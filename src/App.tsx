@@ -2,7 +2,7 @@ import "@xyflow/react/dist/style.css";
 
 import { Background, Controls, ReactFlow } from "@xyflow/react";
 
-import useReactFlowConnection from "./hooks/useReactFlowConnection";
+import useReactFlowConnection from "@/hooks/useReactFlowConnection";
 import { useRef } from "react";
 
 function App() {
