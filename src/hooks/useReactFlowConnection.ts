@@ -15,7 +15,7 @@ const REACT_FLOW_PANE_CLASS = "react-flow__pane";
 const INITIAL_NODE = [
   {
     id: "0",
-    type: "input",
+    type: "doublePage",
     data: { label: "Node" },
     position: { x: 0, y: 50 },
   },
@@ -59,6 +59,7 @@ export default function useReactFlowConnection() {
         }),
         data: { label: `Node ${id}` },
         origin: [0.5, 0.0],
+        type: "doublePage",
       };
       const newEgde: Edge = {
         id,

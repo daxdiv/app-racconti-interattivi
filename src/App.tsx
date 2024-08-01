@@ -1,11 +1,14 @@
 import "@xyflow/react/dist/style.css";
+import "@/styles/globals.css";
 
 import { Background, Controls, ReactFlow } from "@xyflow/react";
+import { useMemo, useRef } from "react";
 
+import DoublePageNode from "@/components/nodes/DoublePageNode";
 import useReactFlowConnection from "@/hooks/useReactFlowConnection";
-import { useRef } from "react";
 
 function App() {
+  const nodeTypes = useMemo(() => ({ doublePage: DoublePageNode }), []);
   const reactFlowWrapper = useRef(null);
   const {
     nodes,
@@ -33,6 +36,7 @@ function App() {
         fitView
         fitViewOptions={{ padding: 2 }}
         nodeOrigin={[0.5, 0]}
+        nodeTypes={nodeTypes}
       >
         <Background />
         <Controls
