@@ -1,7 +1,7 @@
 import "@xyflow/react/dist/style.css";
 import "@/styles/globals.css";
 
-import { Background, Controls, ReactFlow } from "@xyflow/react";
+import { Background, Controls, MiniMap, ReactFlow } from "@xyflow/react";
 import { useMemo, useRef } from "react";
 
 import DoublePageNode from "@/components/nodes/DoublePageNode";
@@ -42,6 +42,10 @@ function App() {
         <Controls
           orientation="horizontal"
           showInteractive={false}
+        />
+        <MiniMap
+          pannable
+          zoomable
         />
       </ReactFlow>
     </div>
