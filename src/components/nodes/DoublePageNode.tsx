@@ -9,8 +9,8 @@ import { Handle, Position, useReactFlow } from "@xyflow/react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import NodeDialog from "./ui/NodeDialog";
-import NodeSelect from "./ui/NodeSelect";
+import NodeDialog from "@/components/nodes/ui/NodeDialog";
+import NodeSelect from "@/components/nodes/ui/NodeSelect";
 import { Separator } from "@/components/ui/separator";
 import { Trash2 } from "lucide-react";
 
