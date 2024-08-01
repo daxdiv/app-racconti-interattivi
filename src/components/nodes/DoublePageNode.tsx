@@ -5,17 +5,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position, useReactFlow } from "@xyflow/react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import NodeDialog from "./ui/NodeDialog";
 import NodeSelect from "./ui/NodeSelect";
 import { Separator } from "@/components/ui/separator";
+import { Trash2 } from "lucide-react";
 
 type DoublePageNodeProps = React.ComponentProps<typeof Card>;
 
 function DoublePageNode(props: DoublePageNodeProps) {
+  const { setNodes } = useReactFlow();
+
+  const onNodeDelete = () => {
+    setNodes(nodes => nodes.filter(node => node.id !== props.id));
+  };
+
   return (
     <>
       <Handle
@@ -23,8 +30,13 @@ function DoublePageNode(props: DoublePageNodeProps) {
         position={Position.Top}
       />
       <Card {...props}>
-        <CardHeader>
+        <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle>Pagine x/y</CardTitle>
+          <Trash2
+            className="cursor-pointer text-secondary p-1 rounded-full bg-destructive"
+            size={28}
+            onClick={onNodeDelete}
+          />
         </CardHeader>
         <CardContent className="grid">
           <div className="flex items-center justify-between">
