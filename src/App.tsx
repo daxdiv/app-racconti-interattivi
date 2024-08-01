@@ -4,11 +4,13 @@ import "@/styles/globals.css";
 import { Background, Controls, MiniMap, ReactFlow } from "@xyflow/react";
 import { useMemo, useRef } from "react";
 
+import DeleteButtonEdge from "./components/edges/DeleteButtonEdge";
 import DoublePageNode from "@/components/nodes/DoublePageNode";
 import useReactFlowConnection from "@/hooks/useReactFlowConnection";
 
 function App() {
   const nodeTypes = useMemo(() => ({ doublePage: DoublePageNode }), []);
+  const edgeTypes = useMemo(() => ({ deleteButton: DeleteButtonEdge }), []);
   const reactFlowWrapper = useRef(null);
   const {
     nodes,
@@ -37,6 +39,7 @@ function App() {
         fitViewOptions={{ padding: 2 }}
         nodeOrigin={[0.5, 0]}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
       >
         <Background />
         <Controls
