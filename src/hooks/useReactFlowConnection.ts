@@ -16,7 +16,7 @@ const INITIAL_NODE = [
   {
     id: "0",
     type: "doublePage",
-    data: { label: "Node" },
+    data: { label: "Pagine 1/2", leftPageNumber: "1", rightPageNumber: "2" },
     position: { x: 0, y: 50 },
   },
 ];
@@ -51,13 +51,19 @@ export default function useReactFlowConnection() {
       if (!targetIsPane) return;
 
       const id = incrementId();
+      const leftPageNumber = +id + 2; // +id => convert id from string to number
+      const rightPageNumber = +id + 3; // +id => convert id from string to number
       const newNode: Node = {
         id,
         position: screenToFlowPosition({
           x: (event as MouseEvent).clientX,
           y: (event as MouseEvent).clientY,
         }),
-        data: { label: `Node ${id}` },
+        data: {
+          label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
+          leftPageNumber,
+          rightPageNumber,
+        },
         origin: [0.5, 0.0],
         type: "doublePage",
       };
