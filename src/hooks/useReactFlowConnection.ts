@@ -76,7 +76,6 @@ export default function useReactFlowConnection() {
         id: `${newNodeId}`,
         source: connectingNodeId.current,
         target: `${newNodeId}`,
-        type: "deleteButton",
       };
 
       setNodes(nds => nds.concat(newNode));
