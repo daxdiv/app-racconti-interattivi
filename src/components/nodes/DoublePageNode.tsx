@@ -26,11 +26,12 @@ type DoublePageNodeProps = NodeProps<DoublePageNode> & {
 };
 
 function DoublePageNode(props: DoublePageNodeProps) {
-  const { deleteElements } = useReactFlow();
+  const { setNodes, deleteElements } = useReactFlow();
 
   const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
   const onNodeDelete = () => {
     decrementNodeId();
+    setNodes(prevNodes => prevNodes.filter(node => node.id !== props.id));
     deleteElements({
       nodes: [
         {
