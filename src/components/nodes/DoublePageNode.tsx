@@ -21,6 +21,7 @@ type DoublePageNodeProps = NodeProps<DoublePageNode> & {
     label: string;
     leftPageNumber: number;
     rightPageNumber: number;
+    deletable: boolean;
   };
 };
 
@@ -42,11 +43,13 @@ function DoublePageNode(props: DoublePageNodeProps) {
       <Card {...props}>
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle>{label}</CardTitle>
-          <Trash2
-            className="cursor-pointer text-secondary p-1 rounded-full bg-destructive"
-            size={28}
-            onClick={onNodeDelete}
-          />
+          {props.data.deletable && (
+            <Trash2
+              className="cursor-pointer text-secondary p-1 rounded-full bg-destructive"
+              size={28}
+              onClick={onNodeDelete}
+            />
+          )}
         </CardHeader>
         <CardContent className="grid">
           <div className="flex items-center justify-between">
