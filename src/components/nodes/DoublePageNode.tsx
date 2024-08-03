@@ -1,3 +1,6 @@
+import { Trash2 } from "lucide-react";
+import { Handle, Position, useReactFlow, type Node, type NodeProps } from "@xyflow/react";
+
 import {
   Card,
   CardContent,
@@ -5,14 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Handle, Position, useReactFlow, type Node, type NodeProps } from "@xyflow/react";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import NodeDialog from "@/components/nodes/ui/NodeDialog";
 import NodeSelect from "@/components/nodes/ui/NodeSelect";
 import { Separator } from "@/components/ui/separator";
-import { Trash2 } from "lucide-react";
 import { decrementNodeId } from "@/hooks/useReactFlowConnection";
 
 type DoublePageNode = Node;
