@@ -1,3 +1,4 @@
+import { useCallback, useRef } from "react";
 import {
   addEdge,
   useEdgesState,
@@ -9,7 +10,6 @@ import {
   type OnConnectEnd,
   type OnConnectStart,
 } from "@xyflow/react";
-import { useCallback, useRef } from "react";
 
 let nodeId = 0;
 export const incrementNodeId = () => (nodeId += 2);
