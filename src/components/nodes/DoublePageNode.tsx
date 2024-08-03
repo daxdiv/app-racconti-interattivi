@@ -26,12 +26,18 @@ type DoublePageNodeProps = NodeProps<DoublePageNode> & {
 };
 
 function DoublePageNode(props: DoublePageNodeProps) {
-  const { setNodes } = useReactFlow();
+  const { deleteElements } = useReactFlow();
 
-  const { label, leftPageNumber, rightPageNumber } = props.data;
+  const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
   const onNodeDelete = () => {
     decrementNodeId();
-    setNodes(nodes => nodes.filter(node => node.id !== props.id));
+    deleteElements({
+      nodes: [
+        {
+          id: props.id,
+        },
+      ],
+    });
   };
 
   return (
@@ -43,7 +49,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
       <Card {...props}>
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle>{label}</CardTitle>
-          {props.data.deletable && (
+          {deletable && (
             <Trash2
               className="cursor-pointer text-secondary p-1 rounded-full bg-destructive"
               size={28}
