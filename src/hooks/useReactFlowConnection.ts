@@ -11,18 +11,23 @@ import {
 } from "@xyflow/react";
 import { useCallback, useRef } from "react";
 
+let nodeId = 0;
+export const incrementNodeId = () => (nodeId += 2);
+export const decrementNodeId = () => (nodeId -= 2);
+
 const REACT_FLOW_PANE_CLASS = "react-flow__pane";
 const INITIAL_NODE = [
   {
     id: "0",
     type: "doublePage",
-    data: { label: "Pagine 1/2", leftPageNumber: "1", rightPageNumber: "2" },
+    data: {
+      label: `Pagine ${nodeId + 1}/${nodeId + 2}`,
+      leftPageNumber: `${nodeId + 1}`,
+      rightPageNumber: `${nodeId + 2}`,
+    },
     position: { x: 0, y: 50 },
   },
 ];
-
-let id = 1;
-const incrementId = () => `${id++}`;
 
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
@@ -50,11 +55,11 @@ export default function useReactFlowConnection() {
 
       if (!targetIsPane) return;
 
-      const id = incrementId();
-      const leftPageNumber = +id + 2; // +id => convert id from string to number
-      const rightPageNumber = +id + 3; // +id => convert id from string to number
+      const newNodeId = incrementNodeId();
+      const leftPageNumber = newNodeId + 1;
+      const rightPageNumber = newNodeId + 2;
       const newNode: Node = {
-        id,
+        id: `${newNodeId}`,
         position: screenToFlowPosition({
           x: (event as MouseEvent).clientX,
           y: (event as MouseEvent).clientY,
@@ -68,9 +73,9 @@ export default function useReactFlowConnection() {
         type: "doublePage",
       };
       const newEgde: Edge = {
-        id,
+        id: `${newNodeId}`,
         source: connectingNodeId.current,
-        target: id,
+        target: `${newNodeId}`,
         type: "deleteButton",
       };
 

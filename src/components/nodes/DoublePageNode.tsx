@@ -13,6 +13,7 @@ import NodeDialog from "@/components/nodes/ui/NodeDialog";
 import NodeSelect from "@/components/nodes/ui/NodeSelect";
 import { Separator } from "@/components/ui/separator";
 import { Trash2 } from "lucide-react";
+import { decrementNodeId } from "@/hooks/useReactFlowConnection";
 
 type DoublePageNode = Node;
 type DoublePageNodeProps = NodeProps<DoublePageNode> & {
@@ -28,6 +29,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
 
   const { label, leftPageNumber, rightPageNumber } = props.data;
   const onNodeDelete = () => {
+    decrementNodeId();
     setNodes(nodes => nodes.filter(node => node.id !== props.id));
   };
 
