@@ -1,3 +1,5 @@
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -10,13 +12,18 @@ function Header() {
         </h1>
       </div>
       <div>
-        <Button
-          variant="secondary"
-          className="flex justify-center items-center"
-        >
-          <BookOpen className="mr-2" />
-          Riepilogo
-        </Button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              variant="secondary"
+              className="flex justify-center items-center"
+            >
+              <BookOpen className="mr-2" />
+              Riepilogo
+            </Button>
+          </SheetTrigger>
+          <SheetContent></SheetContent>
+        </Sheet>
       </div>
     </header>
   );
