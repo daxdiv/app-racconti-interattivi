@@ -2,8 +2,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useReactFlow } from "@xyflow/react";
 
 function Header() {
+  const { getNodes } = useReactFlow();
+
   return (
     <header className="w-full h-[10vh] border-border/40 bg-black flex justify-between px-3 items-center">
       <div>
@@ -22,7 +25,11 @@ function Header() {
               Riepilogo
             </Button>
           </SheetTrigger>
-          <SheetContent></SheetContent>
+          <SheetContent>
+            {getNodes().map(node => (
+              <div key={node.id}>{node.data.label as string}</div>
+            ))}
+          </SheetContent>
         </Sheet>
       </div>
     </header>
