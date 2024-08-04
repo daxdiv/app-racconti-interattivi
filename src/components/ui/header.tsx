@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReactFlow, type Node } from "@xyflow/react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 function Header() {
   const { getNodes } = useReactFlow<Node<DoublePageNodeData>>();
@@ -39,7 +40,16 @@ function Header() {
             >
               {getNodes().map(node => (
                 <AccordionItem value={node.data.label}>
-                  <AccordionTrigger>{node.data.label}</AccordionTrigger>
+                  <div className="flex justify-start items-center gap-2">
+                    <Avatar>
+                      <AvatarImage
+                        src=""
+                        alt={`Sfondo pagine ${node.data.leftPageNumber}/${node.data.rightPageNumber}`}
+                      />
+                      <AvatarFallback>IMG</AvatarFallback>
+                    </Avatar>
+                    <AccordionTrigger>{node.data.label}</AccordionTrigger>
+                  </div>
                   <AccordionContent>
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, est
                     dolor, non quasi architecto nostrum et enim magni in, beatae dicta
