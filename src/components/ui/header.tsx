@@ -8,10 +8,10 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useReactFlow } from "@xyflow/react";
+import { useReactFlow, type Node } from "@xyflow/react";
 
 function Header() {
-  const { getNodes } = useReactFlow();
+  const { getNodes } = useReactFlow<Node<DoublePageNodeData>>();
 
   return (
     <header className="w-full h-[10vh] border-border/40 bg-black flex justify-between px-3 items-center">
@@ -38,8 +38,8 @@ function Header() {
               className="w-full mt-2"
             >
               {getNodes().map(node => (
-                <AccordionItem value={node.data.label as string}>
-                  <AccordionTrigger>{node.data.label as string}</AccordionTrigger>
+                <AccordionItem value={node.data.label}>
+                  <AccordionTrigger>{node.data.label}</AccordionTrigger>
                   <AccordionContent>
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, est
                     dolor, non quasi architecto nostrum et enim magni in, beatae dicta

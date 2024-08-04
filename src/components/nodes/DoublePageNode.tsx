@@ -15,15 +15,8 @@ import NodeSelect from "@/components/nodes/ui/NodeSelect";
 import { Separator } from "@/components/ui/separator";
 import { decrementNodeId } from "@/hooks/useReactFlowConnection";
 
-type DoublePageNode = Node;
-type DoublePageNodeProps = NodeProps<DoublePageNode> & {
-  data: {
-    label: string;
-    leftPageNumber: number;
-    rightPageNumber: number;
-    deletable: boolean;
-  };
-};
+type DoublePageNode = Node<DoublePageNodeData>;
+type DoublePageNodeProps = NodeProps<DoublePageNode>;
 
 function DoublePageNode(props: DoublePageNodeProps) {
   const { setNodes, deleteElements } = useReactFlow();
