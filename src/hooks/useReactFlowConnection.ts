@@ -10,7 +10,7 @@ import {
   type OnConnectEnd,
   type OnConnectStart,
 } from "@xyflow/react";
-import { INITIAL_NODE, REACT_FLOW_PANE_CLASS } from "@/constants";
+import { INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants";
 
 // let nodeId = 0;
 // export const incrementNodeId = () => (nodeId += 2);
@@ -18,7 +18,8 @@ import { INITIAL_NODE, REACT_FLOW_PANE_CLASS } from "@/constants";
 
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(INITIAL_NODE);
+  const [nodes, setNodes, onNodesChange] =
+    useNodesState<Node<DoublePageNodeData>>(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { screenToFlowPosition } = useReactFlow();
 
@@ -46,7 +47,7 @@ export default function useReactFlowConnection() {
       const newNodeId = Number(connectingNodeId.current) + 2;
       const leftPageNumber = newNodeId + 1;
       const rightPageNumber = newNodeId + 2;
-      const newNode: Node = {
+      const newNode: Node<DoublePageNodeData> = {
         id: `${newNodeId}`,
         position: screenToFlowPosition({
           x: (event as MouseEvent).clientX,
@@ -56,6 +57,18 @@ export default function useReactFlowConnection() {
           label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
           leftPageNumber,
           rightPageNumber,
+          backgroundImage: "",
+          pages: Array(2).fill([
+            {
+              content: "",
+              position: "TopLeft",
+            },
+            {
+              content: "",
+              position: "TopRight",
+            },
+          ]) as DoublePageNodeData["pages"],
+          audio: "",
           deletable: true,
         },
         origin: [0.5, 0.0],
