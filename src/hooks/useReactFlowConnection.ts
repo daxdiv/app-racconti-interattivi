@@ -10,25 +10,11 @@ import {
   type OnConnectEnd,
   type OnConnectStart,
 } from "@xyflow/react";
+import { INITIAL_NODE, REACT_FLOW_PANE_CLASS } from "@/constants";
 
 let nodeId = 0;
 export const incrementNodeId = () => (nodeId += 2);
 export const decrementNodeId = () => (nodeId -= 2);
-
-const REACT_FLOW_PANE_CLASS = "react-flow__pane";
-const INITIAL_NODE = [
-  {
-    id: "0",
-    type: "doublePage",
-    data: {
-      label: `Pagine ${nodeId + 1}/${nodeId + 2}`,
-      leftPageNumber: `${nodeId + 1}`,
-      rightPageNumber: `${nodeId + 2}`,
-      deletable: false,
-    },
-    position: { x: 0, y: 50 },
-  },
-];
 
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
