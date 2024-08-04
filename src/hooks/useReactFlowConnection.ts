@@ -12,9 +12,9 @@ import {
 } from "@xyflow/react";
 import { INITIAL_NODE, REACT_FLOW_PANE_CLASS } from "@/constants";
 
-let nodeId = 0;
-export const incrementNodeId = () => (nodeId += 2);
-export const decrementNodeId = () => (nodeId -= 2);
+// let nodeId = 0;
+// export const incrementNodeId = () => (nodeId += 2);
+// export const decrementNodeId = () => (nodeId -= 2);
 
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
@@ -42,7 +42,8 @@ export default function useReactFlowConnection() {
 
       if (!targetIsPane) return;
 
-      const newNodeId = incrementNodeId();
+      // const newNodeId = incrementNodeId();
+      const newNodeId = Number(connectingNodeId.current) + 2;
       const leftPageNumber = newNodeId + 1;
       const rightPageNumber = newNodeId + 2;
       const newNode: Node = {

@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import NodeDialog from "@/components/nodes/ui/NodeDialog";
 import NodeSelect from "@/components/nodes/ui/NodeSelect";
 import { Separator } from "@/components/ui/separator";
-import { decrementNodeId } from "@/hooks/useReactFlowConnection";
+// import { decrementNodeId } from "@/hooks/useReactFlowConnection";
 
 type DoublePageNode = Node<DoublePageNodeData>;
 type DoublePageNodeProps = NodeProps<DoublePageNode>;
@@ -23,7 +23,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
 
   const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
   const onNodeDelete = () => {
-    decrementNodeId();
+    // decrementNodeId();
     setNodes(prevNodes => prevNodes.filter(node => node.id !== props.id));
     deleteElements({
       nodes: [
