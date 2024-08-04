@@ -40,6 +40,8 @@ function App() {
           fitViewOptions={{ padding: 2 }}
           nodeOrigin={[0.5, 0]}
           nodeTypes={nodeTypes}
+          zoomOnScroll={false}
+          panOnScroll
         >
           <Background />
           <Controls
