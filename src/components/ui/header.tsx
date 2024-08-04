@@ -1,3 +1,9 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import { BookOpen } from "lucide-react";
@@ -26,9 +32,23 @@ function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent>
-            {getNodes().map(node => (
-              <div key={node.id}>{node.data.label as string}</div>
-            ))}
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full mt-2"
+            >
+              {getNodes().map(node => (
+                <AccordionItem value={node.data.label as string}>
+                  <AccordionTrigger>{node.data.label as string}</AccordionTrigger>
+                  <AccordionContent>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, est
+                    dolor, non quasi architecto nostrum et enim magni in, beatae dicta
+                    alias aspernatur provident delectus blanditiis pariatur. Itaque, magni
+                    consectetur.
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </SheetContent>
         </Sheet>
       </div>
