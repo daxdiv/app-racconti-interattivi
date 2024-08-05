@@ -2,8 +2,9 @@ type HeightPosition = "Top" | "Middle" | "Bottom";
 type WidthPosition = "Left" | "Center" | "Right";
 
 declare global {
+  type DoublePageNodeLabel = `Pagine ${number}/${number}`;
   interface DoublePageNodeData extends Record<string, unknown> {
-    label: string;
+    label: DoublePageNodeLabel;
     leftPageNumber: number;
     rightPageNumber: number;
     backgroundImage: string;
