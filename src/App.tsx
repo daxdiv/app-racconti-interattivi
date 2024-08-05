@@ -11,6 +11,8 @@ import useReactFlowConnection from "@/hooks/useReactFlowConnection";
 
 function App() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [defaultAccordionValue, setDefaultAccordionValue] =
+    useState<DoublePageNodeLabel>("Pagine 1/2");
   const nodeTypes = useMemo(() => ({ doublePage: DoublePageNode }), []);
   const reactFlowWrapper = useRef(null);
   const {
@@ -28,6 +30,8 @@ function App() {
       value={{
         isSheetOpen,
         setIsSheetOpen,
+        defaultAccordionValue,
+        setDefaultAccordionValue,
       }}
     >
       <Header />
