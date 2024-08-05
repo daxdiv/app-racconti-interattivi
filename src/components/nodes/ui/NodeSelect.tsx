@@ -24,9 +24,9 @@ function NodeSelect({ id, pageNumber }: NodeSelectProps) {
         if (!nodeToUpdate) return;
 
         const nodeIndexToUpdate = pageNumber % 2 === 0 ? 1 : 0;
+        const nodePages = nodeToUpdate.data.pages;
 
-        nodeToUpdate.data.pages[nodeIndexToUpdate].position =
-          value as PageContentPosition;
+        nodePages[nodeIndexToUpdate].position = value as PageContentPosition;
       }}
     >
       <SelectTrigger className="w-[200px]">

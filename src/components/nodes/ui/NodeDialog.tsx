@@ -47,8 +47,9 @@ function NodeDialog({ id, pageNumber }: NodeDialogProps) {
                 if (!nodeToUpdate) return;
 
                 const nodeIndexToUpdate = pageNumber % 2 === 0 ? 1 : 0;
+                const nodePages = nodeToUpdate.data.pages;
 
-                nodeToUpdate.data.pages[nodeIndexToUpdate].content = content;
+                nodePages[nodeIndexToUpdate].content = content;
               }}
             >
               Salva
