@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useReactFlow, type Node } from "@xyflow/react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import useSheetContext from "@/hooks/useSheetContext";
+import { DialogTitle } from "@/components/ui/dialog";
 
 function Header() {
   const { isSheetOpen, setIsSheetOpen, defaultAccordionValue } = useSheetContext();
@@ -38,6 +39,7 @@ function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent>
+            <DialogTitle>Riepilogo</DialogTitle>
             <Accordion
               type="single"
               collapsible
@@ -60,10 +62,9 @@ function Header() {
                     <AccordionTrigger>{node.data.label}</AccordionTrigger>
                   </div>
                   <AccordionContent>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, est
-                    dolor, non quasi architecto nostrum et enim magni in, beatae dicta
-                    alias aspernatur provident delectus blanditiis pariatur. Itaque, magni
-                    consectetur.
+                    {node.data.pages.map((page, index) => (
+                      <p key={`${node.id}-page-${index + 1}`}>&#x2022; {page.content}</p>
+                    ))}
                   </AccordionContent>
                 </AccordionItem>
               ))}
