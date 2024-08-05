@@ -20,7 +20,7 @@ type DoublePageNode = Node<DoublePageNodeData>;
 type DoublePageNodeProps = NodeProps<DoublePageNode>;
 
 function DoublePageNode(props: DoublePageNodeProps) {
-  const { setIsSheetOpen } = useSheetContext();
+  const { setIsSheetOpen, setDefaultAccordionValue } = useSheetContext();
   const { setNodes, deleteElements } = useReactFlow();
 
   const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
@@ -49,7 +49,10 @@ function DoublePageNode(props: DoublePageNodeProps) {
             <Notebook
               className="cursor-pointer text-secondary py-1 px-1 rounded-full bg-primary hover:bg-primary/70 nodrag nopan"
               size={28}
-              onClick={() => setIsSheetOpen(true)}
+              onClick={() => {
+                setIsSheetOpen(true);
+                setDefaultAccordionValue(props.data.label);
+              }}
             />
             {deletable && (
               <Trash2
