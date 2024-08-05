@@ -71,7 +71,10 @@ function DoublePageNode(props: DoublePageNodeProps) {
                 id={id}
                 pageNumber={leftPageNumber}
               />
-              <NodeSelect />
+              <NodeSelect
+                id={id}
+                pageNumber={leftPageNumber}
+              />
             </div>
             <Separator orientation="vertical" />
             <div className="grid gap-2 grid-rows-2 ml-2">
@@ -79,7 +82,10 @@ function DoublePageNode(props: DoublePageNodeProps) {
                 id={id}
                 pageNumber={rightPageNumber}
               />
-              <NodeSelect />
+              <NodeSelect
+                id={id}
+                pageNumber={leftPageNumber}
+              />
             </div>
           </div>
         </CardContent>
