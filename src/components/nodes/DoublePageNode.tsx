@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Notebook, Trash2 } from "lucide-react";
 import { Handle, Position, useReactFlow, type Node, type NodeProps } from "@xyflow/react";
 
 import {
@@ -43,13 +43,19 @@ function DoublePageNode(props: DoublePageNodeProps) {
       <Card {...props}>
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle>{label}</CardTitle>
-          {deletable && (
-            <Trash2
-              className="cursor-pointer text-secondary p-1 rounded-full bg-destructive"
+          <div className="flex justify-center items-center gap-2">
+            <Notebook
+              className="cursor-pointer text-secondary py-1 px-1 rounded-full bg-primary nodrag nopan"
               size={28}
-              onClick={onNodeDelete}
             />
-          )}
+            {deletable && (
+              <Trash2
+                className="cursor-pointer text-secondary p-1 rounded-full bg-destructive nodrag nopan"
+                size={28}
+                onClick={onNodeDelete}
+              />
+            )}
+          </div>
         </CardHeader>
         <CardContent className="grid">
           <div className="flex items-center justify-between">
