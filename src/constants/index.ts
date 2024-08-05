@@ -17,7 +17,7 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
         },
         {
           content: "",
-          position: "TopRight",
+          position: "TopLeft",
         },
       ],
       audio: "",
