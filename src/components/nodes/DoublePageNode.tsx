@@ -23,6 +23,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
   const { setIsSheetOpen, setDefaultAccordionValue } = useSheetContext();
   const { setNodes, deleteElements } = useReactFlow();
 
+  const { id } = props;
   const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
   const onNodeDelete = () => {
     // decrementNodeId();
@@ -66,12 +67,18 @@ function DoublePageNode(props: DoublePageNodeProps) {
         <CardContent className="grid">
           <div className="flex items-center justify-between">
             <div className="grid gap-2 grid-rows-2 mr-2">
-              <NodeDialog pageNumber={leftPageNumber} />
+              <NodeDialog
+                id={id}
+                pageNumber={leftPageNumber}
+              />
               <NodeSelect />
             </div>
             <Separator orientation="vertical" />
             <div className="grid gap-2 grid-rows-2 ml-2">
-              <NodeDialog pageNumber={rightPageNumber} />
+              <NodeDialog
+                id={id}
+                pageNumber={rightPageNumber}
+              />
               <NodeSelect />
             </div>
           </div>
