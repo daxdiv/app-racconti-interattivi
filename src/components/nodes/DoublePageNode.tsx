@@ -47,13 +47,13 @@ function DoublePageNode(props: DoublePageNodeProps) {
           <CardTitle>{label}</CardTitle>
           <div className="flex justify-center items-center gap-2">
             <Notebook
-              className="cursor-pointer text-secondary py-1 px-1 rounded-full bg-primary nodrag nopan"
+              className="cursor-pointer text-secondary py-1 px-1 rounded-full bg-primary hover:bg-primary/70 nodrag nopan"
               size={28}
               onClick={() => setIsSheetOpen(true)}
             />
             {deletable && (
               <Trash2
-                className="cursor-pointer text-secondary p-1 rounded-full bg-destructive nodrag nopan"
+                className="cursor-pointer text-secondary p-1 rounded-full bg-destructive hover:bg-destructive/70 nodrag nopan"
                 size={28}
                 onClick={onNodeDelete}
               />
