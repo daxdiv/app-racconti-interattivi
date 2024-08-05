@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/accordion";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-import { BookOpen } from "lucide-react";
+import { Notebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReactFlow, type Node } from "@xyflow/react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -28,7 +28,7 @@ function Header() {
               variant="secondary"
               className="flex justify-center items-center"
             >
-              <BookOpen className="mr-2" />
+              <Notebook className="mr-2" />
               Riepilogo
             </Button>
           </SheetTrigger>
@@ -39,7 +39,10 @@ function Header() {
               className="w-full mt-2"
             >
               {getNodes().map(node => (
-                <AccordionItem value={node.data.label}>
+                <AccordionItem
+                  value={node.data.label}
+                  key={node.id}
+                >
                   <div className="flex justify-start items-center gap-2">
                     <Avatar>
                       <AvatarImage
