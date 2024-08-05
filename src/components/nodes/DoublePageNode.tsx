@@ -13,12 +13,14 @@ import { Label } from "@/components/ui/label";
 import NodeDialog from "@/components/nodes/ui/NodeDialog";
 import NodeSelect from "@/components/nodes/ui/NodeSelect";
 import { Separator } from "@/components/ui/separator";
+import useSheetContext from "@/hooks/useSheetContext";
 // import { decrementNodeId } from "@/hooks/useReactFlowConnection";
 
 type DoublePageNode = Node<DoublePageNodeData>;
 type DoublePageNodeProps = NodeProps<DoublePageNode>;
 
 function DoublePageNode(props: DoublePageNodeProps) {
+  const { setIsSheetOpen } = useSheetContext();
   const { setNodes, deleteElements } = useReactFlow();
 
   const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
@@ -47,6 +49,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
             <Notebook
               className="cursor-pointer text-secondary py-1 px-1 rounded-full bg-primary nodrag nopan"
               size={28}
+              onClick={() => setIsSheetOpen(true)}
             />
             {deletable && (
               <Trash2
