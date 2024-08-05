@@ -58,16 +58,16 @@ export default function useReactFlowConnection() {
           leftPageNumber,
           rightPageNumber,
           backgroundImage: "",
-          pages: Array(2).fill([
+          pages: [
             {
               content: "",
               position: "TopLeft",
             },
             {
               content: "",
-              position: "TopRight",
+              position: "TopLeft",
             },
-          ]) as DoublePageNodeData["pages"],
+          ],
           audio: "",
           deletable: true,
         },
