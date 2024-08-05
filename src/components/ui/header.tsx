@@ -13,7 +13,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import useSheetContext from "@/hooks/useSheetContext";
 
 function Header() {
-  const { isSheetOpen, setIsSheetOpen } = useSheetContext();
+  const { isSheetOpen, setIsSheetOpen, defaultAccordionValue } = useSheetContext();
   const { getNodes } = useReactFlow<Node<DoublePageNodeData>>();
 
   return (
@@ -42,6 +42,7 @@ function Header() {
               type="single"
               collapsible
               className="w-full mt-2"
+              defaultValue={defaultAccordionValue}
             >
               {getNodes().map(node => (
                 <AccordionItem
