@@ -20,8 +20,8 @@ function NodeDialog({ pageNumber }: NodeDialogProps) {
         <Button variant="outline">Pagina {pageNumber}</Button>
       </DialogTrigger>
       <DialogContent>
+        <DialogTitle>Contenuto pagina {pageNumber}</DialogTitle>
         <DialogHeader>
-          <DialogTitle>Contenuto pagina {pageNumber}</DialogTitle>
           <DialogDescription>
             <Textarea
               placeholder="C'era una volta..."
