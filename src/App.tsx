@@ -2,13 +2,15 @@ import "@xyflow/react/dist/style.css";
 import "@/styles/globals.css";
 
 import { Background, Controls, MiniMap, ReactFlow } from "@xyflow/react";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import DoublePageNode from "@/components/nodes/DoublePageNode";
 import Header from "@/components/ui/header";
+import { SheetContextProvider } from "@/contexts/sheetContext";
 import useReactFlowConnection from "@/hooks/useReactFlowConnection";
 
 function App() {
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const nodeTypes = useMemo(() => ({ doublePage: DoublePageNode }), []);
   const reactFlowWrapper = useRef(null);
   const {
@@ -22,7 +24,12 @@ function App() {
   } = useReactFlowConnection();
 
   return (
-    <>
+    <SheetContextProvider
+      value={{
+        isSheetOpen,
+        setIsSheetOpen,
+      }}
+    >
       <Header />
       <div
         style={{ height: "90vh", width: "100vw" }}
@@ -54,7 +61,7 @@ function App() {
           />
         </ReactFlow>
       </div>
-    </>
+    </SheetContextProvider>
   );
 }
 
