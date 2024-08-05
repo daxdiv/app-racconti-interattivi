@@ -10,8 +10,10 @@ import { Notebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReactFlow, type Node } from "@xyflow/react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import useSheetContext from "@/hooks/useSheetContext";
 
 function Header() {
+  const { isSheetOpen, setIsSheetOpen } = useSheetContext();
   const { getNodes } = useReactFlow<Node<DoublePageNodeData>>();
 
   return (
@@ -22,7 +24,10 @@ function Header() {
         </h1>
       </div>
       <div>
-        <Sheet>
+        <Sheet
+          open={isSheetOpen}
+          onOpenChange={setIsSheetOpen}
+        >
           <SheetTrigger asChild>
             <Button
               variant="secondary"
