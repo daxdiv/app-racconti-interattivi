@@ -64,7 +64,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
         type="target"
         position={Position.Top}
       />
-      <Card {...props}>
+      <Card>
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle>{label}</CardTitle>
           <div className="flex justify-center items-center gap-2">
