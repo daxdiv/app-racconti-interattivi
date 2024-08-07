@@ -21,7 +21,7 @@ type DoublePageNodeProps = NodeProps<DoublePageNode>;
 
 function DoublePageNode(props: DoublePageNodeProps) {
   const { setIsSheetOpen, setDefaultAccordionValue } = useSheetContext();
-  const { setNodes, deleteElements } = useReactFlow();
+  const { getNode, setNodes, deleteElements } = useReactFlow<Node<DoublePageNodeData>>();
 
   const { id } = props;
   const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
@@ -35,6 +35,27 @@ function DoublePageNode(props: DoublePageNodeProps) {
         },
       ],
     });
+  };
+  const onImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedImage = e.target.files?.[0];
+
+    if (!uploadedImage) return;
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      const base64data = reader.result;
+
+      if (!base64data) return;
+
+      const nodeToUpdate = getNode(id);
+
+      if (!nodeToUpdate) return;
+
+      nodeToUpdate.data.backgroundImage = base64data as string;
+    };
+
+    reader.readAsDataURL(uploadedImage);
   };
 
   return (
@@ -99,6 +120,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
                 type="file"
                 className="w-[200px]"
                 accept="image/*"
+                onChange={onImageUpload}
               />
             </div>
             <div>
