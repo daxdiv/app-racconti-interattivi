@@ -53,6 +53,7 @@ function App() {
           nodeTypes={nodeTypes}
           zoomOnScroll={false}
           panOnScroll
+          maxZoom={1}
         >
           <Background />
           <Controls
