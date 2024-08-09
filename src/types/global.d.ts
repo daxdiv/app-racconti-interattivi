@@ -10,15 +10,19 @@ declare global {
     rightPageNumber: number;
     backgroundImage: string;
     pages: [
-      text: {
-        content: string;
-        position: `${HeightPosition}${WidthPosition}`;
-        class?: string;
+      {
+        text: {
+          content: string;
+          position: `${HeightPosition}${WidthPosition}`;
+          class?: string;
+        };
       },
-      text: {
-        content: string;
-        position: PageContentPosition;
-        class?: string;
+      {
+        text: {
+          content: string;
+          position: PageContentPosition;
+          class?: string;
+        };
       }
     ];
     audio: string;
