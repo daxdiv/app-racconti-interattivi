@@ -82,6 +82,11 @@ export default function useReactFlowConnection() {
         id: `${newNodeId}`,
         source: connectingNodeId.current,
         target: `${newNodeId}`,
+        animated: true,
+        style: {
+          stroke: "black",
+          strokeWidth: 1,
+        },
       };
 
       setNodes(nds => nds.concat(newNode));
