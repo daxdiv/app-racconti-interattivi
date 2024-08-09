@@ -31,3 +31,4 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
   },
 ];
 export const MAX_AUDIO_SIZE = 1024 * 1024;
+export const TOOLTIP_DELAY_DURATION = 400; // ms
