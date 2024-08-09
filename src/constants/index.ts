@@ -30,3 +30,4 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
     position: { x: 0, y: 50 },
   },
 ];
+export const MAX_AUDIO_SIZE = 1024 * 1024;
