@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useReactFlow, type Node } from "@xyflow/react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import useSheetContext from "@/hooks/useSheetContext";
-import { DialogTitle } from "@/components/ui/dialog";
+import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 function Header() {
   const { isSheetOpen, setIsSheetOpen, defaultAccordionValue } = useSheetContext();
@@ -40,6 +40,7 @@ function Header() {
           </SheetTrigger>
           <SheetContent>
             <DialogTitle>Riepilogo</DialogTitle>
+            <DialogDescription />
             <Accordion
               type="single"
               collapsible
