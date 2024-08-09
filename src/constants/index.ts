@@ -12,12 +12,16 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
       backgroundImage: "",
       pages: [
         {
-          content: "",
-          position: "TopLeft",
+          text: {
+            content: "",
+            position: "TopLeft",
+          },
         },
         {
-          content: "",
-          position: "TopLeft",
+          text: {
+            content: "",
+            position: "TopLeft",
+          },
         },
       ],
       audio: "",

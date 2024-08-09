@@ -64,7 +64,9 @@ function Header() {
                   </div>
                   <AccordionContent>
                     {node.data.pages.map((page, index) => (
-                      <p key={`${node.id}-page-${index + 1}`}>&#x2022; {page.content}</p>
+                      <p key={`${node.id}-page-${index + 1}`}>
+                        &#x2022; {page.text.content}
+                      </p>
                     ))}
                   </AccordionContent>
                 </AccordionItem>
