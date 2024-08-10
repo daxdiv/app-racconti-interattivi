@@ -22,7 +22,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import PreviewDialog from "@/components/nodes/ui/PreviewDialog";
+import PreviewDialog from "@/components/ui/nodes/PreviewDialog";
 import { MAX_AUDIO_SIZE, TOOLTIP_DELAY_DURATION } from "@/constants";
 import { Tooltip, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -340,7 +340,7 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
             </Button>
           </DialogClose>
 
-          {JSON.stringify(data) !== JSON.stringify(nodeChanges) ? (
+          {JSON.stringify(data) !== JSON.stringify(nodeChanges) ? ( // compare object
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button type="button">Annulla</Button>

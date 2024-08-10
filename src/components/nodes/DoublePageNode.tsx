@@ -11,8 +11,8 @@ import {
 
 import useSheetContext from "@/hooks/useSheetContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import EditDialog from "@/components/nodes/ui/EditDialog";
-import PreviewDialog from "@/components/nodes/ui/PreviewDialog";
+import EditDialog from "@/components/ui/nodes/EditDialog";
+import PreviewDialog from "@/components/ui/nodes/PreviewDialog";
 import {
   TooltipProvider,
   Tooltip,
