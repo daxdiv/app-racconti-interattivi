@@ -1,19 +1,25 @@
-import { Notebook, Trash2 } from "lucide-react";
-import { Handle, Position, useReactFlow, type Node, type NodeProps } from "@xyflow/react";
-
+import { Notebook, Trash2, Unlink } from "lucide-react";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import NodeDialog from "@/components/nodes/ui/NodeDialog";
-import NodeSelect from "@/components/nodes/ui/NodeSelect";
-import { Separator } from "@/components/ui/separator";
+  Handle,
+  Position,
+  useReactFlow,
+  getIncomers,
+  getOutgoers,
+  type Node,
+  type NodeProps,
+} from "@xyflow/react";
+
 import useSheetContext from "@/hooks/useSheetContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import EditDialog from "@/components/nodes/ui/EditDialog";
+import PreviewDialog from "@/components/nodes/ui/PreviewDialog";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_DURATION } from "@/constants";
 // import { decrementNodeId } from "@/hooks/useReactFlowConnection";
 
 type DoublePageNode = Node<DoublePageNodeData>;
@@ -21,12 +27,19 @@ type DoublePageNodeProps = NodeProps<DoublePageNode>;
 
 function DoublePageNode(props: DoublePageNodeProps) {
   const { setIsSheetOpen, setDefaultAccordionValue } = useSheetContext();
-  const { getNode, setNodes, deleteElements } = useReactFlow<Node<DoublePageNodeData>>();
+  const { getNodes, getEdges, setNodes, deleteElements } =
+    useReactFlow<Node<DoublePageNodeData>>();
 
   const { id } = props;
   const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
+  const nodes = getNodes();
+  const edges = getEdges();
+  const incomers = getIncomers({ id }, nodes, edges);
+  const outgoers = getOutgoers({ id }, nodes, edges);
+
   const onNodeDelete = () => {
     // decrementNodeId();
+    URL.revokeObjectURL(props.data.backgroundImage);
     setNodes(prevNodes => prevNodes.filter(node => node.id !== props.id));
     deleteElements({
       nodes: [
@@ -36,27 +49,6 @@ function DoublePageNode(props: DoublePageNodeProps) {
       ],
     });
   };
-  const onImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedImage = e.target.files?.[0];
-
-    if (!uploadedImage) return;
-
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      const base64data = reader.result;
-
-      if (!base64data) return;
-
-      const nodeToUpdate = getNode(id);
-
-      if (!nodeToUpdate) return;
-
-      nodeToUpdate.data.backgroundImage = base64data as string;
-    };
-
-    reader.readAsDataURL(uploadedImage);
-  };
 
   return (
     <>
@@ -64,76 +56,74 @@ function DoublePageNode(props: DoublePageNodeProps) {
         type="target"
         position={Position.Top}
       />
-      <Card>
+      <Card className="w-[300px]">
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle>{label}</CardTitle>
-          <div className="flex justify-center items-center gap-2">
-            <Notebook
-              className="cursor-pointer text-secondary py-1 px-1 rounded-full bg-primary hover:bg-primary/70 nodrag nopan"
-              size={28}
-              onClick={() => {
-                setIsSheetOpen(true);
-                setDefaultAccordionValue(props.data.label);
-              }}
-            />
+          <div className="flex justify-center items-center gap-x-1">
+            {incomers.length === 0 && outgoers.length === 0 && (
+              <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Unlink
+                      className="cursor-pointer text-primary py-1 px-1 rounded-full bg-yellow-500 hover:bg-yellow-500/70 nodrag nopan"
+                      size={24}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Nodo non collegato</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Notebook
+                    className="cursor-pointer text-secondary py-1 px-1 rounded-full bg-primary hover:bg-primary/70 nodrag nopan"
+                    onClick={() => {
+                      setIsSheetOpen(true);
+                      setDefaultAccordionValue(props.data.label);
+                    }}
+                    size={24}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>Apri riepilogo</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
+              <Tooltip>
+                <PreviewDialog {...props.data} />
+                <TooltipContent>
+                  Visualizza anteprima pagine {leftPageNumber}/{rightPageNumber}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
             {deletable && (
-              <Trash2
-                className="cursor-pointer text-secondary p-1 rounded-full bg-destructive hover:bg-destructive/70 nodrag nopan"
-                size={28}
-                onClick={onNodeDelete}
-              />
+              <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Trash2
+                      className="cursor-pointer text-secondary p-1 rounded-full bg-destructive hover:bg-destructive/70 nodrag nopan"
+                      onClick={onNodeDelete}
+                      size={24}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Elimina pagine {leftPageNumber}/{rightPageNumber}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
           </div>
         </CardHeader>
-        <CardContent className="grid">
-          <div className="flex items-center justify-between">
-            <div className="grid gap-2 grid-rows-2 mr-2">
-              <NodeDialog
-                id={id}
-                pageNumber={leftPageNumber}
-              />
-              <NodeSelect
-                id={id}
-                pageNumber={leftPageNumber}
-              />
-            </div>
-            <Separator orientation="vertical" />
-            <div className="grid gap-2 grid-rows-2 ml-2">
-              <NodeDialog
-                id={id}
-                pageNumber={rightPageNumber}
-              />
-              <NodeSelect
-                id={id}
-                pageNumber={leftPageNumber}
-              />
-            </div>
-          </div>
+
+        <CardContent>
+          <EditDialog
+            id={id}
+            data={props.data}
+          />
         </CardContent>
-        <CardFooter className="flex flex-col">
-          <Separator />
-          <div className="mt-4 flex justify-between items-center w-full text-xs">
-            <div>
-              <Label htmlFor="background">Sfondo</Label>
-              <Input
-                id="background"
-                type="file"
-                className="w-[200px]"
-                accept="image/*"
-                onChange={onImageUpload}
-              />
-            </div>
-            <div>
-              <Label htmlFor="audio">Audio</Label>
-              <Input
-                id="audio"
-                type="file"
-                className="w-[200px]"
-                accept="audio/*"
-              />
-            </div>
-          </div>
-        </CardFooter>
       </Card>
       <Handle
         type="source"
