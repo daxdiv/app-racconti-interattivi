@@ -19,6 +19,17 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogTrigger,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 import { TOOLTIP_DELAY_DURATION } from "@/constants";
 // import { decrementNodeId } from "@/hooks/useReactFlowConnection";
 
@@ -100,20 +111,45 @@ function DoublePageNode(props: DoublePageNodeProps) {
             </TooltipProvider>
 
             {deletable && (
-              <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Trash2
-                      className="cursor-pointer text-secondary p-1 rounded-full bg-destructive hover:bg-destructive/70 nodrag nopan"
+              <AlertDialog>
+                <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
+                  <Tooltip>
+                    <AlertDialogTrigger asChild>
+                      <TooltipTrigger asChild>
+                        <Trash2
+                          className="cursor-pointer text-secondary p-1 rounded-full bg-destructive hover:bg-destructive/70 nodrag nopan"
+                          // onClick={onNodeDelete}
+                          size={24}
+                        />
+                      </TooltipTrigger>
+                    </AlertDialogTrigger>
+                    <TooltipContent>
+                      Elimina pagine {leftPageNumber}/{rightPageNumber}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Eliminare pagine {leftPageNumber}/{rightPageNumber}?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Una volta eliminate, dovrai ricrearle da zero.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogAction
                       onClick={onNodeDelete}
-                      size={24}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    Elimina pagine {leftPageNumber}/{rightPageNumber}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                      className="bg-destructive hover:bg-destructive/70"
+                    >
+                      Si
+                    </AlertDialogAction>
+                    <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
+                      No
+                    </AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
         </CardHeader>
