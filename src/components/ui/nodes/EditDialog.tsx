@@ -57,7 +57,9 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
     if (!nodeToUpdate) return;
 
     updateNodeData(id, nodeChanges);
-    toast.success("Modifiche salvate con successo");
+    toast.success("Modifiche salvate con successo", {
+      duration: 3000,
+    });
   };
 
   return (
