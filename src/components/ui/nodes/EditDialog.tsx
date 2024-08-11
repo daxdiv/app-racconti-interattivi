@@ -305,20 +305,19 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
-                    Hai effettuato delle modifiche, vuoi salvarle?
+                    Hai effettuato delle modifiche, uscire senza salvare?
                   </AlertDialogTitle>
                   <AlertDialogDescription />
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <DialogClose
-                    asChild
-                    onClick={saveChanges}
-                  >
-                    <AlertDialogAction>Si</AlertDialogAction>
-                  </DialogClose>
                   <DialogClose asChild>
-                    <AlertDialogCancel>No</AlertDialogCancel>
+                    <AlertDialogAction className="bg-destructive hover:bg-destructive/70">
+                      Si
+                    </AlertDialogAction>
                   </DialogClose>
+                  <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
+                    No
+                  </AlertDialogCancel>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
