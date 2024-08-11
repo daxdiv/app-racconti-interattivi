@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import { Background, Controls, MiniMap, ReactFlow } from "@xyflow/react";
 import { useMemo, useRef, useState } from "react";
 
+import DeleteButtonEdge from "@/components/edges/DeleteButtonEdge";
 import DoublePageNode from "@/components/nodes/DoublePageNode";
 import Header from "@/components/ui/header";
 import { SheetContextProvider } from "@/contexts/sheetContext";
@@ -15,6 +16,7 @@ function App() {
   const [defaultAccordionValue, setDefaultAccordionValue] =
     useState<DoublePageNodeLabel>("Pagine 1/2");
   const nodeTypes = useMemo(() => ({ doublePage: DoublePageNode }), []);
+  const edgeTypes = useMemo(() => ({ deleteButton: DeleteButtonEdge }), []);
   const reactFlowWrapper = useRef(null);
   const {
     nodes,
@@ -52,6 +54,7 @@ function App() {
           fitViewOptions={{ padding: 2 }}
           nodeOrigin={[0.5, 0]}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           zoomOnScroll={false}
           panOnScroll
           maxZoom={1}

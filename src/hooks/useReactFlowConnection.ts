@@ -87,6 +87,7 @@ export default function useReactFlowConnection() {
           stroke: "black",
           strokeWidth: 1,
         },
+        type: "deleteButton",
       };
 
       setNodes(nds => nds.concat(newNode));
