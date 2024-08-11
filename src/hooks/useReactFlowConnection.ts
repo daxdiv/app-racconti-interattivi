@@ -1,3 +1,4 @@
+import Dagre from "@dagrejs/dagre";
 import { useCallback, useRef } from "react";
 import {
   addEdge,
@@ -16,12 +17,44 @@ import { INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants";
 // export const incrementNodeId = () => (nodeId += 2);
 // export const decrementNodeId = () => (nodeId -= 2);
 
+function getLayoutedElements(
+  nodes: Node<DoublePageNodeData>[],
+  edges: Edge[],
+  options: { direction: "horizontal" | "vertical" }
+) {
+  const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+
+  g.setGraph({ rankdir: options.direction === "horizontal" ? "LR" : "TB" });
+
+  edges.forEach(edge => g.setEdge(edge.source, edge.target));
+  nodes.forEach(node =>
+    g.setNode(node.id, {
+      ...node,
+      width: node.measured?.width ?? 0,
+      height: node.measured?.height ?? 0,
+    })
+  );
+
+  Dagre.layout(g);
+
+  return {
+    nodes: nodes.map(node => {
+      const position = g.node(node.id);
+      const x = position.x - (node.measured?.width ?? 0) / 2;
+      const y = position.y - (node.measured?.height ?? 0) / 2;
+
+      return { ...node, position: { x, y } };
+    }),
+    edges,
+  };
+}
+
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
   const [nodes, setNodes, onNodesChange] =
     useNodesState<Node<DoublePageNodeData>>(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, fitView } = useReactFlow();
 
   const onConnect: OnConnect = useCallback(params => {
     connectingNodeId.current = null;
@@ -96,6 +129,21 @@ export default function useReactFlowConnection() {
     [screenToFlowPosition]
   );
 
+  const onLayout = useCallback(
+    (direction: "horizontal" | "vertical") => {
+      console.log(nodes);
+      const layouted = getLayoutedElements(nodes, edges, { direction });
+
+      setNodes([...layouted.nodes]);
+      setEdges([...layouted.edges]);
+
+      window.requestAnimationFrame(() => {
+        fitView();
+      });
+    },
+    [nodes, edges]
+  );
+
   return {
     nodes,
     edges,
@@ -104,5 +152,6 @@ export default function useReactFlowConnection() {
     onConnect,
     onConnectStart,
     onConnectEnd,
+    onLayout,
   };
 }

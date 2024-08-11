@@ -1,12 +1,14 @@
 import "@xyflow/react/dist/style.css";
 import "@/styles/globals.css";
 
-import { Background, Controls, MiniMap, ReactFlow } from "@xyflow/react";
+import { Background, Controls, MiniMap, Panel, ReactFlow } from "@xyflow/react";
 import { useMemo, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import DeleteButtonEdge from "@/components/edges/DeleteButtonEdge";
 import DoublePageNode from "@/components/nodes/DoublePageNode";
 import Header from "@/components/ui/header";
+import { Network } from "lucide-react";
 import { SheetContextProvider } from "@/contexts/sheetContext";
 import { Toaster } from "react-hot-toast";
 import useReactFlowConnection from "@/hooks/useReactFlowConnection";
@@ -26,6 +28,7 @@ function App() {
     onConnect,
     onConnectStart,
     onConnectEnd,
+    onLayout,
   } = useReactFlowConnection();
 
   return (
@@ -60,6 +63,15 @@ function App() {
           maxZoom={1}
         >
           <Background />
+          <Panel position="bottom-center">
+            <Button
+              className="flex justify-center items-center"
+              onClick={() => onLayout("horizontal")}
+            >
+              <Network className="mr-2 nodrag nopan -rotate-90" />
+              Ordina
+            </Button>
+          </Panel>
           <Controls
             orientation="horizontal"
             showInteractive={false}
