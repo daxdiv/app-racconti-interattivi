@@ -31,6 +31,7 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { TOOLTIP_DELAY_DURATION } from "@/constants";
+import toast from "react-hot-toast";
 // import { decrementNodeId } from "@/hooks/useReactFlowConnection";
 
 type DoublePageNode = Node<DoublePageNodeData>;
@@ -58,6 +59,9 @@ function DoublePageNode(props: DoublePageNodeProps) {
           id: props.id,
         },
       ],
+    });
+    toast.error(`Pagine ${leftPageNumber}/${rightPageNumber} eliminate`, {
+      duration: 3000,
     });
   };
 

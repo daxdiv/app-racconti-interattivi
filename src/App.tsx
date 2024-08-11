@@ -7,6 +7,7 @@ import { useMemo, useRef, useState } from "react";
 import DoublePageNode from "@/components/nodes/DoublePageNode";
 import Header from "@/components/ui/header";
 import { SheetContextProvider } from "@/contexts/sheetContext";
+import { Toaster } from "react-hot-toast";
 import useReactFlowConnection from "@/hooks/useReactFlowConnection";
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
             zoomable
           />
         </ReactFlow>
+        <Toaster />
       </div>
     </SheetContextProvider>
   );

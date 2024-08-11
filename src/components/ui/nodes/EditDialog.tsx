@@ -1,4 +1,5 @@
 import { Edit, Volume2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { useReactFlow, type Node } from "@xyflow/react";
 import {
   Dialog,
@@ -49,11 +50,14 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
   const currAudio = new Audio(nodeChanges.audio);
 
   const saveChanges = () => {
+    if (JSON.stringify(data) === JSON.stringify(nodeChanges)) return;
+
     const nodeToUpdate = getNode(id);
 
     if (!nodeToUpdate) return;
 
     updateNodeData(id, nodeChanges);
+    toast.success("Modifiche salvate con successo");
   };
 
   return (
