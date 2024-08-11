@@ -73,14 +73,14 @@ function DoublePageNode(props: DoublePageNodeProps) {
       />
       <Card className="w-[300px]">
         <CardHeader className="flex flex-row justify-between items-center">
-          <CardTitle>{label}</CardTitle>
-          <div className="flex justify-center items-center gap-x-1">
+          <div className="flex justify-center items-center gap-2">
+            <CardTitle>{label}</CardTitle>
             {incomers.length === 0 && outgoers.length === 0 && (
               <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Unlink
-                      className="cursor-pointer text-primary py-1 px-1 rounded-full bg-yellow-500 hover:bg-yellow-500/70 nodrag nopan"
+                      className="cursor-default text-primary py-1 px-1 rounded-full bg-yellow-500 hover:bg-yellow-500/70 nodrag nopan"
                       size={24}
                     />
                   </TooltipTrigger>
@@ -88,7 +88,8 @@ function DoublePageNode(props: DoublePageNodeProps) {
                 </Tooltip>
               </TooltipProvider>
             )}
-
+          </div>
+          <div className="flex justify-center items-center gap-x-1">
             <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
               <Tooltip>
                 <TooltipTrigger asChild>

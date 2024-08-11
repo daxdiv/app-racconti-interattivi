@@ -307,10 +307,7 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
                   <AlertDialogTitle>
                     Hai effettuato delle modifiche, vuoi salvarle?
                   </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your
-                    account and remove your data from our servers.
-                  </AlertDialogDescription>
+                  <AlertDialogDescription />
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <DialogClose
