@@ -73,7 +73,7 @@ function DeleteButtonEdge({
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Eliminare collegamento?</AlertDialogTitle>
+                <AlertDialogTitle>Eliminare il collegamento?</AlertDialogTitle>
                 <AlertDialogDescription />
               </AlertDialogHeader>
               <AlertDialogFooter>
