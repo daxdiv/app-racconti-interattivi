@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Edit, Volume2 } from "lucide-react";
 import { useReactFlow, type Node } from "@xyflow/react";
 import {
@@ -23,7 +22,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import PreviewDialog from "@/components/ui/nodes/PreviewDialog";
-import { MAX_AUDIO_SIZE, TOOLTIP_DELAY_DURATION } from "@/constants";
+import { TOOLTIP_DELAY_DURATION } from "@/constants";
 import { Tooltip, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -37,6 +36,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import useNodeReducer from "@/hooks/useNodeReducer";
 
 type EditNodeDialogProps = {
   id: string;
@@ -45,45 +45,8 @@ type EditNodeDialogProps = {
 
 function EditDialog({ id, data }: EditNodeDialogProps) {
   const { getNode, updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
-  const [nodeChanges, setNodeChanges] = useState<DoublePageNodeData>(() => data);
+  const [nodeChanges, dispatch] = useNodeReducer(id);
   const currAudio = new Audio(nodeChanges.audio);
-
-  const onImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedImage = e.target.files?.[0];
-
-    if (!uploadedImage) return;
-
-    URL.revokeObjectURL(nodeChanges.backgroundImage);
-
-    const imageUrl = URL.createObjectURL(uploadedImage);
-
-    setNodeChanges(prev => ({
-      ...prev,
-      backgroundImage: imageUrl,
-    }));
-  };
-
-  const onAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const uploadedAudio = e.target.files?.[0];
-
-    if (!uploadedAudio) return;
-    if (uploadedAudio.size > MAX_AUDIO_SIZE) {
-      alert("Audio troppo grande");
-      e.target.files = null;
-      e.target.value = "";
-
-      return;
-    }
-
-    URL.revokeObjectURL(nodeChanges.audio);
-
-    const audioUrl = URL.createObjectURL(uploadedAudio);
-
-    setNodeChanges(prev => ({
-      ...prev,
-      audio: audioUrl,
-    }));
-  };
 
   const saveChanges = () => {
     const nodeToUpdate = getNode(id);
@@ -100,7 +63,7 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
           currAudio.pause();
           currAudio.currentTime = 0;
         } else {
-          setNodeChanges(data);
+          dispatch({ payload: data, type: "UPDATE_ALL" });
         }
       }}
     >
@@ -139,19 +102,13 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
               const value = e.target.value;
 
-              setNodeChanges(prev => ({
-                ...prev,
-                pages: [
-                  {
-                    ...prev.pages[0],
-                    text: {
-                      ...prev.pages[0].text,
-                      content: value,
-                    },
-                  },
-                  prev.pages[1],
-                ],
-              }));
+              dispatch({
+                payload: {
+                  page: "left",
+                  content: value,
+                },
+                type: "TEXT_CONTENT_CHANGE",
+              });
             }}
           />
 
@@ -162,19 +119,13 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
               const value = e.target.value;
 
-              setNodeChanges(prev => ({
-                ...prev,
-                pages: [
-                  prev.pages[0],
-                  {
-                    ...prev.pages[1],
-                    text: {
-                      ...prev.pages[1].text,
-                      content: value,
-                    },
-                  },
-                ],
-              }));
+              dispatch({
+                payload: {
+                  page: "right",
+                  content: value,
+                },
+                type: "TEXT_CONTENT_CHANGE",
+              });
             }}
           />
         </div>
@@ -191,18 +142,13 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
             <Select
               defaultValue={nodeChanges.pages[0].text.position}
               onValueChange={value => {
-                setNodeChanges(prev => ({
-                  ...prev,
-                  pages: [
-                    {
-                      text: {
-                        ...prev.pages[0].text,
-                        position: value as PageContentPosition,
-                      },
-                    },
-                    prev.pages[1],
-                  ],
-                }));
+                dispatch({
+                  payload: {
+                    page: "left",
+                    position: value as PageContentPosition,
+                  },
+                  type: "TEXT_POSITION_CHANGE",
+                });
               }}
             >
               <SelectTrigger>
@@ -230,18 +176,13 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
             <Select
               defaultValue={nodeChanges.pages[1].text.position}
               onValueChange={value => {
-                setNodeChanges(prev => ({
-                  ...prev,
-                  pages: [
-                    prev.pages[0],
-                    {
-                      text: {
-                        ...prev.pages[1].text,
-                        position: value as PageContentPosition,
-                      },
-                    },
-                  ],
-                }));
+                dispatch({
+                  payload: {
+                    page: "right",
+                    position: value as PageContentPosition,
+                  },
+                  type: "TEXT_POSITION_CHANGE",
+                });
               }}
             >
               <SelectTrigger>
@@ -272,7 +213,9 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
               type="file"
               accept="image/*"
               className="cursor-pointer w-full"
-              onChange={onImageUpload}
+              onChange={e => {
+                dispatch({ payload: e.target.files?.[0], type: "IMAGE_UPLOAD" });
+              }}
             />
 
             {data.backgroundImage !== "" && (
@@ -306,7 +249,17 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
               type="file"
               accept="audio/*"
               className="cursor-pointer w-full"
-              onChange={onAudioUpload}
+              onChange={e => {
+                dispatch({
+                  payload: e.target.files?.[0],
+                  type: "AUDIO_UPLOAD",
+                  onReject: () => {
+                    alert("Audio troppo grande");
+                    e.target.files = null;
+                    e.target.value = "";
+                  },
+                });
+              }}
             />
 
             {data.audio !== "" && (
