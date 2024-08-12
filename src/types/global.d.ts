@@ -3,7 +3,7 @@ type WidthPosition = "Left" | "Center" | "Right";
 
 declare global {
   type DoublePageNodeLabel = `Pagine ${number}/${number}`;
-  type PageContentPosition = `${HeightPosition}${WidthPosition}`;
+  type PageTextPosition = `${HeightPosition}${WidthPosition}`;
   type Page = {
     text: {
       content: string;

@@ -14,7 +14,7 @@ type DoublePageNodeAction =
     }
   | {
       type: "TEXT_POSITION_CHANGE";
-      payload: { page: "left" | "right"; position: PageContentPosition };
+      payload: { page: "left" | "right"; position: PageTextPosition };
     }
   | {
       type: "UPDATE_ALL";
