@@ -138,7 +138,7 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
                 dispatch({
                   payload: {
                     page: "left",
-                    position: value as PageContentPosition,
+                    position: value as PageTextPosition,
                   },
                   type: "TEXT_POSITION_CHANGE",
                 });
@@ -172,7 +172,7 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
                 dispatch({
                   payload: {
                     page: "right",
-                    position: value as PageContentPosition,
+                    position: value as PageTextPosition,
                   },
                   type: "TEXT_POSITION_CHANGE",
                 });
