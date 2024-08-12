@@ -39,7 +39,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
     <>
       <Handle
         type="target"
-        position={Position.Top}
+        position={Position.Left}
       />
       <Card className="w-[300px]">
         <CardHeader className="flex flex-row justify-between items-center">
@@ -139,7 +139,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
       </Card>
       <Handle
         type="source"
-        position={Position.Bottom}
+        position={Position.Right}
       />
     </>
   );
