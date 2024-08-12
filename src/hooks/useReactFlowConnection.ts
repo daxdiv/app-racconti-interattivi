@@ -58,7 +58,20 @@ export default function useReactFlowConnection() {
 
   const onConnect: OnConnect = useCallback(params => {
     connectingNodeId.current = null;
-    setEdges(eds => addEdge(params, eds));
+    setEdges(eds =>
+      addEdge(
+        {
+          ...params,
+          animated: true,
+          style: {
+            stroke: "black",
+            strokeWidth: 1,
+          },
+          type: "deleteButton",
+        },
+        eds
+      )
+    );
   }, []);
 
   const onConnectStart: OnConnectStart = useCallback((_, { nodeId }) => {
