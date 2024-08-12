@@ -1,16 +1,6 @@
 import { Edit, Volume2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useReactFlow, type Node } from "@xyflow/react";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-  DialogHeader,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -38,6 +28,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import useNodeReducer from "@/hooks/useNodeReducer";
+import { useState } from "react";
 
 type EditNodeDialogProps = {
   id: string;
@@ -45,6 +36,7 @@ type EditNodeDialogProps = {
 };
 
 function EditDialog({ id, data }: EditNodeDialogProps) {
+  const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const { getNode, updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
   const [nodeChanges, dispatch] = useNodeReducer(id);
   const currAudio = new Audio(nodeChanges.audio);
@@ -63,7 +55,8 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
   };
 
   return (
-    <Dialog
+    <AlertDialog
+      open={alertDialogOpen}
       onOpenChange={open => {
         if (!open) {
           currAudio.pause();
@@ -71,9 +64,11 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
         } else {
           dispatch({ payload: data, type: "UPDATE_ALL" });
         }
+
+        setAlertDialogOpen(open);
       }}
     >
-      <DialogTrigger asChild>
+      <AlertDialogTrigger asChild>
         <Button
           className="w-full"
           variant="outline"
@@ -84,10 +79,15 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
           />{" "}
           Modifica
         </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-3xl w-full">
-        <DialogHeader>
-          <DialogTitle className="flex justify-start items-center gap-2">
+      </AlertDialogTrigger>
+      <AlertDialogContent
+        className="max-w-3xl w-full"
+        onEscapeKeyDown={e => {
+          e.preventDefault();
+        }}
+      >
+        <AlertDialogHeader>
+          <AlertDialogTitle className="flex justify-start items-center gap-2">
             Modifica pagine {data.leftPageNumber}/{data.rightPageNumber}{" "}
             <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
               <Tooltip>
@@ -97,9 +97,9 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </DialogTitle>
-        </DialogHeader>
-        <DialogDescription />
+          </AlertDialogTitle>
+        </AlertDialogHeader>
+        <AlertDialogDescription />
         <div className="flex justify-center items-center gap-2">
           <Textarea
             placeholder={`Contenuto pagina ${data.leftPageNumber}`}
@@ -288,16 +288,13 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
             )}
           </div>
         </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button
-              type="button"
-              className="bg-green-500 text-primary-foreground hover:bg-green-400"
-              onClick={saveChanges}
-            >
-              Salva
-            </Button>
-          </DialogClose>
+        <AlertDialogFooter>
+          <AlertDialogAction
+            className="bg-green-500 text-primary-foreground hover:bg-green-400"
+            onClick={saveChanges}
+          >
+            Salva
+          </AlertDialogAction>
 
           {JSON.stringify(data) !== JSON.stringify(nodeChanges) ? ( // compare object
             <AlertDialog>
@@ -312,11 +309,12 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
                   <AlertDialogDescription />
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <DialogClose asChild>
-                    <AlertDialogAction className="bg-destructive hover:bg-destructive/70">
-                      Si
-                    </AlertDialogAction>
-                  </DialogClose>
+                  <AlertDialogAction
+                    className="bg-destructive hover:bg-destructive/70"
+                    onClick={() => setAlertDialogOpen(false)}
+                  >
+                    Si
+                  </AlertDialogAction>
                   <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
                     No
                   </AlertDialogCancel>
@@ -324,13 +322,13 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
               </AlertDialogContent>
             </AlertDialog>
           ) : (
-            <DialogClose asChild>
-              <Button type="button">Annulla</Button>
-            </DialogClose>
+            <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
+              Annulla
+            </AlertDialogCancel>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
