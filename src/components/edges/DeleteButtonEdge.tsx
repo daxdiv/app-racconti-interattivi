@@ -1,13 +1,4 @@
 import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  EdgeProps,
-  getBezierPath,
-  useReactFlow,
-  type Node,
-} from "@xyflow/react";
-import toast from "react-hot-toast";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -18,6 +9,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { BaseEdge, EdgeLabelRenderer, EdgeProps, getBezierPath } from "@xyflow/react";
+
+import useEdgeUtils from "@/hooks/useEdgeUtils";
 
 function DeleteButtonEdge({
   id,
@@ -30,7 +24,7 @@ function DeleteButtonEdge({
   style = {},
   markerEnd,
 }: EdgeProps) {
-  const { setEdges, deleteElements } = useReactFlow<Node<DoublePageNodeData>>();
+  const { onEdgeDelete } = useEdgeUtils();
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -39,14 +33,6 @@ function DeleteButtonEdge({
     targetY,
     targetPosition,
   });
-
-  const onEdgeDelete = () => {
-    setEdges(edges => edges.filter(edge => edge.id !== id));
-    deleteElements({
-      edges: [{ id }],
-    });
-    toast.error("Collegamento eliminato");
-  };
 
   return (
     <>
@@ -78,7 +64,9 @@ function DeleteButtonEdge({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogAction
-                  onClick={onEdgeDelete}
+                  onClick={() => {
+                    onEdgeDelete(id);
+                  }}
                   className="bg-destructive hover:bg-destructive/70"
                 >
                   Si

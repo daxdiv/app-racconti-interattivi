@@ -1,13 +1,5 @@
 import { Notebook, Trash2, Unlink } from "lucide-react";
-import {
-  Handle,
-  Position,
-  useReactFlow,
-  getIncomers,
-  getOutgoers,
-  type Node,
-  type NodeProps,
-} from "@xyflow/react";
+import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
 
 import useSheetContext from "@/hooks/useSheetContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,39 +23,17 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { TOOLTIP_DELAY_DURATION } from "@/constants";
-import toast from "react-hot-toast";
-// import { decrementNodeId } from "@/hooks/useReactFlowConnection";
+import useNodeUtils from "@/hooks/useNodeUtils";
 
 type DoublePageNode = Node<DoublePageNodeData>;
 type DoublePageNodeProps = NodeProps<DoublePageNode>;
 
 function DoublePageNode(props: DoublePageNodeProps) {
+  const { onNodeDelete, isNodeUnlinked } = useNodeUtils();
   const { setIsSheetOpen, setDefaultAccordionValue } = useSheetContext();
-  const { getNodes, getEdges, setNodes, deleteElements } =
-    useReactFlow<Node<DoublePageNodeData>>();
 
   const { id } = props;
   const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
-  const nodes = getNodes();
-  const edges = getEdges();
-  const incomers = getIncomers({ id }, nodes, edges);
-  const outgoers = getOutgoers({ id }, nodes, edges);
-
-  const onNodeDelete = () => {
-    // decrementNodeId();
-    URL.revokeObjectURL(props.data.backgroundImage);
-    setNodes(prevNodes => prevNodes.filter(node => node.id !== props.id));
-    deleteElements({
-      nodes: [
-        {
-          id: props.id,
-        },
-      ],
-    });
-    toast.error(`Pagine ${leftPageNumber}/${rightPageNumber} eliminate`, {
-      duration: 3000,
-    });
-  };
 
   return (
     <>
@@ -75,7 +45,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
         <CardHeader className="flex flex-row justify-between items-center">
           <div className="flex justify-center items-center gap-2">
             <CardTitle>{label}</CardTitle>
-            {incomers.length === 0 && outgoers.length === 0 && (
+            {isNodeUnlinked(id) && (
               <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -123,7 +93,6 @@ function DoublePageNode(props: DoublePageNodeProps) {
                       <TooltipTrigger asChild>
                         <Trash2
                           className="cursor-pointer text-secondary p-1 rounded-full bg-destructive hover:bg-destructive/70 nodrag nopan"
-                          // onClick={onNodeDelete}
                           size={24}
                         />
                       </TooltipTrigger>
@@ -144,7 +113,9 @@ function DoublePageNode(props: DoublePageNodeProps) {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogAction
-                      onClick={onNodeDelete}
+                      onClick={() => {
+                        onNodeDelete(id);
+                      }}
                       className="bg-destructive hover:bg-destructive/70"
                     >
                       Si
