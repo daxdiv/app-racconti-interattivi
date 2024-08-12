@@ -1,21 +1,3 @@
-import { Edit, Volume2 } from "lucide-react";
-import toast from "react-hot-toast";
-import { useReactFlow, type Node } from "@xyflow/react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import PreviewDialog from "@/components/ui/nodes/PreviewDialog";
-import { TOOLTIP_DELAY_DURATION } from "@/constants";
-import { Tooltip, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +9,25 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Edit, Volume2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import PreviewDialog from "@/components/ui/nodes/PreviewDialog";
+import { TOOLTIP_DELAY_DURATION } from "@/constants";
+import { Textarea } from "@/components/ui/textarea";
 import useNodeReducer from "@/hooks/useNodeReducer";
+import useNodeUtils from "@/hooks/useNodeUtils";
 import { useState } from "react";
 
 type EditNodeDialogProps = {
@@ -37,22 +37,9 @@ type EditNodeDialogProps = {
 
 function EditDialog({ id, data }: EditNodeDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-  const { getNode, updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
+  const { saveChanges } = useNodeUtils();
   const [nodeChanges, dispatch] = useNodeReducer(id);
   const currAudio = new Audio(nodeChanges.audio);
-
-  const saveChanges = () => {
-    if (JSON.stringify(data) === JSON.stringify(nodeChanges)) return;
-
-    const nodeToUpdate = getNode(id);
-
-    if (!nodeToUpdate) return;
-
-    updateNodeData(id, nodeChanges);
-    toast.success("Modifiche salvate con successo", {
-      duration: 3000,
-    });
-  };
 
   return (
     <AlertDialog
@@ -291,7 +278,11 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
         <AlertDialogFooter>
           <AlertDialogAction
             className="bg-green-500 text-primary-foreground hover:bg-green-400"
-            onClick={saveChanges}
+            onClick={() => {
+              if (JSON.stringify(data) === JSON.stringify(nodeChanges)) return;
+
+              saveChanges(id, nodeChanges);
+            }}
           >
             Salva
           </AlertDialogAction>
