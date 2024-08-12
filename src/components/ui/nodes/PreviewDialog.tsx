@@ -11,11 +11,20 @@ import { Eye, Volume2 } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 function PreviewDialog({
   leftPageNumber,
   rightPageNumber,
   backgroundImage,
+  pages: [
+    {
+      text: { content: leftTextContent, position: leftTextPosition },
+    },
+    {
+      text: { content: rightTextContent, position: rightTextPosition },
+    },
+  ],
   audio,
 }: DoublePageNodeData) {
   const audioEl = new Audio(audio);
@@ -63,6 +72,33 @@ function PreviewDialog({
             }
             className="absolute rounded-md object-cover w-full h-full"
           />
+          <div className="absolute w-1/2 h-full border-r border-r-primary border-dashed">
+            <p
+              className={cn("font-extrabold italic absolute", {
+                "top-10": leftTextPosition.includes("Top"),
+                "bottom-10": leftTextPosition.includes("Bottom"),
+                "left-10": leftTextPosition.includes("Left"),
+                "right-10": leftTextPosition.includes("Right"),
+                "top-1/2": leftTextPosition.includes("Middle"),
+              })}
+            >
+              {leftTextContent || "C'era una volta..."}
+            </p>
+          </div>
+
+          <div className="absolute left-1/2 w-1/2 h-full">
+            <p
+              className={cn("font-extrabold italic absolute", {
+                "top-10": rightTextPosition.includes("Top"),
+                "bottom-10": rightTextPosition.includes("Bottom"),
+                "left-10": rightTextPosition.includes("Left"),
+                "right-10": rightTextPosition.includes("Right"),
+                "top-1/2": rightTextPosition.includes("Middle"),
+              })}
+            >
+              {rightTextContent || "...una bambina..."}
+            </p>
+          </div>
         </AspectRatio>
       </DialogContent>
     </Dialog>
