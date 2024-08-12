@@ -29,7 +29,7 @@ function nodeReducer(
     case "IMAGE_UPLOAD": {
       if (!action.payload) return state;
 
-      URL.revokeObjectURL(state.backgroundImage);
+      // URL.revokeObjectURL(state.backgroundImage);
 
       const imageUrl = URL.createObjectURL(action.payload);
 
@@ -45,7 +45,7 @@ function nodeReducer(
         return state;
       }
 
-      URL.revokeObjectURL(state.audio);
+      // URL.revokeObjectURL(state.audio);
 
       const audioUrl = URL.createObjectURL(action.payload);
 
