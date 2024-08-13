@@ -2,7 +2,7 @@ import { Reducer, useReducer } from "react";
 import { useReactFlow, type Node } from "@xyflow/react";
 import { MAX_AUDIO_SIZE } from "@/constants";
 
-type DoublePageNodeAction =
+export type DoublePageNodeAction =
   | {
       type: "IMAGE_UPLOAD";
       payload: File | undefined;
