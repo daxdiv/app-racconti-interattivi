@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Eye, Volume2 } from "lucide-react";
+import { Eye, Volume2, VolumeX } from "lucide-react";
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
@@ -50,14 +50,18 @@ function PreviewDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Anteprima pagine {leftPageNumber}/{rightPageNumber}
-            <Button variant="ghost">
+            {audio === "" ? (
+              <Button variant="ghost">
+                <VolumeX className="nodrag nopan cursor-not-allowed" />
+              </Button>
+            ) : (
               <Volume2
                 className="nodrag nopan"
                 onClick={() => {
                   audioEl.paused ? audioEl.play() : audioEl.pause();
                 }}
               />
-            </Button>
+            )}
           </DialogTitle>
           <DialogDescription />
         </DialogHeader>
