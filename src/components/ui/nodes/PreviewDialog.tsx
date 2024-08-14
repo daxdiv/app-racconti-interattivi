@@ -6,27 +6,34 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Eye, Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
-import { TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
+type PreviewDialogProps = {
+  data: DoublePageNodeData;
+  trigger: React.ReactNode;
+};
+
 function PreviewDialog({
-  leftPageNumber,
-  rightPageNumber,
-  backgroundImage,
-  pages: [
-    {
-      text: { content: leftTextContent, position: leftTextPosition },
-    },
-    {
-      text: { content: rightTextContent, position: rightTextPosition },
-    },
-  ],
-  audio,
-}: DoublePageNodeData) {
+  data: {
+    leftPageNumber,
+    rightPageNumber,
+    backgroundImage,
+    pages: [
+      {
+        text: { content: leftTextContent, position: leftTextPosition },
+      },
+      {
+        text: { content: rightTextContent, position: rightTextPosition },
+      },
+    ],
+    audio,
+  },
+  trigger,
+}: PreviewDialogProps) {
   const audioEl = new Audio(audio);
 
   return (
@@ -38,14 +45,7 @@ function PreviewDialog({
         }
       }}
     >
-      <DialogTrigger asChild>
-        <TooltipTrigger asChild>
-          <Eye
-            className="cursor-pointer text-secondary p-1 rounded-full bg-primary hover:bg-primary/70 nodrag nopan"
-            size={24}
-          />
-        </TooltipTrigger>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-6xl w-full">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -55,12 +55,14 @@ function PreviewDialog({
                 <VolumeX className="nodrag nopan cursor-not-allowed" />
               </Button>
             ) : (
-              <Volume2
-                className="nodrag nopan"
-                onClick={() => {
-                  audioEl.paused ? audioEl.play() : audioEl.pause();
-                }}
-              />
+              <Button variant="ghost">
+                <Volume2
+                  className="nodrag nopan cursor-pointer"
+                  onClick={() => {
+                    audioEl.paused ? audioEl.play() : audioEl.pause();
+                  }}
+                />
+              </Button>
             )}
           </DialogTitle>
           <DialogDescription />

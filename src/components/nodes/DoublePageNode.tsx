@@ -1,4 +1,4 @@
-import { Notebook, Trash2, Unlink } from "lucide-react";
+import { Eye, Notebook, Trash2, Unlink } from "lucide-react";
 import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
 
 import useSheetContext from "@/hooks/useSheetContext";
@@ -22,6 +22,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { TOOLTIP_DELAY_DURATION } from "@/constants";
 import useNodeUtils from "@/hooks/useNodeUtils";
 
@@ -42,8 +43,8 @@ function DoublePageNode(props: DoublePageNodeProps) {
         position={Position.Left}
       />
       <Card className="w-[300px]">
-        <CardHeader className="flex flex-row justify-between items-center">
-          <div className="flex justify-center items-center gap-2">
+        <CardHeader className="flex flex-row justify-between items-center space-y-0">
+          <div className="flex justify-center items-center gap-x-2">
             <CardTitle>{label}</CardTitle>
             {isNodeUnlinked(id) && (
               <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
@@ -59,6 +60,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
               </TooltipProvider>
             )}
           </div>
+
           <div className="flex justify-center items-center gap-x-1">
             <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
               <Tooltip>
@@ -75,16 +77,6 @@ function DoublePageNode(props: DoublePageNodeProps) {
                 <TooltipContent>Apri riepilogo</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-
-            <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
-              <Tooltip>
-                <PreviewDialog {...props.data} />
-                <TooltipContent>
-                  Visualizza anteprima pagine {leftPageNumber}/{rightPageNumber}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
             {deletable && (
               <AlertDialog>
                 <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
@@ -130,10 +122,25 @@ function DoublePageNode(props: DoublePageNodeProps) {
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="flex justify-center items-center gap-x-1">
           <EditDialog
             id={id}
             data={props.data}
+          />
+          <PreviewDialog
+            data={props.data}
+            trigger={
+              <Button
+                className="w-1/2"
+                variant="outline"
+              >
+                <Eye
+                  className="mr-2"
+                  size={16}
+                />{" "}
+                Anteprima
+              </Button>
+            }
           />
         </CardContent>
       </Card>
