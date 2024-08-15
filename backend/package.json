@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
-    "start": "npx tsc && node dist/index.js",
-    "watch": "npx tsc -w",
-    "dev": "nodemon dist/index.js"
+    "build": "tsc",
+    "start": "tsc && node dist/index.js",
+    "watch": "tsc-watch",
+    "dev": "tsc-watch --onSuccess \"nodemon dist/index.js\""
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "@types/node": "^22.3.0",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.4",
+    "tsc-watch": "^6.2.0",
     "typescript": "^5.5.4"
   }
 }
