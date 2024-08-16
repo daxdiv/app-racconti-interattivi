@@ -1,47 +1,60 @@
-import type { DoublePageNodeAction } from "@/hooks/useNodeReducer";
 import { Textarea } from "@/components/ui/textarea";
+import useNodeUtils from "@/hooks/useNodeUtils";
 
 type PageTextContentsProps = {
-  data: DoublePageNodeData;
-  dispatch: React.Dispatch<DoublePageNodeAction>;
+  id: string;
 };
 
-function PageTextContents({
-  data: { leftPageNumber, rightPageNumber, pages },
-  dispatch,
-}: PageTextContentsProps) {
+function PageTextContents({ id }: PageTextContentsProps) {
+  const { getNodeData, updateNodeData } = useNodeUtils();
+  const data = getNodeData(id);
+
   return (
     <div className="flex justify-center items-center gap-2">
       <Textarea
-        placeholder={`Contenuto pagina ${leftPageNumber}`}
+        placeholder={`Contenuto pagina ${data.leftPageNumber}`}
         className="h-[200px] min-h-[200px] max-h-[200px] text-black"
-        value={pages[0].text.content}
+        value={data.preview.pages[0].text.content}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
           const value = e.target.value;
 
-          dispatch({
-            payload: {
-              page: "left",
-              content: value,
+          updateNodeData(id, {
+            preview: {
+              ...data.preview,
+              pages: [
+                {
+                  text: {
+                    ...data.preview.pages[0].text,
+                    content: value,
+                  },
+                },
+                data.preview.pages[1],
+              ],
             },
-            type: "TEXT_CONTENT_CHANGE",
           });
         }}
       />
 
       <Textarea
-        placeholder={`Contenuto pagina ${rightPageNumber}`}
+        placeholder={`Contenuto pagina ${data.rightPageNumber}`}
         className="h-[200px] min-h-[200px] max-h-[200px] text-black"
-        value={pages[1].text.content}
+        value={data.preview.pages[1].text.content}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
           const value = e.target.value;
 
-          dispatch({
-            payload: {
-              page: "right",
-              content: value,
+          updateNodeData(id, {
+            preview: {
+              ...data.preview,
+              pages: [
+                data.preview.pages[0],
+                {
+                  text: {
+                    ...data.preview.pages[1].text,
+                    content: value,
+                  },
+                },
+              ],
             },
-            type: "TEXT_CONTENT_CHANGE",
           });
         }}
       />

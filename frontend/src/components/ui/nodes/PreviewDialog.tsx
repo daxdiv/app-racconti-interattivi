@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type PreviewDialogProps = {
-  data: DoublePageNodeData;
+  data: DoublePageNodeData | DoublePageNodeData["preview"];
   trigger: React.ReactNode;
 };
 

@@ -93,34 +93,58 @@ export default function useReactFlowConnection() {
       const newNodeId = Number(connectingNodeId.current) + 2;
       const leftPageNumber = newNodeId + 1;
       const rightPageNumber = newNodeId + 2;
+      const preview: DoublePageNodeData["preview"] = {
+        label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
+        leftPageNumber,
+        rightPageNumber,
+        backgroundImage: "",
+        pages: [
+          {
+            text: {
+              content: "",
+              position: "TopLeft",
+            },
+          },
+          {
+            text: {
+              content: "",
+              position: "TopLeft",
+            },
+          },
+        ],
+        audio: "",
+      };
+      const data: DoublePageNodeData = {
+        label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
+        leftPageNumber,
+        rightPageNumber,
+        backgroundImage: "",
+        pages: [
+          {
+            text: {
+              content: "",
+              position: "TopLeft",
+            },
+          },
+          {
+            text: {
+              content: "",
+              position: "TopLeft",
+            },
+          },
+        ],
+        audio: "",
+        deletable: true,
+        preview,
+      };
+
       const newNode: Node<DoublePageNodeData> = {
         id: `${newNodeId}`,
         position: screenToFlowPosition({
           x: (event as MouseEvent).clientX,
           y: (event as MouseEvent).clientY,
         }),
-        data: {
-          label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
-          leftPageNumber,
-          rightPageNumber,
-          backgroundImage: "",
-          pages: [
-            {
-              text: {
-                content: "",
-                position: "TopLeft",
-              },
-            },
-            {
-              text: {
-                content: "",
-                position: "TopLeft",
-              },
-            },
-          ],
-          audio: "",
-          deletable: true,
-        },
+        data,
         origin: [0.5, 0.0],
         type: "doublePage",
       };

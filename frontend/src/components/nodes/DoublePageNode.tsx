@@ -123,10 +123,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
         </CardHeader>
 
         <CardContent className="flex justify-center items-center gap-x-1">
-          <EditDialog
-            id={id}
-            data={props.data}
-          />
+          <EditDialog id={id} />
           <PreviewDialog
             data={props.data}
             trigger={

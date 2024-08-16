@@ -6,18 +6,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import type { DoublePageNodeAction } from "@/hooks/useNodeReducer";
 import { Label } from "@/components/ui/label";
+import useNodeUtils from "@/hooks/useNodeUtils";
 
 type PageTextPositionsProps = {
-  data: DoublePageNodeData;
-  dispatch: React.Dispatch<DoublePageNodeAction>;
+  id: string;
 };
 
-function PageTextPositions({
-  data: { leftPageNumber, rightPageNumber, pages },
-  dispatch,
-}: PageTextPositionsProps) {
+function PageTextPositions({ id }: PageTextPositionsProps) {
+  const { getNodeData, updateNodeData } = useNodeUtils();
+  const data = getNodeData(id);
+
   return (
     <div className="flex justify-center items-center gap-2">
       <div className="flex flex-col w-full gap-2">
@@ -25,18 +24,25 @@ function PageTextPositions({
           htmlFor="pos"
           className="font-extrabold"
         >
-          Posizione contenuto pagina {leftPageNumber}
+          Posizione contenuto pagina {data.leftPageNumber}
         </Label>
 
         <Select
-          defaultValue={pages[0].text.position}
+          defaultValue={data.pages[0].text.position}
           onValueChange={value => {
-            dispatch({
-              payload: {
-                page: "left",
-                position: value as PageTextPosition,
+            updateNodeData(id, {
+              preview: {
+                ...data.preview,
+                pages: [
+                  {
+                    text: {
+                      ...data.preview.pages[0].text,
+                      position: value as PageTextPosition,
+                    },
+                  },
+                  data.preview.pages[1],
+                ],
               },
-              type: "TEXT_POSITION_CHANGE",
             });
           }}
         >
@@ -59,18 +65,25 @@ function PageTextPositions({
           htmlFor="pos"
           className="font-extrabold"
         >
-          Posizione contenuto pagina {rightPageNumber}
+          Posizione contenuto pagina {data.rightPageNumber}
         </Label>
 
         <Select
-          defaultValue={pages[1].text.position}
+          defaultValue={data.preview.pages[1].text.position}
           onValueChange={value => {
-            dispatch({
-              payload: {
-                page: "right",
-                position: value as PageTextPosition,
+            updateNodeData(id, {
+              preview: {
+                ...data.preview,
+                pages: [
+                  data.preview.pages[0],
+                  {
+                    text: {
+                      ...data.preview.pages[1].text,
+                      position: value as PageTextPosition,
+                    },
+                  },
+                ],
               },
-              type: "TEXT_POSITION_CHANGE",
             });
           }}
         >
