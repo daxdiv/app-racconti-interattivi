@@ -19,6 +19,14 @@ declare global {
     pages: [Page, Page];
     audio: string;
     deletable: boolean;
+    preview: {
+      label: DoublePageNodeLabel;
+      leftPageNumber: number;
+      rightPageNumber: number;
+      backgroundImage: string;
+      pages: [Page, Page];
+      audio: string;
+    };
   }
 }
 

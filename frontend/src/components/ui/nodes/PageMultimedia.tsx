@@ -2,18 +2,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
-import type { DoublePageNodeAction } from "@/hooks/useNodeReducer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Volume2 } from "lucide-react";
+import useNodeUtils from "@/hooks/useNodeUtils";
 
 type PageMultimediaProps = {
-  data: DoublePageNodeData;
-  prevData: DoublePageNodeData;
-  dispatch: React.Dispatch<DoublePageNodeAction>;
+  id: string;
 };
 
-function PageMultimedia({ data, prevData, dispatch }: PageMultimediaProps) {
+function PageMultimedia({ id }: PageMultimediaProps) {
+  const { getNodeData, updateNodeData } = useNodeUtils();
+  const data = getNodeData(id);
   const audio = useMemo(() => new Audio(data.audio), [data.audio]);
 
   useEffect(() => {
@@ -38,11 +38,20 @@ function PageMultimedia({ data, prevData, dispatch }: PageMultimediaProps) {
           accept="image/*"
           className="cursor-pointer w-full"
           onChange={e => {
-            dispatch({ payload: e.target.files?.[0], type: "IMAGE_UPLOAD" });
+            const file = e.target.files?.[0];
+
+            if (!file) return;
+
+            updateNodeData(id, {
+              preview: {
+                ...data.preview,
+                backgroundImage: URL.createObjectURL(file),
+              },
+            });
           }}
         />
 
-        {prevData.backgroundImage !== "" && (
+        {data.backgroundImage !== "" && (
           <div className="flex justify-start items-center gap-2">
             <Label
               htmlFor="selected-img"
@@ -54,7 +63,7 @@ function PageMultimedia({ data, prevData, dispatch }: PageMultimediaProps) {
               id="selected-img"
               className="rounded-none"
             >
-              <AvatarImage src={prevData.backgroundImage || ""} />
+              <AvatarImage src={data.backgroundImage || ""} />
               <AvatarFallback>IMG</AvatarFallback>
             </Avatar>
           </div>
@@ -74,19 +83,20 @@ function PageMultimedia({ data, prevData, dispatch }: PageMultimediaProps) {
           accept="audio/*"
           className="cursor-pointer w-full"
           onChange={e => {
-            dispatch({
-              payload: e.target.files?.[0],
-              type: "AUDIO_UPLOAD",
-              onReject: () => {
-                alert("Audio troppo grande");
-                e.target.files = null;
-                e.target.value = "";
+            const file = e.target.files?.[0];
+
+            if (!file) return;
+
+            updateNodeData(id, {
+              preview: {
+                ...data.preview,
+                audio: URL.createObjectURL(file),
               },
             });
           }}
         />
 
-        {prevData.audio !== "" && (
+        {data.audio !== "" && (
           <div className="flex justify-start items-center gap-2">
             <Label
               htmlFor="selected-audio"

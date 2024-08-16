@@ -29,18 +29,27 @@ function useNodeUtils() {
 
     return incomers.length === 0 && outgoers.length === 0;
   };
-  const saveChanges = (id: string, data: DoublePageNodeData) => {
-    const nodeToUpdate = getNode(id);
+  const getNodeData = (id: string): DoublePageNodeData => {
+    const node = getNode(id);
 
-    if (!nodeToUpdate) return;
+    if (!node) throw new Error("Nodo non trovato");
 
-    updateNodeData(id, data);
-    toast.success("Modifiche salvate con successo", {
-      duration: 3000,
-    });
+    return node.data;
+  };
+  const isNodeDataEqual = (
+    data: DoublePageNodeData,
+    preview: DoublePageNodeData["preview"]
+  ) => {
+    const dataKeys = Object.keys(preview) as (keyof DoublePageNodeData["preview"])[];
+    const previewDataMap = dataKeys.reduce((acc, key) => {
+      acc[key] = data[key];
+      return acc;
+    }, {} as Record<keyof DoublePageNodeData["preview"], unknown>);
+
+    return JSON.stringify(previewDataMap) === JSON.stringify(preview);
   };
 
-  return { onNodeDelete, isNodeUnlinked, saveChanges };
+  return { onNodeDelete, isNodeUnlinked, getNodeData, updateNodeData, isNodeDataEqual };
 }
 
 export default useNodeUtils;

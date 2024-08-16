@@ -16,27 +16,23 @@ import PageMultimedia from "@/components/ui/nodes/PageMultimedia";
 import PageTextContents from "@/components/ui/nodes/PageTextContents";
 import PageTextPositions from "@/components//ui/nodes/PageTextPositions";
 import PreviewDialog from "@/components/ui/nodes/PreviewDialog";
-import useNodeReducer from "@/hooks/useNodeReducer";
+import toast from "react-hot-toast";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { useState } from "react";
 
 type EditNodeDialogProps = {
   id: string;
-  data: DoublePageNodeData;
 };
 
-function EditDialog({ id, data }: EditNodeDialogProps) {
+function EditDialog({ id }: EditNodeDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-  const { saveChanges } = useNodeUtils();
-  const [nodeChanges, dispatch] = useNodeReducer(id);
+  const { getNodeData, updateNodeData, isNodeDataEqual } = useNodeUtils();
+  const data = getNodeData(id);
 
   return (
     <AlertDialog
       open={alertDialogOpen}
-      onOpenChange={open => {
-        dispatch({ payload: data, type: "UPDATE_ALL" });
-        setAlertDialogOpen(open);
-      }}
+      onOpenChange={setAlertDialogOpen}
     >
       <AlertDialogTrigger asChild>
         <Button
@@ -63,29 +59,24 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
         </AlertDialogHeader>
         <AlertDialogDescription />
 
-        <PageTextContents
-          data={nodeChanges}
-          dispatch={dispatch}
-        />
+        <PageTextContents id={id} />
 
-        <PageTextPositions
-          data={nodeChanges}
-          dispatch={dispatch}
-        />
+        <PageTextPositions id={id} />
 
-        <PageMultimedia
-          data={nodeChanges}
-          prevData={data}
-          dispatch={dispatch}
-        />
+        <PageMultimedia id={id} />
 
         <AlertDialogFooter>
           <AlertDialogAction
             className="bg-green-500 text-primary-foreground hover:bg-green-400 flex justify-center items-center"
             onClick={() => {
-              if (JSON.stringify(data) === JSON.stringify(nodeChanges)) return;
+              if (isNodeDataEqual(data, data.preview)) return;
 
-              saveChanges(id, nodeChanges);
+              updateNodeData(id, {
+                ...data.preview,
+                preview: data.preview,
+                deletable: true,
+              });
+              toast.success("Modifiche salvate", { duration: 3000 });
             }}
           >
             <Save
@@ -96,7 +87,7 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
           </AlertDialogAction>
 
           <PreviewDialog
-            data={nodeChanges}
+            data={data.preview}
             trigger={
               <Button>
                 <Eye
@@ -108,7 +99,7 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
             }
           />
 
-          {JSON.stringify(data) !== JSON.stringify(nodeChanges) ? ( // compare object
+          {!isNodeDataEqual(data, data.preview) ? (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
@@ -132,7 +123,21 @@ function EditDialog({ id, data }: EditNodeDialogProps) {
                 <AlertDialogFooter>
                   <AlertDialogAction
                     className="bg-destructive hover:bg-destructive/70"
-                    onClick={() => setAlertDialogOpen(false)}
+                    onClick={() => {
+                      setAlertDialogOpen(false);
+
+                      // NOTE: workaround to reset the node data
+                      updateNodeData(id, {
+                        preview: {
+                          audio: data.audio,
+                          backgroundImage: data.backgroundImage,
+                          leftPageNumber: data.leftPageNumber,
+                          rightPageNumber: data.rightPageNumber,
+                          label: data.label,
+                          pages: data.pages,
+                        },
+                      });
+                    }}
                   >
                     Si
                   </AlertDialogAction>
