@@ -97,7 +97,7 @@ export default function useReactFlowConnection() {
         label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
         leftPageNumber,
         rightPageNumber,
-        backgroundImage: "",
+        backgroundImage: new File([], ""),
         pages: [
           {
             text: {
@@ -112,13 +112,13 @@ export default function useReactFlowConnection() {
             },
           },
         ],
-        audio: "",
+        audio: new File([], ""),
+        deletable: true,
       };
       const data: DoublePageNodeData = {
         label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
         leftPageNumber,
         rightPageNumber,
-        backgroundImage: "",
         pages: [
           {
             text: {
@@ -133,7 +133,6 @@ export default function useReactFlowConnection() {
             },
           },
         ],
-        audio: "",
         deletable: true,
         preview,
       };
@@ -168,7 +167,6 @@ export default function useReactFlowConnection() {
 
   const onLayout = useCallback(
     (direction: "horizontal" | "vertical") => {
-      console.log(nodes);
       const layouted = getLayoutedElements(nodes, edges, { direction });
 
       setNodes([...layouted.nodes]);
