@@ -51,15 +51,15 @@ uploadRouter.post("/background", (req, res) => {
   uploadBackground(req, res, err => {
     if (err) {
       if (err.message === "Invalid id") {
-        res.sendStatus(400);
+        res.status(400).json({ message: err.message });
         return;
       }
 
-      res.sendStatus(500);
+      res.status(500).json({ message: "Internal server error" });
       return;
     }
 
-    res.sendStatus(201);
+    res.status(201).json({ message: "Background uploaded" });
   });
 });
 
@@ -67,15 +67,15 @@ uploadRouter.post("/audio", (req, res) => {
   uploadAudio(req, res, err => {
     if (err) {
       if (err.message === "Invalid id") {
-        res.sendStatus(400);
+        res.status(400).json({ message: err.message });
         return;
       }
 
-      res.sendStatus(500);
+      res.status(500).json({ message: "Internal server error" });
       return;
     }
 
-    res.sendStatus(201);
+    res.status(201).json({ message: "Audio uploaded" });
   });
 });
 
