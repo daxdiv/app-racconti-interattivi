@@ -55,7 +55,7 @@ function Header() {
                   <div className="flex justify-start items-center gap-2">
                     <Avatar>
                       <AvatarImage
-                        src={node.data.backgroundImage || ""}
+                        src=""
                         alt={`Sfondo pagine ${node.data.leftPageNumber}/${node.data.rightPageNumber}`}
                       />
                       <AvatarFallback>IMG</AvatarFallback>
