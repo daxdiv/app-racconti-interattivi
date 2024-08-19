@@ -15,18 +15,24 @@ declare global {
     label: DoublePageNodeLabel;
     leftPageNumber: number;
     rightPageNumber: number;
-    backgroundImage: string;
     pages: [Page, Page];
-    audio: string;
     deletable: boolean;
     preview: {
       label: DoublePageNodeLabel;
       leftPageNumber: number;
       rightPageNumber: number;
-      backgroundImage: string;
+      backgroundImage: File;
       pages: [Page, Page];
-      audio: string;
+      audio: File;
+      deletable: boolean;
     };
+  }
+  interface DoublePageNodeDataWithoutPreview {
+    label: DoublePageNodeLabel;
+    leftPageNumber: number;
+    rightPageNumber: number;
+    pages: [Page, Page];
+    deletable: boolean;
   }
 }
 

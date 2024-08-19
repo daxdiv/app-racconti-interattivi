@@ -1,10 +1,10 @@
 import type { Node } from "@xyflow/react";
 
-const INITIAL_PREVIEW_VALUE = {
+const INITIAL_PREVIEW_VALUE: DoublePageNodeData["preview"] = {
   label: "Pagine 1/2" as DoublePageNodeLabel,
   leftPageNumber: 1,
   rightPageNumber: 2,
-  backgroundImage: "",
+  backgroundImage: new File([], ""),
   pages: [
     {
       text: {
@@ -19,7 +19,8 @@ const INITIAL_PREVIEW_VALUE = {
       },
     },
   ] as [Page, Page],
-  audio: "",
+  audio: new File([], ""),
+  deletable: false,
 };
 
 export const REACT_FLOW_PANE_CLASS = "react-flow__pane";
@@ -31,7 +32,7 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
       label: "Pagine 1/2",
       leftPageNumber: 1,
       rightPageNumber: 2,
-      backgroundImage: "",
+      backgroundImage: new File([], ""),
       pages: [
         {
           text: {
@@ -46,7 +47,6 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
           },
         },
       ],
-      audio: "",
       deletable: false,
       preview: INITIAL_PREVIEW_VALUE,
     },
