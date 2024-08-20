@@ -41,10 +41,12 @@ function DoublePageNode(props: DoublePageNodeProps) {
 
   return (
     <>
-      <Handle
-        type="target"
-        position={Position.Left}
-      />
+      {parseInt(id) !== 0 && (
+        <Handle
+          type="target"
+          position={Position.Left}
+        />
+      )}
       <Card className="w-[300px]">
         <CardHeader className="flex flex-row justify-between items-center space-y-0">
           <div className="flex justify-center items-center gap-x-2">
