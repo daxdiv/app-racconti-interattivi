@@ -39,11 +39,6 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
   });
   const backgroundImageObjectURL = URL.createObjectURL(data.preview.backgroundImage);
   const audioObjectURL = URL.createObjectURL(data.preview.audio);
-  const previewMediaUploaded =
-    data.preview.backgroundImage.size > 0 || data.preview.audio.size > 0;
-
-  // !data.preview.backgroundImage.size &&
-  // !data.preview.audio.size
 
   return (
     <AlertDialog
@@ -103,7 +98,8 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
                   pages: data.preview.pages,
                   deletable: data.preview.deletable,
                 }) &&
-                !previewMediaUploaded
+                data.preview.backgroundImage.size <= 0 &&
+                data.preview.audio.size <= 0
               )
                 return;
 
@@ -155,7 +151,9 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
             rightPageNumber: data.preview.rightPageNumber,
             pages: data.preview.pages,
             deletable: data.preview.deletable,
-          }) || previewMediaUploaded ? (
+          }) ||
+          data.preview.backgroundImage.size > 0 ||
+          data.preview.audio.size > 0 ? (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
