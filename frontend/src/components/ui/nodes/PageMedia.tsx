@@ -1,27 +1,29 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useMemo } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Volume2 } from "lucide-react";
 import useNodeUtils from "@/hooks/useNodeUtils";
 
-type PageMultimediaProps = {
+type PageMediaProps = {
   id: string;
+  media: {
+    backgroundImage: string;
+    audio: string;
+  };
 };
 
-function PageMultimedia({ id }: PageMultimediaProps) {
+function PageMedia({ id, media }: PageMediaProps) {
   const { getNodeData, updateNodeData } = useNodeUtils();
   const data = getNodeData(id);
-  const audio = useMemo(() => new Audio(data.audio), [data.audio]);
+  const audio = useMemo(() => new Audio(media.audio), [media.audio]);
 
   useEffect(() => {
     return () => {
       audio.pause();
       audio.currentTime = 0;
     };
-  }, [audio]);
+  }, [media.audio]);
 
   return (
     <div className="flex gap-2 w-full">
@@ -45,13 +47,13 @@ function PageMultimedia({ id }: PageMultimediaProps) {
             updateNodeData(id, {
               preview: {
                 ...data.preview,
-                backgroundImage: URL.createObjectURL(file),
+                backgroundImage: file,
               },
             });
           }}
         />
 
-        {data.backgroundImage !== "" && (
+        {media.backgroundImage && (
           <div className="flex justify-start items-center gap-2">
             <Label
               htmlFor="selected-img"
@@ -63,7 +65,7 @@ function PageMultimedia({ id }: PageMultimediaProps) {
               id="selected-img"
               className="rounded-none"
             >
-              <AvatarImage src={data.backgroundImage || ""} />
+              <AvatarImage src={media.backgroundImage} />
               <AvatarFallback>IMG</AvatarFallback>
             </Avatar>
           </div>
@@ -80,7 +82,7 @@ function PageMultimedia({ id }: PageMultimediaProps) {
         <Input
           id="audio"
           type="file"
-          accept="audio/*"
+          accept="audio/mp3"
           className="cursor-pointer w-full"
           onChange={e => {
             const file = e.target.files?.[0];
@@ -90,13 +92,13 @@ function PageMultimedia({ id }: PageMultimediaProps) {
             updateNodeData(id, {
               preview: {
                 ...data.preview,
-                audio: URL.createObjectURL(file),
+                audio: file,
               },
             });
           }}
         />
 
-        {data.audio !== "" && (
+        {media.audio && (
           <div className="flex justify-start items-center gap-2">
             <Label
               htmlFor="selected-audio"
@@ -104,14 +106,16 @@ function PageMultimedia({ id }: PageMultimediaProps) {
             >
               Audio attuale
             </Label>
-            <Button variant="ghost">
-              <Volume2
-                className="nodrag nopan"
-                onClick={() => {
-                  audio.paused ? audio.play() : audio.pause();
-                }}
+            <audio
+              id="selected-audio"
+              controls
+              autoPlay={false}
+            >
+              <source
+                src={audio.src}
+                type="audio/mp3"
               />
-            </Button>
+            </audio>
           </div>
         )}
       </div>
@@ -119,4 +123,4 @@ function PageMultimedia({ id }: PageMultimediaProps) {
   );
 }
 
-export default PageMultimedia;
+export default PageMedia;

@@ -12,27 +12,50 @@ import {
 import { Edit, Eye, Save, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import PageMultimedia from "@/components/ui/nodes/PageMultimedia";
+import PageMedia from "@/components/ui/nodes/PageMedia";
 import PageTextContents from "@/components/ui/nodes/PageTextContents";
 import PageTextPositions from "@/components//ui/nodes/PageTextPositions";
 import PreviewDialog from "@/components/ui/nodes/PreviewDialog";
 import toast from "react-hot-toast";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { useState } from "react";
+import useUploadMedia from "@/hooks/useUploadMedia";
 
 type EditNodeDialogProps = {
   id: string;
+  media: {
+    backgroundImage: string;
+    audio: string;
+  };
 };
 
-function EditDialog({ id }: EditNodeDialogProps) {
+function EditDialog({ id, media }: EditNodeDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const { getNodeData, updateNodeData, isNodeDataEqual } = useNodeUtils();
   const data = getNodeData(id);
+  const { uploadBackgroundImageMutation, uploadAudioMutation } = useUploadMedia(id, {
+    backgroundImage: data.preview.backgroundImage,
+    audio: data.preview.audio,
+  });
+  const backgroundImageObjectURL = URL.createObjectURL(data.preview.backgroundImage);
+  const audioObjectURL = URL.createObjectURL(data.preview.audio);
+  const previewMediaUploaded =
+    data.preview.backgroundImage.size > 0 || data.preview.audio.size > 0;
+
+  // !data.preview.backgroundImage.size &&
+  // !data.preview.audio.size
 
   return (
     <AlertDialog
       open={alertDialogOpen}
-      onOpenChange={setAlertDialogOpen}
+      onOpenChange={open => {
+        setAlertDialogOpen(open);
+
+        if (!open) {
+          URL.revokeObjectURL(backgroundImageObjectURL);
+          URL.revokeObjectURL(audioObjectURL);
+        }
+      }}
     >
       <AlertDialogTrigger asChild>
         <Button
@@ -63,19 +86,39 @@ function EditDialog({ id }: EditNodeDialogProps) {
 
         <PageTextPositions id={id} />
 
-        <PageMultimedia id={id} />
+        <PageMedia
+          id={id}
+          media={media}
+        />
 
         <AlertDialogFooter>
           <AlertDialogAction
             className="bg-green-500 text-primary-foreground hover:bg-green-400 flex justify-center items-center"
             onClick={() => {
-              if (isNodeDataEqual(data, data.preview)) return;
+              if (
+                isNodeDataEqual(data, {
+                  label: data.preview.label,
+                  leftPageNumber: data.preview.leftPageNumber,
+                  rightPageNumber: data.preview.rightPageNumber,
+                  pages: data.preview.pages,
+                  deletable: data.preview.deletable,
+                }) &&
+                !previewMediaUploaded
+              )
+                return;
+
+              if (data.preview.backgroundImage) {
+                uploadBackgroundImageMutation.mutate();
+              }
+              if (data.preview.audio) {
+                uploadAudioMutation.mutate();
+              }
 
               updateNodeData(id, {
                 ...data.preview,
                 preview: data.preview,
-                deletable: true,
               });
+
               toast.success("Modifiche salvate", { duration: 3000 });
             }}
           >
@@ -87,7 +130,14 @@ function EditDialog({ id }: EditNodeDialogProps) {
           </AlertDialogAction>
 
           <PreviewDialog
+            id={id}
             data={data.preview}
+            media={{
+              backgroundImage: data.preview.backgroundImage.size
+                ? backgroundImageObjectURL
+                : media.backgroundImage,
+              audio: data.preview.audio.size ? audioObjectURL : media.audio,
+            }}
             trigger={
               <Button>
                 <Eye
@@ -99,7 +149,13 @@ function EditDialog({ id }: EditNodeDialogProps) {
             }
           />
 
-          {!isNodeDataEqual(data, data.preview) ? (
+          {!isNodeDataEqual(data, {
+            label: data.preview.label,
+            leftPageNumber: data.preview.leftPageNumber,
+            rightPageNumber: data.preview.rightPageNumber,
+            pages: data.preview.pages,
+            deletable: data.preview.deletable,
+          }) || previewMediaUploaded ? (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
@@ -129,12 +185,13 @@ function EditDialog({ id }: EditNodeDialogProps) {
                       // NOTE: workaround to reset the node data
                       updateNodeData(id, {
                         preview: {
-                          audio: data.audio,
-                          backgroundImage: data.backgroundImage,
+                          label: data.label,
                           leftPageNumber: data.leftPageNumber,
                           rightPageNumber: data.rightPageNumber,
-                          label: data.label,
+                          backgroundImage: new File([], ""),
                           pages: data.pages,
+                          audio: new File([], ""),
+                          deletable: data.deletable,
                         },
                       });
                     }}
