@@ -38,7 +38,7 @@ function useNodeUtils() {
   };
   const isNodeDataEqual = (
     data: DoublePageNodeData,
-    preview: DoublePageNodeData["preview"]
+    preview: Omit<DoublePageNodeData["preview"], "backgroundImage" | "audio">
   ) => {
     const dataKeys = Object.keys(preview) as (keyof DoublePageNodeData["preview"])[];
     const previewDataMap = dataKeys.reduce((acc, key) => {
