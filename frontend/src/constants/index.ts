@@ -32,7 +32,6 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
       label: "Pagine 1/2",
       leftPageNumber: 1,
       rightPageNumber: 2,
-      backgroundImage: new File([], ""),
       pages: [
         {
           text: {
