@@ -1,4 +1,4 @@
-import { Eye, Notebook, Trash2, Unlink } from "lucide-react";
+import { Eye, Notebook, Trash2, Unlink, LoaderCircle } from "lucide-react";
 import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
 
 import useSheetContext from "@/hooks/useSheetContext";
@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { TOOLTIP_DELAY_DURATION } from "@/constants";
 import useNodeUtils from "@/hooks/useNodeUtils";
+import useDownloadMedia from "@/hooks/useDownloadMedia";
 
 type DoublePageNode = Node<DoublePageNodeData>;
 type DoublePageNodeProps = NodeProps<DoublePageNode>;
@@ -35,6 +36,8 @@ function DoublePageNode(props: DoublePageNodeProps) {
 
   const { id } = props;
   const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
+
+  const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
 
   return (
     <>
@@ -123,22 +126,52 @@ function DoublePageNode(props: DoublePageNodeProps) {
         </CardHeader>
 
         <CardContent className="flex justify-center items-center gap-x-1">
-          <EditDialog id={id} />
-          <PreviewDialog
-            data={props.data}
-            trigger={
-              <Button
-                className="w-1/2"
-                variant="outline"
-              >
-                <Eye
-                  className="mr-2"
-                  size={16}
-                />{" "}
-                Anteprima
-              </Button>
-            }
-          />
+          {backgroundImageQuery.isLoading || audioQuery.isLoading ? (
+            <>
+              <div className="w-1/2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium">
+                <LoaderCircle
+                  className="animate-spin text-primary nodrag nopan"
+                  size={24}
+                />
+              </div>
+              <div className="w-1/2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium">
+                <LoaderCircle
+                  className="animate-spin text-primary nodrag nopan"
+                  size={24}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <EditDialog
+                id={id}
+                media={{
+                  backgroundImage: backgroundImageQuery.data || "",
+                  audio: audioQuery.data || "",
+                }}
+              />
+              <PreviewDialog
+                id={id}
+                data={props.data}
+                media={{
+                  backgroundImage: backgroundImageQuery.data || "",
+                  audio: audioQuery.data || "",
+                }}
+                trigger={
+                  <Button
+                    className="w-1/2"
+                    variant="outline"
+                  >
+                    <Eye
+                      className="mr-2"
+                      size={16}
+                    />{" "}
+                    Anteprima
+                  </Button>
+                }
+              />
+            </>
+          )}
         </CardContent>
       </Card>
       <Handle
