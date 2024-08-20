@@ -39,6 +39,7 @@ const audioStorage = multer.diskStorage({
 
     if (isNaN(id) || !Number.isInteger(id) || id < 0) {
       cb(new Error("Invalid id"), "");
+      return;
     }
 
     cb(null, `${id}_audio`);
