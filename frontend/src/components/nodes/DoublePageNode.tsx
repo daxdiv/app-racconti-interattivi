@@ -1,5 +1,11 @@
 import { Eye, Notebook, Trash2, Unlink, LoaderCircle } from "lucide-react";
-import { Handle, Position, type Node, type NodeProps } from "@xyflow/react";
+import {
+  Handle,
+  Position,
+  useHandleConnections,
+  type Node,
+  type NodeProps,
+} from "@xyflow/react";
 
 import useSheetContext from "@/hooks/useSheetContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,6 +37,7 @@ type DoublePageNode = Node<DoublePageNodeData>;
 type DoublePageNodeProps = NodeProps<DoublePageNode>;
 
 function DoublePageNode(props: DoublePageNodeProps) {
+  const connections = useHandleConnections({ type: "source" });
   const { onNodeDelete, isNodeUnlinked } = useNodeUtils();
   const { setIsSheetOpen, setDefaultAccordionValue } = useSheetContext();
 
@@ -179,6 +186,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
       <Handle
         type="source"
         position={Position.Right}
+        isConnectable={connections.length < 2}
       />
     </>
   );
