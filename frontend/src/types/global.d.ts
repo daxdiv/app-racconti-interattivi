@@ -16,7 +16,6 @@ declare global {
     readonly leftPageNumber: number;
     readonly rightPageNumber: number;
     pages: [Page, Page];
-    readonly deletable: boolean;
     preview: {
       readonly label: DoublePageNodeLabel;
       readonly leftPageNumber: number;
@@ -24,7 +23,6 @@ declare global {
       backgroundImage: File;
       pages: [Page, Page];
       audio: File;
-      readonly deletable: boolean;
     };
   }
   interface DoublePageNodeDataWithoutPreview {
@@ -32,7 +30,6 @@ declare global {
     readonly leftPageNumber: number;
     readonly rightPageNumber: number;
     pages: [Page, Page];
-    readonly deletable: boolean;
   }
 }
 

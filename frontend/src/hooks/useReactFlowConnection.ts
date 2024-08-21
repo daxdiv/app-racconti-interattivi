@@ -113,7 +113,6 @@ export default function useReactFlowConnection() {
           },
         ],
         audio: new File([], ""),
-        deletable: true,
       };
       const data: DoublePageNodeData = {
         label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
@@ -133,7 +132,6 @@ export default function useReactFlowConnection() {
             },
           },
         ],
-        deletable: true,
         preview,
       };
 
