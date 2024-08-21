@@ -12,27 +12,27 @@ declare global {
     };
   };
   interface DoublePageNodeData extends Record<string, unknown> {
-    label: DoublePageNodeLabel;
-    leftPageNumber: number;
-    rightPageNumber: number;
+    readonly label: DoublePageNodeLabel;
+    readonly leftPageNumber: number;
+    readonly rightPageNumber: number;
     pages: [Page, Page];
-    deletable: boolean;
+    readonly deletable: boolean;
     preview: {
-      label: DoublePageNodeLabel;
-      leftPageNumber: number;
-      rightPageNumber: number;
+      readonly label: DoublePageNodeLabel;
+      readonly leftPageNumber: number;
+      readonly rightPageNumber: number;
       backgroundImage: File;
       pages: [Page, Page];
       audio: File;
-      deletable: boolean;
+      readonly deletable: boolean;
     };
   }
   interface DoublePageNodeDataWithoutPreview {
-    label: DoublePageNodeLabel;
-    leftPageNumber: number;
-    rightPageNumber: number;
+    readonly label: DoublePageNodeLabel;
+    readonly leftPageNumber: number;
+    readonly rightPageNumber: number;
     pages: [Page, Page];
-    deletable: boolean;
+    readonly deletable: boolean;
   }
 }
 
