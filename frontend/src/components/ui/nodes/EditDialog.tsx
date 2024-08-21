@@ -102,10 +102,10 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
               )
                 return;
 
-              if (data.preview.backgroundImage) {
+              if (data.preview.backgroundImage.size) {
                 uploadBackgroundImageMutation.mutate();
               }
-              if (data.preview.audio) {
+              if (data.preview.audio.size) {
                 uploadAudioMutation.mutate();
               }
 
