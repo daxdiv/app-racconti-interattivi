@@ -20,7 +20,6 @@ const INITIAL_PREVIEW_VALUE: DoublePageNodeData["preview"] = {
     },
   ] as [Page, Page],
   audio: new File([], ""),
-  deletable: false,
 };
 
 export const REACT_FLOW_PANE_CLASS = "react-flow__pane";
@@ -46,7 +45,6 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
           },
         },
       ],
-      deletable: false,
       preview: INITIAL_PREVIEW_VALUE,
     },
     position: { x: 0, y: 50 },

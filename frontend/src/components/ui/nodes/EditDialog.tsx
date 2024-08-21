@@ -96,7 +96,6 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
                   leftPageNumber: data.preview.leftPageNumber,
                   rightPageNumber: data.preview.rightPageNumber,
                   pages: data.preview.pages,
-                  deletable: data.preview.deletable,
                 }) &&
                 data.preview.backgroundImage.size <= 0 &&
                 data.preview.audio.size <= 0
@@ -150,7 +149,6 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
             leftPageNumber: data.preview.leftPageNumber,
             rightPageNumber: data.preview.rightPageNumber,
             pages: data.preview.pages,
-            deletable: data.preview.deletable,
           }) ||
           data.preview.backgroundImage.size > 0 ||
           data.preview.audio.size > 0 ? (
@@ -189,7 +187,6 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
                           backgroundImage: new File([], ""),
                           pages: data.pages,
                           audio: new File([], ""),
-                          deletable: data.deletable,
                         },
                       });
                     }}

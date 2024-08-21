@@ -42,7 +42,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
   const { setIsSheetOpen, setDefaultAccordionValue } = useSheetContext();
 
   const { id } = props;
-  const { label, leftPageNumber, rightPageNumber, deletable } = props.data;
+  const { label, leftPageNumber, rightPageNumber } = props.data;
 
   const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
 
@@ -89,7 +89,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
                 <TooltipContent>Apri riepilogo</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            {deletable && (
+            {parseInt(id) !== 0 && (
               <AlertDialog>
                 <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
                   <Tooltip>
