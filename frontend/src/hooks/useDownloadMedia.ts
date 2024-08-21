@@ -4,7 +4,6 @@ export default function useDownloadMedia(id: string) {
   const backgroundImageQuery = useQuery({
     queryKey: ["get-background", id],
     queryFn: async () => {
-      console.log(import.meta.env.VITE_SERVER_URL);
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/uploads/backgrounds/${id}_background`
       );

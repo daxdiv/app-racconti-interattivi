@@ -6,9 +6,6 @@ function useNodeUtils() {
     useReactFlow<Node<DoublePageNodeData>>();
 
   const onNodeDelete = (id: string) => {
-    // decrementNodeId();
-    // URL.revokeObjectURL(props.data.backgroundImage);
-    // URL.revokeObjectURL(props.data.audio);
     setNodes(prevNodes => prevNodes.filter(node => node.id !== id));
     deleteElements({
       nodes: [
@@ -49,7 +46,14 @@ function useNodeUtils() {
     return JSON.stringify(previewDataMap) === JSON.stringify(preview);
   };
 
-  return { onNodeDelete, isNodeUnlinked, getNodeData, updateNodeData, isNodeDataEqual };
+  return {
+    onNodeDelete,
+    isNodeUnlinked,
+    getNode,
+    getNodeData,
+    updateNodeData,
+    isNodeDataEqual,
+  };
 }
 
 export default useNodeUtils;
