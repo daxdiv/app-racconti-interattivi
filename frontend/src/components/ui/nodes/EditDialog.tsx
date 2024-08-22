@@ -93,7 +93,7 @@ function EditDialog({ id }: EditNodeDialogProps) {
 
         <AlertDialogFooter>
           <AlertDialogAction
-            className="bg-green-500 text-primary-foreground hover:bg-green-400 flex justify-center items-center"
+            className="bg-confirm text-primary-foreground hover:bg-confirm-foreground flex justify-center items-center"
             onClick={() => {
               if (
                 isNodeDataEqual(data, {

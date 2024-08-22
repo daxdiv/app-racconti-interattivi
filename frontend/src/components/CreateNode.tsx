@@ -87,7 +87,7 @@ function CreateNode() {
               onNodeCreate(valueAsNumber - 1); // NOTE: leftPageNumber = id + 1 so ==> id = leftPageNumber - 1
               setOpen(false);
             }}
-            className="bg-green-500 text-primary-foreground hover:bg-green-400"
+            className="bg-confirm text-primary-foreground hover:bg-confirm-foreground"
           >
             Crea
           </AlertDialogAction>
