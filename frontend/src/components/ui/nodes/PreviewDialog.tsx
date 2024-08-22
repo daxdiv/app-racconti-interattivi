@@ -9,16 +9,18 @@ import {
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from "@/lib/utils";
+import useDownloadMedia from "@/hooks/useDownloadMedia";
 import { useMemo } from "react";
 
 type PreviewDialogProps = {
   id: string;
   data: DoublePageNodeDataWithoutPreview;
-  media: { backgroundImage: string; audio: string };
+  media?: { backgroundImage?: string; audio?: string };
   trigger: React.ReactNode;
 };
 
 function PreviewDialog({
+  id,
   data: {
     leftPageNumber,
     rightPageNumber,
@@ -34,11 +36,17 @@ function PreviewDialog({
   media,
   trigger,
 }: PreviewDialogProps) {
-  const audio = useMemo(() => new Audio(media.audio), [media.audio]);
+  const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
+  const audioSrc = audioQuery.data || media?.audio || "";
+  const audio = useMemo(() => new Audio(audioSrc), [audioSrc]);
 
   return (
     <Dialog
       onOpenChange={open => {
+        if (open && !media) {
+          backgroundImageQuery.refetch();
+          audioQuery.refetch();
+        }
         if (!open) {
           audio.pause();
           audio.currentTime = 0;
@@ -50,9 +58,10 @@ function PreviewDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Anteprima pagine {leftPageNumber}/{rightPageNumber}
-            {media.audio ? (
+            {(media?.audio ? media.audio : audioQuery.data) ? (
               <audio
                 controls
+                onDurationChange={e => e.preventDefault()}
                 autoPlay={false}
               >
                 <source
@@ -72,7 +81,9 @@ function PreviewDialog({
         >
           <img
             src={
-              media.backgroundImage ||
+              (media?.backgroundImage
+                ? media.backgroundImage
+                : backgroundImageQuery.data) ||
               "https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
             }
             className="absolute rounded-md object-cover w-full h-full"
