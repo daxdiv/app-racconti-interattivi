@@ -38,7 +38,7 @@ function PreviewDialog({
 
   return (
     <Dialog
-      onOpenChange={() => {
+      onOpenChange={open => {
         if (!open) {
           audio.pause();
           audio.currentTime = 0;
