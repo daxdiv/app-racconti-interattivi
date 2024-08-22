@@ -12,6 +12,7 @@ import { useReactFlow, type Node } from "@xyflow/react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import useSheetContext from "@/hooks/useSheetContext";
 import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import CreateNode from "@/components/CreateNode";
 
 function Header() {
   const { isSheetOpen, setIsSheetOpen, defaultAccordionValue } = useSheetContext();
@@ -24,7 +25,9 @@ function Header() {
           Titolo
         </h1>
       </div>
-      <div>
+      <div className="flex justify-center items-center gap-x-2">
+        <CreateNode />
+
         <Sheet
           open={isSheetOpen}
           onOpenChange={setIsSheetOpen}

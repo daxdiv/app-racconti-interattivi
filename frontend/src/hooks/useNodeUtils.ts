@@ -18,6 +18,63 @@ function useNodeUtils() {
       duration: 3000,
     });
   };
+  const onNodeCreate = (id: number) => {
+    const initialNode = getNode("0")!;
+    const newNodePreview: DoublePageNodeData["preview"] = {
+      label: `Pagine ${id + 1}/${id + 2}`,
+      leftPageNumber: id + 1,
+      rightPageNumber: id + 2,
+      backgroundImage: new File([], ""),
+      pages: [
+        {
+          text: {
+            content: "",
+            position: "TopLeft",
+          },
+        },
+        {
+          text: {
+            content: "",
+            position: "TopLeft",
+          },
+        },
+      ] as [Page, Page],
+      audio: new File([], ""),
+    };
+    const newNode: Node<DoublePageNodeData> = {
+      id: `${id}`,
+      data: {
+        label: `Pagine ${id + 1}/${id + 2}`,
+        leftPageNumber: id + 1,
+        rightPageNumber: id + 2,
+        pages: [
+          {
+            text: {
+              content: "",
+              position: "TopLeft",
+            },
+          },
+          {
+            text: {
+              content: "",
+              position: "TopLeft",
+            },
+          },
+        ] as [Page, Page],
+        preview: newNodePreview,
+      },
+      position: {
+        x: initialNode.position.x - (Math.floor(Math.random() * 8) * 20 + 50),
+        y: initialNode.position.y - (Math.floor(Math.random() * 8) * 20 + 50),
+      },
+      origin: [0.5, 0.0],
+      type: "doublePage",
+    };
+
+    setNodes(nds => nds.concat(newNode));
+
+    toast.success(`Pagine ${id + 1}/${id + 2} create`, { duration: 3000 });
+  };
   const isNodeUnlinked = (id: string) => {
     const nodes = getNodes();
     const edges = getEdges();
@@ -48,6 +105,7 @@ function useNodeUtils() {
 
   return {
     onNodeDelete,
+    onNodeCreate,
     isNodeUnlinked,
     getNode,
     getNodeData,
