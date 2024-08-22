@@ -15,6 +15,7 @@ export default function useDownloadMedia(id: string) {
       return URL.createObjectURL(blob);
     },
     retry: false,
+    enabled: false,
   });
   const audioQuery = useQuery({
     queryKey: ["get-audio", id],
@@ -30,6 +31,7 @@ export default function useDownloadMedia(id: string) {
       return URL.createObjectURL(blob);
     },
     retry: false,
+    enabled: false,
   });
 
   return { backgroundImageQuery, audioQuery };

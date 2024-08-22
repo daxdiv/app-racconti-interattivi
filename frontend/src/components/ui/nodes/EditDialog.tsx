@@ -17,22 +17,20 @@ import PageTextContents from "@/components/ui/nodes/PageTextContents";
 import PageTextPositions from "@/components//ui/nodes/PageTextPositions";
 import PreviewDialog from "@/components/ui/nodes/PreviewDialog";
 import toast from "react-hot-toast";
+import useDownloadMedia from "@/hooks/useDownloadMedia";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { useState } from "react";
 import useUploadMedia from "@/hooks/useUploadMedia";
 
 type EditNodeDialogProps = {
   id: string;
-  media: {
-    backgroundImage: string;
-    audio: string;
-  };
 };
 
-function EditDialog({ id, media }: EditNodeDialogProps) {
+function EditDialog({ id }: EditNodeDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const { getNodeData, updateNodeData, isNodeDataEqual } = useNodeUtils();
   const data = getNodeData(id);
+  const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
   const { uploadBackgroundImageMutation, uploadAudioMutation } = useUploadMedia(id, {
     backgroundImage: data.preview.backgroundImage,
     audio: data.preview.audio,
@@ -46,6 +44,10 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
       onOpenChange={open => {
         setAlertDialogOpen(open);
 
+        if (open) {
+          backgroundImageQuery.refetch();
+          audioQuery.refetch();
+        }
         if (!open) {
           URL.revokeObjectURL(backgroundImageObjectURL);
           URL.revokeObjectURL(audioObjectURL);
@@ -83,7 +85,10 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
 
         <PageMedia
           id={id}
-          media={media}
+          media={{
+            backgroundImage: backgroundImageQuery.data || "",
+            audio: audioQuery.data || "",
+          }}
         />
 
         <AlertDialogFooter>
@@ -128,10 +133,11 @@ function EditDialog({ id, media }: EditNodeDialogProps) {
             id={id}
             data={data.preview}
             media={{
-              backgroundImage: data.preview.backgroundImage.size
-                ? backgroundImageObjectURL
-                : media.backgroundImage,
-              audio: data.preview.audio.size ? audioObjectURL : media.audio,
+              backgroundImage:
+                data.preview.backgroundImage.size > 0
+                  ? backgroundImageObjectURL
+                  : backgroundImageQuery.data || "",
+              audio: data.preview.audio.size > 0 ? audioObjectURL : audioQuery.data || "",
             }}
             trigger={
               <Button>
