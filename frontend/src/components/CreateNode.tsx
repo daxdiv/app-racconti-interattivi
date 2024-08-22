@@ -11,9 +11,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useRef, useState } from "react";
 
+import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
 import useNodeUtils from "@/hooks/useNodeUtils";
 
@@ -34,7 +34,7 @@ function CreateNode() {
           variant="secondary"
           className="flex justify-center items-center"
         >
-          <Plus className="mr-2" />
+          <BookOpen className="mr-2" />
           Crea pagine
         </Button>
       </AlertDialogTrigger>
