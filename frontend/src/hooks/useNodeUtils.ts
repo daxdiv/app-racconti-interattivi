@@ -1,9 +1,13 @@
 import { getIncomers, getOutgoers, useReactFlow, type Node } from "@xyflow/react";
 import toast from "react-hot-toast";
 
+let choiceNodeId = 0;
+const incrementChoiceNodeId = () => (choiceNodeId += 1);
+const decrementChoiceNodeId = () => (choiceNodeId += 1);
+
 function useNodeUtils() {
   const { getNode, getNodes, getEdges, setNodes, deleteElements, updateNodeData } =
-    useReactFlow<Node<DoublePageNodeData>>();
+    useReactFlow<Node<DoublePageNodeData | ChoiceNodeData>>();
 
   const onNodeDelete = (id: string) => {
     setNodes(prevNodes => prevNodes.filter(node => node.id !== id));
@@ -75,6 +79,27 @@ function useNodeUtils() {
 
     toast.success(`Pagine ${id + 1}/${id + 2} create`, { duration: 3000 });
   };
+  const onChoiceCreate = (label: string) => {
+    const initialNode = getNode("0")!;
+    const newChoiceNode: Node<ChoiceNodeData> = {
+      id: `choice-${choiceNodeId}`,
+      data: {
+        label: label || "",
+        image: new File([], ""),
+        text: "",
+        audio: [new File([], ""), new File([], ""), new File([], "")],
+        options: ["", ""],
+      },
+      position: {
+        x: initialNode.position.x - (Math.floor(Math.random() * 8) * 20 + 50),
+        y: initialNode.position.y - (Math.floor(Math.random() * 8) * 20 + 50),
+      },
+      type: "choice",
+    };
+
+    setNodes(nds => nds.concat(newChoiceNode));
+    incrementChoiceNodeId();
+  };
   const isNodeUnlinked = (id: string) => {
     const nodes = getNodes();
     const edges = getEdges();
@@ -88,7 +113,7 @@ function useNodeUtils() {
 
     if (!node) throw new Error("Nodo non trovato");
 
-    return node.data;
+    return node.data as DoublePageNodeData;
   };
   const isNodeDataEqual = (
     data: DoublePageNodeData,
@@ -106,6 +131,10 @@ function useNodeUtils() {
   return {
     onNodeDelete,
     onNodeCreate,
+    onChoiceCreate,
+    choiceNodeId,
+    incrementChoiceNodeId,
+    decrementChoiceNodeId,
     isNodeUnlinked,
     getNode,
     getNodeData,

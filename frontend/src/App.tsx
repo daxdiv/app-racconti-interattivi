@@ -5,6 +5,7 @@ import { Background, Controls, MiniMap, Panel, ReactFlow } from "@xyflow/react";
 import { useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import ChoiceNode from "@/components/nodes/ChoiceNode";
 import DeleteButtonEdge from "@/components/edges/DeleteButtonEdge";
 import DoublePageNode from "@/components/nodes/DoublePageNode";
 import Header from "@/components/ui/header";
@@ -17,7 +18,10 @@ function App() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [defaultAccordionValue, setDefaultAccordionValue] =
     useState<DoublePageNodeLabel>("Pagine 1/2");
-  const nodeTypes = useMemo(() => ({ doublePage: DoublePageNode }), []);
+  const nodeTypes = useMemo(
+    () => ({ doublePage: DoublePageNode, choice: ChoiceNode }),
+    []
+  );
   const edgeTypes = useMemo(() => ({ deleteButton: DeleteButtonEdge }), []);
   const reactFlowWrapper = useRef(null);
   const {
