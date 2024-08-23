@@ -13,12 +13,12 @@ import {
 } from "@xyflow/react";
 import { INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants";
 
-// let nodeId = 0;
-// export const incrementNodeId = () => (nodeId += 2);
-// export const decrementNodeId = () => (nodeId -= 2);
+let nodeId = 0;
+export const incrementNodeId = () => (nodeId += 2);
+export const decrementNodeId = () => (nodeId -= 2);
 
 function getLayoutedElements(
-  nodes: Node<DoublePageNodeData>[],
+  nodes: (Node<DoublePageNodeData> | Node<ChoiceNodeData>)[],
   edges: Edge[],
   options: { direction: "horizontal" | "vertical" }
 ) {
@@ -51,8 +51,9 @@ function getLayoutedElements(
 
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
-  const [nodes, setNodes, onNodesChange] =
-    useNodesState<Node<DoublePageNodeData>>(INITIAL_NODES);
+  const [nodes, setNodes, onNodesChange] = useNodesState<
+    Node<DoublePageNodeData> | Node<ChoiceNodeData>
+  >(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { screenToFlowPosition, fitView } = useReactFlow();
 
@@ -89,8 +90,7 @@ export default function useReactFlowConnection() {
 
       if (!targetIsPane) return;
 
-      // const newNodeId = incrementNodeId();
-      const newNodeId = Number(connectingNodeId.current) + 2;
+      const newNodeId = incrementNodeId();
       const leftPageNumber = newNodeId + 1;
       const rightPageNumber = newNodeId + 2;
       const preview: DoublePageNodeData["preview"] = {
@@ -180,6 +180,7 @@ export default function useReactFlowConnection() {
   return {
     nodes,
     edges,
+    setNodes,
     onNodesChange,
     onEdgesChange,
     onConnect,

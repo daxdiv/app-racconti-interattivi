@@ -31,6 +31,13 @@ declare global {
     readonly rightPageNumber: number;
     pages: [Page, Page];
   }
+  interface ChoiceNodeData extends Record<string, unknown> {
+    label: string;
+    image: File;
+    text: string;
+    audio: [File, File, File];
+    options: [string, string];
+  }
 }
 
 export {};
