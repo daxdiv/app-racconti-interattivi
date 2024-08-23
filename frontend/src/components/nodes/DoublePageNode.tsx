@@ -154,7 +154,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
       <Handle
         type="source"
         position={Position.Right}
-        isConnectable={connections.length < 2}
+        isConnectable={connections.length < 1}
       />
     </>
   );
