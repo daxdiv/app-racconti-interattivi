@@ -21,6 +21,7 @@ import useDownloadMedia from "@/hooks/useDownloadMedia";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { useState } from "react";
 import useUploadMedia from "@/hooks/useUploadMedia";
+import { useReactFlow, type Node } from "@xyflow/react";
 
 type EditNodeDialogProps = {
   id: string;
@@ -28,7 +29,8 @@ type EditNodeDialogProps = {
 
 function EditDialog({ id }: EditNodeDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-  const { getNodeData, updateNodeData, isNodeDataEqual } = useNodeUtils();
+  const { getNodeData, isNodeDataEqual } = useNodeUtils();
+  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
   const data = getNodeData(id) as DoublePageNodeData;
   const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
   const { uploadBackgroundImageMutation, uploadAudioMutation } = useUploadMedia(id, {

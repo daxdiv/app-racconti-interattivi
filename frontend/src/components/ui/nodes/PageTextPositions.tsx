@@ -8,13 +8,15 @@ import {
 
 import { Label } from "@/components/ui/label";
 import useNodeUtils from "@/hooks/useNodeUtils";
+import { useReactFlow, type Node } from "@xyflow/react";
 
 type PageTextPositionsProps = {
   id: string;
 };
 
 function PageTextPositions({ id }: PageTextPositionsProps) {
-  const { getNodeData, updateNodeData } = useNodeUtils();
+  const { getNodeData } = useNodeUtils();
+  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
   const data = getNodeData(id) as DoublePageNodeData;
 
   return (
