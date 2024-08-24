@@ -29,7 +29,7 @@ type EditNodeDialogProps = {
 function EditDialog({ id }: EditNodeDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const { getNodeData, updateNodeData, isNodeDataEqual } = useNodeUtils();
-  const data = getNodeData(id);
+  const data = getNodeData(id) as DoublePageNodeData;
   const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
   const { uploadBackgroundImageMutation, uploadAudioMutation } = useUploadMedia(id, {
     backgroundImage: data.preview.backgroundImage,

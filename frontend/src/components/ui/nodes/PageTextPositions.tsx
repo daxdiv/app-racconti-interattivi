@@ -15,7 +15,7 @@ type PageTextPositionsProps = {
 
 function PageTextPositions({ id }: PageTextPositionsProps) {
   const { getNodeData, updateNodeData } = useNodeUtils();
-  const data = getNodeData(id);
+  const data = getNodeData(id) as DoublePageNodeData;
 
   return (
     <div className="flex justify-center items-center gap-2">

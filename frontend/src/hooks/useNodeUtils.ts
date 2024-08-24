@@ -129,12 +129,12 @@ function useNodeUtils() {
 
     return incomers.length === 0 && outgoers.length === 0;
   };
-  const getNodeData = (id: string): DoublePageNodeData => {
+  const getNodeData = (id: string): DoublePageNodeData | ChoiceNodeData => {
     const node = getNode(id);
 
     if (!node) throw new Error("Nodo non trovato");
 
-    return node.data as DoublePageNodeData;
+    return node.data;
   };
   const isNodeDataEqual = (
     data: DoublePageNodeData,
