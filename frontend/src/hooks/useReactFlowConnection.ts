@@ -14,8 +14,7 @@ import {
 import { INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants";
 
 let nodeId = 0;
-export const incrementNodeId = () => (nodeId += 2);
-export const decrementNodeId = () => (nodeId -= 2);
+const incrementNodeId = () => (nodeId += 2);
 
 function getLayoutedElements(
   nodes: (Node<DoublePageNodeData> | Node<ChoiceNodeData>)[],
