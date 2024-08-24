@@ -3,7 +3,10 @@ import toast from "react-hot-toast";
 
 let choiceNodeId = 0;
 const incrementChoiceNodeId = () => (choiceNodeId += 1);
-const decrementChoiceNodeId = () => (choiceNodeId += 1);
+
+type OnNodeCreateOptions =
+  | { id: number; type: "doublePage" }
+  | { label: string; type: "choice" };
 
 function useNodeUtils() {
   const { getNode, getNodes, getEdges, setNodes, deleteElements, updateNodeData } =
@@ -18,87 +21,105 @@ function useNodeUtils() {
         },
       ],
     });
-    toast.error("Pagine eliminate", {
-      duration: 3000,
-    });
+    toast.error("Nodo eliminato");
   };
-  const onNodeCreate = (id: number) => {
+
+  const onNodeCreate = (options: OnNodeCreateOptions) => {
     const initialNode = getNode("0")!;
-    const newNodePreview: DoublePageNodeData["preview"] = {
-      label: `Pagine ${id + 1}/${id + 2}`,
-      leftPageNumber: id + 1,
-      rightPageNumber: id + 2,
-      backgroundImage: new File([], ""),
-      pages: [
-        {
-          text: {
-            content: "",
-            position: "TopLeft",
-          },
-        },
-        {
-          text: {
-            content: "",
-            position: "TopLeft",
-          },
-        },
-      ] as [Page, Page],
-      audio: new File([], ""),
-    };
-    const newNode: Node<DoublePageNodeData> = {
-      id: `${id}`,
-      data: {
-        label: `Pagine ${id + 1}/${id + 2}`,
-        leftPageNumber: id + 1,
-        rightPageNumber: id + 2,
-        pages: [
-          {
-            text: {
-              content: "",
-              position: "TopLeft",
+
+    let newNode: Node<DoublePageNodeData | ChoiceNodeData>;
+
+    switch (options.type) {
+      case "doublePage":
+        const { id } = options;
+        const doublePageNodePreview: DoublePageNodeData["preview"] = {
+          label: `Pagine ${id + 1}/${id + 2}`,
+          leftPageNumber: id + 1,
+          rightPageNumber: id + 2,
+          backgroundImage: new File([], ""),
+          pages: [
+            {
+              text: {
+                content: "",
+                position: "TopLeft",
+              },
             },
-          },
-          {
-            text: {
-              content: "",
-              position: "TopLeft",
+            {
+              text: {
+                content: "",
+                position: "TopLeft",
+              },
             },
+          ] as [Page, Page],
+          audio: new File([], ""),
+        };
+
+        const doublePageNodeData: DoublePageNodeData = {
+          label: `Pagine ${id + 1}/${id + 2}`,
+          leftPageNumber: id + 1,
+          rightPageNumber: id + 2,
+          pages: [
+            {
+              text: {
+                content: "",
+                position: "TopLeft",
+              },
+            },
+            {
+              text: {
+                content: "",
+                position: "TopLeft",
+              },
+            },
+          ] as [Page, Page],
+          preview: doublePageNodePreview,
+        };
+
+        newNode = {
+          id: `${id}`,
+          data: doublePageNodeData,
+          position: {
+            x: initialNode.position.x - (Math.floor(Math.random() * 8) * 20 + 50),
+            y: initialNode.position.y - (Math.floor(Math.random() * 8) * 20 + 50),
           },
-        ] as [Page, Page],
-        preview: newNodePreview,
-      },
-      position: {
-        x: initialNode.position.x - (Math.floor(Math.random() * 8) * 20 + 50),
-        y: initialNode.position.y - (Math.floor(Math.random() * 8) * 20 + 50),
-      },
-      origin: [0.5, 0.0],
-      type: "doublePage",
-    };
+          origin: [0.5, 0.0],
+          type: "doublePage",
+        };
+
+        toast.success(`Pagine ${id + 1}/${id + 2} create`, { duration: 3000 });
+
+        break;
+      case "choice":
+        const { label } = options;
+        const choiceNodeData: ChoiceNodeData = {
+          label: label || "",
+          image: new File([], ""),
+          text: "",
+          audio: [
+            new File([], ""),
+            new File([], ""),
+            new File([], ""),
+          ] as ChoiceNodeData["audio"],
+          options: ["", ""] as ChoiceNodeData["options"],
+        };
+
+        newNode = {
+          id: `choice-${choiceNodeId}`,
+          data: choiceNodeData,
+          position: {
+            x: initialNode.position.x - (Math.floor(Math.random() * 8) * 20 + 50),
+            y: initialNode.position.y - (Math.floor(Math.random() * 8) * 20 + 50),
+          },
+          origin: [0.5, 0.0],
+          type: "choice",
+        };
+
+        incrementChoiceNodeId();
+
+        break;
+    }
 
     setNodes(nds => nds.concat(newNode));
-
-    toast.success(`Pagine ${id + 1}/${id + 2} create`, { duration: 3000 });
-  };
-  const onChoiceCreate = (label: string) => {
-    const initialNode = getNode("0")!;
-    const newChoiceNode: Node<ChoiceNodeData> = {
-      id: `choice-${choiceNodeId}`,
-      data: {
-        label: label || "",
-        image: new File([], ""),
-        text: "",
-        audio: [new File([], ""), new File([], ""), new File([], "")],
-        options: ["", ""],
-      },
-      position: {
-        x: initialNode.position.x - (Math.floor(Math.random() * 8) * 20 + 50),
-        y: initialNode.position.y - (Math.floor(Math.random() * 8) * 20 + 50),
-      },
-      type: "choice",
-    };
-
-    setNodes(nds => nds.concat(newChoiceNode));
-    incrementChoiceNodeId();
   };
   const isNodeUnlinked = (id: string) => {
     const nodes = getNodes();
@@ -131,10 +152,6 @@ function useNodeUtils() {
   return {
     onNodeDelete,
     onNodeCreate,
-    onChoiceCreate,
-    choiceNodeId,
-    incrementChoiceNodeId,
-    decrementChoiceNodeId,
     isNodeUnlinked,
     getNode,
     getNodeData,

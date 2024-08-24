@@ -19,7 +19,7 @@ import useNodeUtils from "@/hooks/useNodeUtils";
 function CreateChoice() {
   const [open, setOpen] = useState(false);
   const labelRef = useRef<HTMLInputElement | null>(null);
-  const { onChoiceCreate } = useNodeUtils();
+  const { onNodeCreate } = useNodeUtils();
 
   return (
     <AlertDialog
@@ -61,7 +61,7 @@ function CreateChoice() {
                 return;
               }
 
-              onChoiceCreate(value);
+              onNodeCreate({ label: value, type: "choice" });
               setOpen(false);
             }}
             className="bg-confirm text-primary-foreground hover:bg-confirm-foreground"
