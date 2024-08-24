@@ -15,7 +15,7 @@ type PageMediaProps = {
 
 function PageMedia({ id, media }: PageMediaProps) {
   const { getNodeData, updateNodeData } = useNodeUtils();
-  const data = getNodeData(id);
+  const data = getNodeData(id) as DoublePageNodeData;
   const audio = useMemo(() => new Audio(media.audio), [media.audio]);
 
   useEffect(() => {
