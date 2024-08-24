@@ -37,6 +37,13 @@ declare global {
     text: string;
     audio: [File, File, File];
     options: [string, string];
+    preview: {
+      label: string;
+      image: File;
+      text: string;
+      audio: [File, File, File];
+      options: [string, string];
+    };
   }
 }
 
