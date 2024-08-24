@@ -1,12 +1,15 @@
 import { Textarea } from "@/components/ui/textarea";
 import useNodeUtils from "@/hooks/useNodeUtils";
+import { useReactFlow, type Node } from "@xyflow/react";
 
 type PageTextContentsProps = {
   id: string;
 };
 
 function PageTextContents({ id }: PageTextContentsProps) {
-  const { getNodeData, updateNodeData } = useNodeUtils();
+  const { getNodeData } = useNodeUtils();
+  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
+
   const data = getNodeData(id) as DoublePageNodeData;
 
   return (

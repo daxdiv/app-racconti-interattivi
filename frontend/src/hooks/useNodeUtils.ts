@@ -9,7 +9,7 @@ type OnNodeCreateOptions =
   | { label: string; type: "choice" };
 
 function useNodeUtils() {
-  const { getNode, getNodes, getEdges, setNodes, deleteElements, updateNodeData } =
+  const { getNode, getNodes, getEdges, setNodes, deleteElements } =
     useReactFlow<Node<DoublePageNodeData | ChoiceNodeData>>();
 
   const onNodeDelete = (id: string) => {
@@ -155,7 +155,7 @@ function useNodeUtils() {
     isNodeUnlinked,
     getNode,
     getNodeData,
-    updateNodeData,
+
     isNodeDataEqual,
   };
 }

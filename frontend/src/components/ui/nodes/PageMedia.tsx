@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useNodeUtils from "@/hooks/useNodeUtils";
+import { useReactFlow, type Node } from "@xyflow/react";
 
 type PageMediaProps = {
   id: string;
@@ -14,7 +15,8 @@ type PageMediaProps = {
 };
 
 function PageMedia({ id, media }: PageMediaProps) {
-  const { getNodeData, updateNodeData } = useNodeUtils();
+  const { getNodeData } = useNodeUtils();
+  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
   const data = getNodeData(id) as DoublePageNodeData;
   const audio = useMemo(() => new Audio(media.audio), [media.audio]);
 
