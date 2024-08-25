@@ -50,5 +50,5 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
     position: { x: 0, y: 50 },
   },
 ];
-export const MAX_AUDIO_SIZE = 1024 * 1024;
+export const MAX_FILE_SIZE = 104_857_600; // NOTE: 100MB
 export const TOOLTIP_DELAY_DURATION = 400; // ms
