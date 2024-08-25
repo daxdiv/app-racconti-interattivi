@@ -2,6 +2,8 @@ import express from "express";
 import fs from "fs";
 import multer from "multer";
 
+const MAX_FILE_SIZE = 104_857_600; // NOTE: 100MB
+
 const uploadRouter = express.Router();
 const backgroundStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
@@ -13,9 +15,13 @@ const backgroundStorage = multer.diskStorage({
 
     cb(null, destPath);
   },
-  filename: (req, _file, cb) => {
+  filename: (req, file, cb) => {
     const id = parseInt(req.body.id);
 
+    if (file.size > MAX_FILE_SIZE) {
+      cb(new Error("File too large"), "");
+      return;
+    }
     if (isNaN(id) || !Number.isInteger(id) || id < 0) {
       cb(new Error("Invalid id"), "");
       return;
@@ -34,9 +40,13 @@ const audioStorage = multer.diskStorage({
 
     cb(null, destPath);
   },
-  filename: (req, _file, cb) => {
+  filename: (req, file, cb) => {
     const id = parseInt(req.body.id);
 
+    if (file.size > MAX_FILE_SIZE) {
+      cb(new Error("File too large"), "");
+      return;
+    }
     if (isNaN(id) || !Number.isInteger(id) || id < 0) {
       cb(new Error("Invalid id"), "");
       return;
@@ -45,13 +55,25 @@ const audioStorage = multer.diskStorage({
     cb(null, `${id}_audio`);
   },
 });
-const uploadBackground = multer({ storage: backgroundStorage }).single("background");
-const uploadAudio = multer({ storage: audioStorage }).single("audio");
+const uploadBackground = multer({
+  storage: backgroundStorage,
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+  },
+}).single("background");
+const uploadAudio = multer({
+  storage: audioStorage,
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+  },
+}).single("audio");
 
 uploadRouter.post("/background", (req, res) => {
   uploadBackground(req, res, err => {
     if (err) {
-      if (err.message === "Invalid id") {
+      const error404Messages = ["Invalid id", "File too large"];
+
+      if (error404Messages.includes(err.message)) {
         res.status(400).json({ message: err.message });
         return;
       }
@@ -67,7 +89,9 @@ uploadRouter.post("/background", (req, res) => {
 uploadRouter.post("/audio", (req, res) => {
   uploadAudio(req, res, err => {
     if (err) {
-      if (err.message === "Invalid id") {
+      const error404Messages = ["Invalid id", "File too large"];
+
+      if (error404Messages.includes(err.message)) {
         res.status(400).json({ message: err.message });
         return;
       }
