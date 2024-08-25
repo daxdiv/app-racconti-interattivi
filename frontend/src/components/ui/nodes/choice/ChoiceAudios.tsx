@@ -1,6 +1,8 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useReactFlow, type Node } from "@xyflow/react";
+import { MAX_FILE_SIZE } from "@/constants";
+import toast from "react-hot-toast";
 
 type ChoiceAudiosProps = {
   id: string;
@@ -28,6 +30,11 @@ function ChoiceAudios({ id }: ChoiceAudiosProps) {
             const file = e.target.files?.[0];
 
             if (!file) return;
+            if (file.size > MAX_FILE_SIZE) {
+              toast.error("Audio troppo grande, non verrà usato nell'anteprima");
+
+              return;
+            }
 
             updateNodeData(id, ({ data }) => ({
               ...data,
@@ -57,6 +64,11 @@ function ChoiceAudios({ id }: ChoiceAudiosProps) {
             const file = e.target.files?.[0];
 
             if (!file) return;
+            if (file.size > MAX_FILE_SIZE) {
+              toast.error("Audio troppo grande, non verrà usato nell'anteprima");
+
+              return;
+            }
 
             updateNodeData(id, ({ data }) => ({
               ...data,
@@ -86,6 +98,11 @@ function ChoiceAudios({ id }: ChoiceAudiosProps) {
             const file = e.target.files?.[0];
 
             if (!file) return;
+            if (file.size > MAX_FILE_SIZE) {
+              toast.error("Audio troppo grande, non verrà usato nell'anteprima");
+
+              return;
+            }
 
             updateNodeData(id, ({ data }) => ({
               ...data,
