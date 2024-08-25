@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { useReactFlow, type Node } from "@xyflow/react";
+import { MAX_FILE_SIZE } from "@/constants";
+import toast from "react-hot-toast";
 
 type PageMediaProps = {
   id: string;
@@ -45,6 +47,11 @@ function PageMedia({ id, media }: PageMediaProps) {
             const file = e.target.files?.[0];
 
             if (!file) return;
+            if (file.size > MAX_FILE_SIZE) {
+              toast.error("Immagine troppo grande, non verrà usata nell'anteprima");
+
+              return;
+            }
 
             updateNodeData(id, {
               preview: {
@@ -90,6 +97,11 @@ function PageMedia({ id, media }: PageMediaProps) {
             const file = e.target.files?.[0];
 
             if (!file) return;
+            if (file.size > MAX_FILE_SIZE) {
+              toast.error("Audio troppo grande, non verrà usato nell'anteprima");
+
+              return;
+            }
 
             updateNodeData(id, {
               preview: {

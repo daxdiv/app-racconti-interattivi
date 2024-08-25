@@ -4,6 +4,8 @@ import { useReactFlow, type Node } from "@xyflow/react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { MAX_FILE_SIZE } from "@/constants";
+import toast from "react-hot-toast";
 
 type ChoiceImageProps = {
   id: string;
@@ -39,6 +41,11 @@ function ChoiceImage({ id, image }: ChoiceImageProps) {
             const file = e.target.files?.[0];
 
             if (!file) return;
+            if (file.size > MAX_FILE_SIZE) {
+              toast.error("Immagine troppo grande, non verrà usata");
+
+              return;
+            }
 
             updateNodeData(id, ({ data }) => ({
               ...data,
