@@ -12,8 +12,7 @@ import {
   type Node,
   type NodeProps,
 } from "@xyflow/react";
-import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Unlink } from "lucide-react";
+import { Trash2, Unlink } from "lucide-react";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { TOOLTIP_DELAY_DURATION } from "@/constants";
 import {
@@ -33,6 +32,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import EditChoiceDialog from "@/components/ui/nodes/choice/EditChoiceDialog";
 
 type ChoiceNode = Node<ChoiceNodeData>;
 type ChoiceNodeProps = NodeProps<ChoiceNode>;
@@ -113,16 +113,7 @@ function ChoiceNode(props: ChoiceNodeProps) {
         </CardHeader>
 
         <CardContent>
-          <Button
-            variant="outline"
-            className="w-full"
-          >
-            <Edit
-              className="mr-2"
-              size={16}
-            />{" "}
-            Modifica scelta
-          </Button>
+          <EditChoiceDialog id={id} />
         </CardContent>
       </Card>
       <Handle
