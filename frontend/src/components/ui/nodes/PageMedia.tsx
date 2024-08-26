@@ -48,7 +48,9 @@ function PageMedia({ id, media }: PageMediaProps) {
 
             if (!file) return;
             if (file.size > MAX_FILE_SIZE) {
-              toast.error("Immagine troppo grande, non verrà usata nell'anteprima");
+              toast.error("Immagine troppo grande");
+
+              e.target.value = "";
 
               return;
             }
@@ -98,7 +100,9 @@ function PageMedia({ id, media }: PageMediaProps) {
 
             if (!file) return;
             if (file.size > MAX_FILE_SIZE) {
-              toast.error("Audio troppo grande, non verrà usato nell'anteprima");
+              toast.error("Audio troppo grande");
+
+              e.target.value = "";
 
               return;
             }
