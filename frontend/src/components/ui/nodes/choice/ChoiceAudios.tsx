@@ -31,7 +31,9 @@ function ChoiceAudios({ id }: ChoiceAudiosProps) {
 
             if (!file) return;
             if (file.size > MAX_FILE_SIZE) {
-              toast.error("Audio troppo grande, non verrà usato nell'anteprima");
+              toast.error("Audio troppo grande");
+
+              e.target.value = "";
 
               return;
             }
@@ -65,7 +67,9 @@ function ChoiceAudios({ id }: ChoiceAudiosProps) {
 
             if (!file) return;
             if (file.size > MAX_FILE_SIZE) {
-              toast.error("Audio troppo grande, non verrà usato nell'anteprima");
+              toast.error("Audio troppo grande");
+
+              e.target.value = "";
 
               return;
             }
@@ -99,7 +103,9 @@ function ChoiceAudios({ id }: ChoiceAudiosProps) {
 
             if (!file) return;
             if (file.size > MAX_FILE_SIZE) {
-              toast.error("Audio troppo grande, non verrà usato nell'anteprima");
+              toast.error("Audio troppo grande");
+
+              e.target.value = "";
 
               return;
             }

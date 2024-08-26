@@ -42,7 +42,9 @@ function ChoiceImage({ id, image }: ChoiceImageProps) {
 
             if (!file) return;
             if (file.size > MAX_FILE_SIZE) {
-              toast.error("Immagine troppo grande, non verrà usata");
+              toast.error("Immagine troppo grande");
+
+              e.target.value = "";
 
               return;
             }
