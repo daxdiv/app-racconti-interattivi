@@ -12,10 +12,10 @@ import {
 import { Edit, Eye, Save, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import PageMedia from "@/components/ui/nodes/PageMedia";
-import PageTextContents from "@/components/ui/nodes/PageTextContents";
-import PageTextPositions from "@/components//ui/nodes/PageTextPositions";
-import PreviewDialog from "@/components/ui/nodes/PreviewDialog";
+import PageMedia from "@/components/ui/nodes/doublePage/PageMedia";
+import PageTextContents from "@/components/ui/nodes/doublePage/PageTextContents";
+import PageTextPositions from "@/components/ui/nodes/doublePage/PageTextPositions";
+import PreviewDialog from "@/components/ui/nodes/doublePage/PreviewDialog";
 import toast from "react-hot-toast";
 import useDownloadMedia from "@/hooks/useDownloadMedia";
 import useNodeUtils from "@/hooks/useNodeUtils";
