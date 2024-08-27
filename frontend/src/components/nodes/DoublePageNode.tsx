@@ -49,6 +49,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
         <Handle
           type="target"
           position={Position.Left}
+          style={{ padding: "3px" }}
         />
       )}
       <Card className="w-[300px]">
@@ -155,6 +156,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
         type="source"
         position={Position.Right}
         isConnectable={connections.length < 1}
+        style={{ padding: "3px" }}
       />
     </>
   );
