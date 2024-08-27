@@ -49,6 +49,7 @@ function ChoiceNode(props: ChoiceNodeProps) {
       <Handle
         type="target"
         position={Position.Left}
+        style={{ padding: "3px" }}
       />
       <Card className="w-[300px] border-[1.5px] border-yellow-500">
         <CardHeader className="flex flex-row justify-between items-center space-y-0">
@@ -120,6 +121,7 @@ function ChoiceNode(props: ChoiceNodeProps) {
         type="source"
         position={Position.Right}
         isConnectable={connections.length < 2}
+        style={{ padding: "3px" }}
       />
     </>
   );
