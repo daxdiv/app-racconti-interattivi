@@ -90,7 +90,7 @@ function PreviewDialog({
           />
           <div className="absolute w-1/2 h-full border-r border-r-primary border-dashed">
             <p
-              className={cn("font-extrabold italic absolute", {
+              className={cn("whitespace-pre font-extrabold italic absolute", {
                 "top-10": leftTextPosition.includes("Top"),
                 "bottom-10": leftTextPosition.includes("Bottom"),
                 "left-10": leftTextPosition.includes("Left"),
@@ -104,7 +104,7 @@ function PreviewDialog({
 
           <div className="absolute left-1/2 w-1/2 h-full">
             <p
-              className={cn("font-extrabold italic absolute", {
+              className={cn("whitespace-pre font-extrabold italic absolute", {
                 "top-10": rightTextPosition.includes("Top"),
                 "bottom-10": rightTextPosition.includes("Bottom"),
                 "left-10": rightTextPosition.includes("Left"),
