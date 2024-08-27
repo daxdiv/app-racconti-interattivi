@@ -22,6 +22,41 @@ function CreateNode() {
   const [open, setOpen] = useState(false);
   const { onNodeCreate, getNode } = useNodeUtils();
 
+  const handleCreate = () => {
+    if (!leftPageNumberRef.current) return;
+
+    const value = leftPageNumberRef.current.value;
+    const valueAsNumber = Number(value);
+
+    if (!value || valueAsNumber < 0) {
+      toast.error("Numero pagina non valido");
+
+      leftPageNumberRef.current.value = "";
+
+      return;
+    }
+    if (valueAsNumber % 2 === 0) {
+      toast.error("La pagina sinistra può essere solo dispari");
+
+      leftPageNumberRef.current.value = "";
+
+      return;
+    }
+
+    const nodeWithSameIdExists = getNode(`${valueAsNumber - 1}`) !== undefined; // NOTE: leftPageNumber = id + 1 so ==> id = leftPageNumber - 1
+
+    if (nodeWithSameIdExists) {
+      toast.error("Pagina già esistente");
+
+      leftPageNumberRef.current.value = "";
+
+      return;
+    }
+
+    onNodeCreate({ id: valueAsNumber - 1, type: "doublePage" }); // NOTE: leftPageNumber = id + 1 so ==> id = leftPageNumber - 1
+    setOpen(false);
+  };
+
   return (
     <AlertDialog
       open={open}
@@ -38,7 +73,14 @@ function CreateNode() {
           Crea pagine
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent
+        onKeyDown={e => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleCreate();
+          }
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>Creazione pagine</AlertDialogTitle>
           <AlertDialogDescription />
@@ -53,40 +95,7 @@ function CreateNode() {
 
         <AlertDialogFooter>
           <AlertDialogAction
-            onClick={async () => {
-              if (!leftPageNumberRef.current) return;
-
-              const value = leftPageNumberRef.current.value;
-              const valueAsNumber = Number(value);
-
-              if (!value || valueAsNumber < 0) {
-                toast.error("Numero pagina non valido");
-
-                leftPageNumberRef.current.value = "";
-
-                return;
-              }
-              if (valueAsNumber % 2 === 0) {
-                toast.error("La pagina sinistra può essere solo dispari");
-
-                leftPageNumberRef.current.value = "";
-
-                return;
-              }
-
-              const nodeWithSameIdExists = getNode(`${valueAsNumber - 1}`) !== undefined; // NOTE: leftPageNumber = id + 1 so ==> id = leftPageNumber - 1
-
-              if (nodeWithSameIdExists) {
-                toast.error("Pagina già esistente");
-
-                leftPageNumberRef.current.value = "";
-
-                return;
-              }
-
-              onNodeCreate({ id: valueAsNumber - 1, type: "doublePage" }); // NOTE: leftPageNumber = id + 1 so ==> id = leftPageNumber - 1
-              setOpen(false);
-            }}
+            onClick={handleCreate}
             className="bg-confirm text-primary-foreground hover:bg-confirm-foreground"
           >
             Crea

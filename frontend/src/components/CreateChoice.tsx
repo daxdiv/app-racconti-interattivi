@@ -21,6 +21,20 @@ function CreateChoice() {
   const labelRef = useRef<HTMLInputElement | null>(null);
   const { onNodeCreate } = useNodeUtils();
 
+  const handleCreate = () => {
+    if (!labelRef.current) return;
+
+    const value = labelRef.current.value;
+
+    if (!value) {
+      toast.error("Nome non valido");
+      return;
+    }
+
+    onNodeCreate({ label: value, type: "choice" });
+    setOpen(false);
+  };
+
   return (
     <AlertDialog
       open={open}
@@ -36,7 +50,14 @@ function CreateChoice() {
           <span className="mr-2 nodrag nopan text-md">&#63;</span> Crea scelta
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent
+        onKeyDown={e => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleCreate();
+          }
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>Creazione scelta</AlertDialogTitle>
           <AlertDialogDescription />
@@ -51,19 +72,7 @@ function CreateChoice() {
 
         <AlertDialogFooter>
           <AlertDialogAction
-            onClick={() => {
-              if (!labelRef.current) return;
-
-              const value = labelRef.current.value;
-
-              if (!value) {
-                toast.error("Nome non valido");
-                return;
-              }
-
-              onNodeCreate({ label: value, type: "choice" });
-              setOpen(false);
-            }}
+            onClick={handleCreate}
             className="bg-confirm text-primary-foreground hover:bg-confirm-foreground"
           >
             Crea
