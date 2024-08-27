@@ -65,7 +65,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
                       size={24}
                     />
                   </TooltipTrigger>
-                  <TooltipContent>Pagine non collegate</TooltipContent>
+                  <TooltipContent>Nodo non collegato</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             )}
