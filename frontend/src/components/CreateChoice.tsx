@@ -68,6 +68,7 @@ function CreateChoice() {
           ref={labelRef}
           className="w-full"
           placeholder="Nome..."
+          autoFocus={true}
         />
 
         <AlertDialogFooter>

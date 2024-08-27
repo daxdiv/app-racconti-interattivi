@@ -91,6 +91,7 @@ function CreateNode() {
           placeholder="Numero pagina sinistra"
           className="inline-flex w-1/2"
           ref={leftPageNumberRef}
+          autoFocus={true}
         />
 
         <AlertDialogFooter>
