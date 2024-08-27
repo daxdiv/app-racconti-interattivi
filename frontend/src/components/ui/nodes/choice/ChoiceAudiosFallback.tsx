@@ -18,12 +18,13 @@ function ChoiceAudiosFallback({ id, audios }: ChoiceAudiosFallbackProps) {
           a.size > 0 ? (
             <div
               key={`${a.name}-${i}`}
-              className="flex-row w-1/3"
+              className="flex justify-center items-center gap-x-2 w-1/3"
             >
               <Label className="font-extrabold">Audio attuale</Label>
               <audio
                 controls
                 autoPlay={false}
+                className="w-1/2"
               >
                 <source
                   src={audios[i]}
