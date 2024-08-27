@@ -58,11 +58,17 @@ function EditChoiceDialog({ id }: EditChoiceDialogProps) {
 
     if (equalObjects(oldData, newData) && !isImageUploaded && !isSomeAudioUploaded)
       return;
+    if (isImageUploaded)
+      updateNodeData(id, {
+        image: data.preview.image,
+      });
+    if (isSomeAudioUploaded)
+      updateNodeData(id, {
+        audio: data.preview.audio,
+      });
 
     updateNodeData(id, {
       ...newData,
-      image: data.preview.image,
-      audio: data.preview.audio,
       preview: {
         ...data.preview,
         image: new File([], ""),
@@ -77,11 +83,14 @@ function EditChoiceDialog({ id }: EditChoiceDialogProps) {
     <AlertDialog
       open={alertDialogOpen}
       onOpenChange={open => {
+        const isImageUploaded = data.preview.image.size > 0;
+        const isSomeAudioUploaded = data.preview.audio.some(a => a.size > 0);
+
         setAlertDialogOpen(open);
 
         if (!open) {
-          URL.revokeObjectURL(imageObjectURL);
-          audiosObjectURLs.forEach(u => URL.revokeObjectURL(u));
+          if (isImageUploaded) URL.revokeObjectURL(imageObjectURL);
+          if (isSomeAudioUploaded) audiosObjectURLs.forEach(u => URL.revokeObjectURL(u));
         }
       }}
     >
