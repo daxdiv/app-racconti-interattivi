@@ -2,6 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { useReactFlow, type Node } from "@xyflow/react";
+import toast from "react-hot-toast";
 
 type ChoiceOptionsProps = { id: string };
 
@@ -25,6 +26,14 @@ function ChoiceOptions({ id }: ChoiceOptionsProps) {
           value={data.preview.options[0]}
           placeholder="Parlarci"
           onChange={e => {
+            const spaceCount = (e.target.value.match(/ /g) || []).length;
+
+            if (spaceCount > 1) {
+              toast.error("Le opzioni possono essere di massimo due parole");
+
+              return;
+            }
+
             updateNodeData(id, ({ data }) => ({
               ...data,
               preview: {
@@ -48,6 +57,14 @@ function ChoiceOptions({ id }: ChoiceOptionsProps) {
           value={data.preview.options[1]}
           placeholder="Non parlarci"
           onChange={e => {
+            const spaceCount = (e.target.value.match(/ /g) || []).length;
+
+            if (spaceCount > 1) {
+              toast.error("Le opzioni possono essere di massimo due parole");
+
+              return;
+            }
+
             updateNodeData(id, ({ data }) => ({
               ...data,
               preview: {
