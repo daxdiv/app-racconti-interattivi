@@ -33,6 +33,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import EditChoiceDialog from "@/components/ui/nodes/choice/EditChoiceDialog";
+import { truncate } from "@/lib/utils";
 
 type ChoiceNode = Node<ChoiceNodeData>;
 type ChoiceNodeProps = NodeProps<ChoiceNode>;
@@ -54,7 +55,7 @@ function ChoiceNode(props: ChoiceNodeProps) {
       <Card className="w-[300px] border-[1.5px] border-yellow-500">
         <CardHeader className="flex flex-row justify-between items-center space-y-0">
           <div className="flex justify-center items-center gap-x-2">
-            <CardTitle>{label}</CardTitle>
+            <CardTitle>{truncate(label, 12)}</CardTitle>
 
             <CardDescription />
 
@@ -90,7 +91,7 @@ function ChoiceNode(props: ChoiceNodeProps) {
               </TooltipProvider>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Eliminare nodo scelta?</AlertDialogTitle>
+                  <AlertDialogTitle>Eliminare nodo scelta "{label}"?</AlertDialogTitle>
                   <AlertDialogDescription>
                     Una volta eliminato, dovrai ricrearlo da zero.
                   </AlertDialogDescription>
