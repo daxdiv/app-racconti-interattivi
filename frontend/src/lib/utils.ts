@@ -11,3 +11,7 @@ export function equalObjects(
 ) {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
 }
+
+export function truncate(str: string, maxLen: number) {
+  return str.length > maxLen ? `${str.slice(0, maxLen - 1)}...` : str;
+}
