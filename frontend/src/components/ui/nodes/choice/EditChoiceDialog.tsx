@@ -14,7 +14,6 @@ import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import useNodeUtils from "@/hooks/useNodeUtils";
 import { useReactFlow, type Node } from "@xyflow/react";
 import { equalObjects } from "@/lib/utils";
 import ChoiceLabel from "@/components/ui/nodes/choice/ChoiceLabel";
@@ -26,15 +25,14 @@ import ChoiceAudiosFallback from "@/components/ui/nodes/choice/ChoiceAudiosFallb
 
 type EditChoiceDialogProps = {
   id: string;
+  data: ChoiceNodeData;
 };
 
-function EditChoiceDialog({ id }: EditChoiceDialogProps) {
+function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const [confirmUnsavedDialogOpen, setConfirmUnsavedDialogOpen] = useState(false);
-  const { getNodeData } = useNodeUtils();
   const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
 
-  const data = getNodeData(id) as ChoiceNodeData;
   const imageObjectURL = useMemo(() => URL.createObjectURL(data.image), [data.image]);
   const audiosObjectURLs = useMemo(
     () => data.audio.map(a => URL.createObjectURL(a)),
@@ -96,14 +94,14 @@ function EditChoiceDialog({ id }: EditChoiceDialogProps) {
     >
       <AlertDialogTrigger asChild>
         <Button
-          className="w-full"
+          className="w-1/2"
           variant="outline"
         >
           <Edit
             className="mr-2"
             size={16}
           />{" "}
-          Modifica scelta
+          Modifica
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent
