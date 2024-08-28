@@ -1,3 +1,4 @@
+import { truncate } from "@/lib/utils";
 import { getIncomers, getOutgoers, useReactFlow, type Node } from "@xyflow/react";
 import toast from "react-hot-toast";
 
@@ -127,6 +128,10 @@ function useNodeUtils() {
 
         incrementChoiceNodeId();
 
+        toast.success(`Nodo scelta "${truncate(newNode.data.label, 12)}" creato`, {
+          duration: 3000,
+        });
+
         break;
     }
 
@@ -166,7 +171,6 @@ function useNodeUtils() {
     isNodeUnlinked,
     getNode,
     getNodeData,
-
     isNodeDataEqual,
   };
 }
