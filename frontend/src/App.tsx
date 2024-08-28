@@ -33,6 +33,7 @@ function App() {
     onConnectStart,
     onConnectEnd,
     onLayout,
+    isValidConnection,
   } = useReactFlowConnection();
 
   return (
@@ -65,6 +66,7 @@ function App() {
           zoomOnScroll={false}
           panOnScroll
           maxZoom={1}
+          isValidConnection={isValidConnection}
         >
           <Background />
           <Panel position="bottom-center">

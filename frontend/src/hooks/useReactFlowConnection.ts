@@ -5,11 +5,13 @@ import {
   useEdgesState,
   useNodesState,
   useReactFlow,
+  getOutgoers,
   type Edge,
   type Node,
   type OnConnect,
   type OnConnectEnd,
   type OnConnectStart,
+  type IsValidConnection,
 } from "@xyflow/react";
 import { INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants";
 
@@ -54,7 +56,7 @@ export default function useReactFlowConnection() {
     Node<DoublePageNodeData> | Node<ChoiceNodeData>
   >(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-  const { screenToFlowPosition, fitView } = useReactFlow();
+  const { getNodes, getEdges, screenToFlowPosition, fitView } = useReactFlow();
 
   const onConnect: OnConnect = useCallback(params => {
     connectingNodeId.current = null;
@@ -176,6 +178,30 @@ export default function useReactFlowConnection() {
     [nodes, edges]
   );
 
+  const isValidConnection: IsValidConnection = useCallback(
+    connection => {
+      const nodes = getNodes();
+      const edges = getEdges();
+      const target = nodes.find(node => node.id === connection.target);
+      const hasCycle = (node: Node, visited = new Set()) => {
+        if (visited.has(node.id)) return false;
+
+        visited.add(node.id);
+
+        getOutgoers(node, nodes, edges).forEach(outGoer => {
+          if (outGoer.id === connection.source) return true;
+          if (hasCycle(outGoer, visited)) return true;
+        });
+      };
+
+      if (!target) return false;
+      if (target.id === connection.source) return false;
+
+      return !hasCycle(target);
+    },
+    [getNodes, getEdges]
+  );
+
   return {
     nodes,
     edges,
@@ -186,5 +212,6 @@ export default function useReactFlowConnection() {
     onConnectStart,
     onConnectEnd,
     onLayout,
+    isValidConnection,
   };
 }
