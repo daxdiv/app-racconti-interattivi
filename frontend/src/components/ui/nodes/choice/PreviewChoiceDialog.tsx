@@ -38,10 +38,10 @@ function PreviewChoiceDialog({ data, trigger }: PreviewChoiceDialogProps) {
             </p>
 
             <div className="flex justify-center items-center gap-x-5">
-              <div className="flex justify-center items-center transition-colors bg-muted-foreground/65 hover:bg-muted-foreground/50 rounded-full size-28 cursor-pointer">
+              <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-28">
                 {data.options[0]}
               </div>
-              <div className="flex justify-center items-center transition-colors bg-muted-foreground/65 hover:bg-muted-foreground/50 rounded-full size-28 cursor-pointer">
+              <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-28">
                 {data.options[1]}
               </div>
             </div>
