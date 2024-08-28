@@ -50,6 +50,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
           type="target"
           position={Position.Left}
           style={{ padding: "3px" }}
+          isConnectableStart={false}
         />
       )}
       <Card className="w-[300px]">

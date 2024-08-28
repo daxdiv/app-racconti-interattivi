@@ -55,6 +55,7 @@ function ChoiceNode(props: ChoiceNodeProps) {
         type="target"
         position={Position.Left}
         style={{ padding: "3px" }}
+        isConnectableStart={false}
       />
       <Card className="w-[300px] border-[1.5px] border-yellow-500">
         <CardHeader className="flex flex-row justify-between items-center space-y-0">
