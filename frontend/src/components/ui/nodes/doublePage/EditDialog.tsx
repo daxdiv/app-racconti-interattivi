@@ -22,6 +22,7 @@ import useNodeUtils from "@/hooks/useNodeUtils";
 import { useState } from "react";
 import useUploadMedia from "@/hooks/useUploadMedia";
 import { useReactFlow, type Node } from "@xyflow/react";
+import { equalObjects } from "@/lib/utils";
 
 type EditNodeDialogProps = {
   id: string;
@@ -29,7 +30,7 @@ type EditNodeDialogProps = {
 
 function EditDialog({ id }: EditNodeDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-  const { getNodeData, isNodeDataEqual } = useNodeUtils();
+  const { getNodeData } = useNodeUtils();
   const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
   const data = getNodeData(id) as DoublePageNodeData;
   const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
@@ -39,6 +40,36 @@ function EditDialog({ id }: EditNodeDialogProps) {
   });
   const backgroundImageObjectURL = URL.createObjectURL(data.preview.backgroundImage);
   const audioObjectURL = URL.createObjectURL(data.preview.audio);
+
+  const handleSave = () => {
+    const isImageUploaded = data.preview.backgroundImage.size > 0;
+    const isAudioUploaded = data.preview.audio.size > 0;
+
+    const oldData: Partial<DoublePageNodeData> = {
+      label: data.label,
+      leftPageNumber: data.leftPageNumber,
+      rightPageNumber: data.rightPageNumber,
+      pages: data.pages,
+    };
+    const newData: Partial<DoublePageNodeData> = {
+      label: data.preview.label,
+      leftPageNumber: data.preview.leftPageNumber,
+      rightPageNumber: data.preview.rightPageNumber,
+      pages: data.preview.pages,
+    };
+
+    if (equalObjects(oldData, newData) && !isImageUploaded && !isAudioUploaded) return;
+
+    if (isImageUploaded) uploadBackgroundImageMutation.mutate();
+    if (isAudioUploaded) uploadAudioMutation.mutate();
+
+    updateNodeData(id, ({ data }) => ({
+      ...data.preview,
+      preview: data.preview,
+    }));
+
+    toast.success("Modifiche salvate", { duration: 3000 });
+  };
 
   return (
     <AlertDialog
@@ -96,33 +127,7 @@ function EditDialog({ id }: EditNodeDialogProps) {
         <AlertDialogFooter>
           <AlertDialogAction
             className="bg-confirm text-primary-foreground hover:bg-confirm-foreground flex justify-center items-center"
-            onClick={() => {
-              if (
-                isNodeDataEqual(data, {
-                  label: data.preview.label,
-                  leftPageNumber: data.preview.leftPageNumber,
-                  rightPageNumber: data.preview.rightPageNumber,
-                  pages: data.preview.pages,
-                }) &&
-                data.preview.backgroundImage.size <= 0 &&
-                data.preview.audio.size <= 0
-              )
-                return;
-
-              if (data.preview.backgroundImage.size) {
-                uploadBackgroundImageMutation.mutate();
-              }
-              if (data.preview.audio.size) {
-                uploadAudioMutation.mutate();
-              }
-
-              updateNodeData(id, {
-                ...data.preview,
-                preview: data.preview,
-              });
-
-              toast.success("Modifiche salvate", { duration: 3000 });
-            }}
+            onClick={handleSave}
           >
             <Save
               size={16}
@@ -152,70 +157,49 @@ function EditDialog({ id }: EditNodeDialogProps) {
             }
           />
 
-          {!isNodeDataEqual(data, {
-            label: data.preview.label,
-            leftPageNumber: data.preview.leftPageNumber,
-            rightPageNumber: data.preview.rightPageNumber,
-            pages: data.preview.pages,
-          }) ||
-          data.preview.backgroundImage.size > 0 ||
-          data.preview.audio.size > 0 ? (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  type="button"
-                  className="flex justify-center items-center"
-                >
-                  <X
-                    size={16}
-                    className="mr-2"
-                  />
-                  Annulla
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Hai effettuato delle modifiche, uscire senza salvare?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription />
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogAction
-                    className="bg-destructive hover:bg-destructive/70"
-                    onClick={() => {
-                      setAlertDialogOpen(false);
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button>
+                <X
+                  size={16}
+                  className="mr-2"
+                />
+                Annulla
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Uscire senza salvare?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Le modifiche non salvate andranno perse
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction
+                  className="bg-destructive hover:bg-destructive/70"
+                  onClick={() => {
+                    setAlertDialogOpen(false);
 
-                      // NOTE: workaround to reset the node data
-                      updateNodeData(id, {
-                        preview: {
-                          label: data.label,
-                          leftPageNumber: data.leftPageNumber,
-                          rightPageNumber: data.rightPageNumber,
-                          backgroundImage: new File([], ""),
-                          pages: data.pages,
-                          audio: new File([], ""),
-                        },
-                      });
-                    }}
-                  >
-                    Si
-                  </AlertDialogAction>
-                  <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
-                    No
-                  </AlertDialogCancel>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          ) : (
-            <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
-              <X
-                size={16}
-                className="mr-2"
-              />
-              Annulla
-            </AlertDialogCancel>
-          )}
+                    updateNodeData(id, {
+                      preview: {
+                        label: data.label,
+                        leftPageNumber: data.leftPageNumber,
+                        rightPageNumber: data.rightPageNumber,
+                        backgroundImage: new File([], ""),
+                        pages: data.pages,
+                        audio: new File([], ""),
+                      },
+                    });
+                  }}
+                >
+                  Si
+                </AlertDialogAction>
+                <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
+                  No
+                </AlertDialogCancel>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

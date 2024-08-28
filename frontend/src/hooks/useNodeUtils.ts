@@ -152,18 +152,6 @@ function useNodeUtils() {
 
     return node.data;
   };
-  const isNodeDataEqual = (
-    data: DoublePageNodeData,
-    preview: Omit<DoublePageNodeData["preview"], "backgroundImage" | "audio">
-  ) => {
-    const dataKeys = Object.keys(preview) as (keyof DoublePageNodeData["preview"])[];
-    const previewDataMap = dataKeys.reduce((acc, key) => {
-      acc[key] = data[key];
-      return acc;
-    }, {} as Record<keyof DoublePageNodeData["preview"], unknown>);
-
-    return JSON.stringify(previewDataMap) === JSON.stringify(preview);
-  };
 
   return {
     onNodeDelete,
@@ -171,7 +159,6 @@ function useNodeUtils() {
     isNodeUnlinked,
     getNode,
     getNodeData,
-    isNodeDataEqual,
   };
 }
 
