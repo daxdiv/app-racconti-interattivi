@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useReactFlow, type Node } from "@xyflow/react";
 
 import toast from "react-hot-toast";
 
@@ -9,6 +10,7 @@ export default function useUploadMedia(
     audio: File;
   }
 ) {
+  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
   const queryClient = useQueryClient();
   const uploadBackgroundImageMutation = useMutation({
     mutationKey: ["upload-background", id],
@@ -41,9 +43,23 @@ export default function useUploadMedia(
       queryClient.invalidateQueries({
         queryKey: ["get-background", id],
       });
+      updateNodeData(id, ({ data }) => ({
+        ...data.preview,
+        preview: {
+          ...data.preview,
+          backgroundImage: new File([], ""),
+        },
+      }));
     },
     onError(error) {
       toast.error(`Error uploading background: ${error.message.toLowerCase()}`);
+      updateNodeData(id, ({ data }) => ({
+        ...data.preview,
+        preview: {
+          ...data.preview,
+          backgroundImage: new File([], ""),
+        },
+      }));
     },
   });
   const uploadAudioMutation = useMutation({
@@ -74,9 +90,23 @@ export default function useUploadMedia(
       queryClient.invalidateQueries({
         queryKey: ["get-audio", id],
       });
+      updateNodeData(id, ({ data }) => ({
+        ...data.preview,
+        preview: {
+          ...data.preview,
+          audio: new File([], ""),
+        },
+      }));
     },
     onError(error) {
       toast.error(`Error uploading audio: ${error.message.toLowerCase()}`);
+      updateNodeData(id, ({ data }) => ({
+        ...data.preview,
+        preview: {
+          ...data.preview,
+          audio: new File([], ""),
+        },
+      }));
     },
   });
 
