@@ -1,6 +1,8 @@
 import { Textarea } from "@/components/ui/textarea";
+import { MAX_TEXT_CONTENT_LENGTH } from "@/constants";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { useReactFlow, type Node } from "@xyflow/react";
+import toast from "react-hot-toast";
 
 type PageTextContentsProps = {
   id: string;
@@ -20,6 +22,14 @@ function PageTextContents({ id }: PageTextContentsProps) {
         value={data.preview.pages[0].text.content}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
           const value = e.target.value;
+
+          if (value.length > MAX_TEXT_CONTENT_LENGTH) {
+            toast.error(
+              `Il contenuto di una pagina può essere al massimo ${MAX_TEXT_CONTENT_LENGTH} caratteri`
+            );
+
+            return;
+          }
 
           updateNodeData(id, {
             preview: {
@@ -44,6 +54,14 @@ function PageTextContents({ id }: PageTextContentsProps) {
         value={data.preview.pages[1].text.content}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
           const value = e.target.value;
+
+          if (value.length > MAX_TEXT_CONTENT_LENGTH) {
+            toast.error(
+              `Il contenuto di una pagina può essere al massimo ${MAX_TEXT_CONTENT_LENGTH} caratteri`
+            );
+
+            return;
+          }
 
           updateNodeData(id, {
             preview: {

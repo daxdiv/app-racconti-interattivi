@@ -52,3 +52,4 @@ export const INITIAL_NODES: Node<DoublePageNodeData>[] = [
 ];
 export const MAX_FILE_SIZE = 104_857_600; // NOTE: 100MB
 export const TOOLTIP_DELAY_DURATION = 400; // ms
+export const MAX_TEXT_CONTENT_LENGTH = 900;
