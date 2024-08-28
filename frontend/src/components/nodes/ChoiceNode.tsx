@@ -12,7 +12,7 @@ import {
   type Node,
   type NodeProps,
 } from "@xyflow/react";
-import { Trash2, Unlink } from "lucide-react";
+import { Eye, Trash2, Unlink } from "lucide-react";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { TOOLTIP_DELAY_DURATION } from "@/constants";
 import {
@@ -34,16 +34,20 @@ import {
 } from "@/components/ui/alert-dialog";
 import EditChoiceDialog from "@/components/ui/nodes/choice/EditChoiceDialog";
 import { truncate } from "@/lib/utils";
+import PreviewChoiceDialog from "@/components/ui/nodes/choice/PreviewChoiceDialog";
+import { Button } from "@/components/ui/button";
 
 type ChoiceNode = Node<ChoiceNodeData>;
 type ChoiceNodeProps = NodeProps<ChoiceNode>;
 
 function ChoiceNode(props: ChoiceNodeProps) {
   const connections = useHandleConnections({ type: "source" });
-  const { isNodeUnlinked, onNodeDelete } = useNodeUtils();
+  const { isNodeUnlinked, onNodeDelete, getNodeData } = useNodeUtils();
 
   const { id } = props;
   const { label } = props.data;
+
+  const data = getNodeData(id) as ChoiceNodeData;
 
   return (
     <>
@@ -114,8 +118,24 @@ function ChoiceNode(props: ChoiceNodeProps) {
           </div>
         </CardHeader>
 
-        <CardContent>
-          <EditChoiceDialog id={id} />
+        <CardContent className="flex justify-center items-center gap-x-1">
+          <EditChoiceDialog
+            id={id}
+            data={data}
+          />
+          <PreviewChoiceDialog
+            id={id}
+            data={data}
+            trigger={
+              <Button variant="outline">
+                <Eye
+                  className="mr-2"
+                  size={16}
+                />{" "}
+                Anteprima
+              </Button>
+            }
+          />
         </CardContent>
       </Card>
       <Handle
