@@ -1,16 +1,15 @@
 import { Label } from "@/components/ui/label";
-import useNodeUtils from "@/hooks/useNodeUtils";
 
-type ChoiceAudiosFallbackProps = {
+type ChoiceAudiosFallbackProps<T> = {
   id: string;
+  data: T;
   audios: [string, string, string];
 };
 
-function ChoiceAudiosFallback({ id, audios }: ChoiceAudiosFallbackProps) {
-  const { getNodeData } = useNodeUtils();
-
-  const data = getNodeData(id) as ChoiceNodeData;
-
+function ChoiceAudiosFallback<T extends ChoiceNodeData | ChoiceNodeDataWithoutPreview>({
+  data,
+  audios,
+}: ChoiceAudiosFallbackProps<T>) {
   return (
     <div className="flex items-center gap-x-2">
       {data.audio.some(a => a.size > 0) &&

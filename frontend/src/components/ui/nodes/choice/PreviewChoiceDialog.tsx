@@ -11,7 +11,7 @@ import { cn, truncate } from "@/lib/utils";
 
 type PreviewChoiceDialogProps = {
   id: string;
-  data: ChoiceNodeData;
+  data: ChoiceNodeDataWithoutPreview;
   trigger: React.ReactNode;
 };
 

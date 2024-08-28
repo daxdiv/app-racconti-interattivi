@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Edit, Save, X } from "lucide-react";
+import { Edit, Eye, Save, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ import ChoiceText from "@/components/ui/nodes/choice/ChoiceText";
 import ChoiceOptions from "@/components/ui/nodes/choice/ChoiceOptions";
 import ChoiceAudios from "@/components/ui/nodes/choice/ChoiceAudios";
 import ChoiceAudiosFallback from "@/components/ui/nodes/choice/ChoiceAudiosFallback";
+import PreviewChoiceDialog from "@/components/ui/nodes/choice/PreviewChoiceDialog";
 
 type EditChoiceDialogProps = {
   id: string;
@@ -30,7 +31,6 @@ type EditChoiceDialogProps = {
 
 function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-  const [confirmUnsavedDialogOpen, setConfirmUnsavedDialogOpen] = useState(false);
   const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
 
   const imageObjectURL = useMemo(() => URL.createObjectURL(data.image), [data.image]);
@@ -117,21 +117,32 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
         </AlertDialogHeader>
         <AlertDialogDescription />
 
-        <ChoiceLabel id={id} />
+        <ChoiceLabel
+          id={id}
+          data={data}
+        />
 
         <ChoiceImage
           id={id}
+          data={data}
           image={imageObjectURL}
         />
 
-        <ChoiceText id={id} />
+        <ChoiceText
+          id={id}
+          data={data}
+        />
 
-        <ChoiceOptions id={id} />
+        <ChoiceOptions
+          id={id}
+          data={data}
+        />
 
         <ChoiceAudios id={id} />
 
         <ChoiceAudiosFallback
           id={id}
+          data={data}
           audios={audiosObjectURLs}
         />
 
@@ -147,16 +158,36 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
             Salva
           </AlertDialogAction>
 
-          <AlertDialog
-            open={confirmUnsavedDialogOpen}
-            onOpenChange={setConfirmUnsavedDialogOpen}
-          >
+          <PreviewChoiceDialog
+            id={id}
+            data={data.preview}
+            trigger={
+              <Button>
+                <Eye
+                  className="mr-2"
+                  size={16}
+                />{" "}
+                Anteprima
+              </Button>
+            }
+          />
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button>
+                <X
+                  size={16}
+                  className="mr-2"
+                />
+                Annulla
+              </Button>
+            </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Hai effettuato delle modifiche, uscire senza salvare?
-                </AlertDialogTitle>
-                <AlertDialogDescription />
+                <AlertDialogTitle>Uscire senza salvare?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Le modifiche non salvate andranno perse
+                </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogAction
@@ -184,39 +215,6 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-
-          <Button
-            onClick={() => {
-              const isImageUploaded = data.preview.image.size > 0;
-              const isSomeAudioUploaded = data.preview.audio.some(a => a.size > 0);
-
-              if (
-                !equalObjects(
-                  { label: data.label, text: data.text, options: data.options },
-                  {
-                    label: data.preview.label,
-                    text: data.preview.text,
-                    options: data.preview.options,
-                  }
-                ) ||
-                isImageUploaded ||
-                isSomeAudioUploaded
-              ) {
-                // NOTE if there are unsaved changes, open confirm dialog
-                setConfirmUnsavedDialogOpen(true);
-
-                return;
-              }
-
-              setAlertDialogOpen(false);
-            }}
-          >
-            <X
-              size={16}
-              className="mr-2"
-            />
-            Annulla
-          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

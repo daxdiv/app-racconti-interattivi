@@ -1,16 +1,12 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import useNodeUtils from "@/hooks/useNodeUtils";
 import { useReactFlow, type Node } from "@xyflow/react";
 import toast from "react-hot-toast";
 
-type ChoiceOptionsProps = { id: string };
+type ChoiceOptionsProps = { id: string; data: ChoiceNodeData };
 
-function ChoiceOptions({ id }: ChoiceOptionsProps) {
-  const { getNodeData } = useNodeUtils();
+function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
   const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
-
-  const data = getNodeData(id) as ChoiceNodeData;
 
   return (
     <div className="flex justify-center items-center gap-x-2">
