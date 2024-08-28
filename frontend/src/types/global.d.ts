@@ -45,6 +45,13 @@ declare global {
       options: [string, string];
     };
   }
+  interface ChoiceNodeDataWithoutPreview {
+    label: string;
+    image: File;
+    text: string;
+    audio: [File, File, File];
+    options: [string, string];
+  }
 }
 
 export {};
