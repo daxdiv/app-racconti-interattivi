@@ -5,10 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function equalObjects(
-  obj1: Record<string, unknown>,
-  obj2: Record<string, unknown>
-) {
+export function equalObjects<T extends Record<string, unknown>>(obj1: T, obj2: T) {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
 }
 
