@@ -1,17 +1,14 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import useNodeUtils from "@/hooks/useNodeUtils";
 import { useReactFlow, type Node } from "@xyflow/react";
 
 type ChoiceTextProps = {
   id: string;
+  data: ChoiceNodeData;
 };
 
-function ChoiceText({ id }: ChoiceTextProps) {
-  const { getNodeData } = useNodeUtils();
+function ChoiceText({ id, data }: ChoiceTextProps) {
   const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
-
-  const data = getNodeData(id) as ChoiceNodeData;
 
   return (
     <>

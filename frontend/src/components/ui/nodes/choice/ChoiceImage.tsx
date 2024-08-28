@@ -1,4 +1,3 @@
-import useNodeUtils from "@/hooks/useNodeUtils";
 import { cn } from "@/lib/utils";
 import { useReactFlow, type Node } from "@xyflow/react";
 import { Label } from "@/components/ui/label";
@@ -9,14 +8,12 @@ import toast from "react-hot-toast";
 
 type ChoiceImageProps = {
   id: string;
+  data: ChoiceNodeData;
   image: string;
 };
 
-function ChoiceImage({ id, image }: ChoiceImageProps) {
-  const { getNodeData } = useNodeUtils();
+function ChoiceImage({ id, data, image }: ChoiceImageProps) {
   const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
-
-  const data = getNodeData(id) as ChoiceNodeData;
 
   return (
     <div className="flex justify-center items-center gap-x-2">
