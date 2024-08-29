@@ -102,6 +102,13 @@ function useNodeUtils() {
             new File([], ""),
           ] as ChoiceNodeData["audio"],
           options: ["", ""] as ChoiceNodeData["options"],
+          feedback: {
+            list: [
+              { text: "", audio: new File([], "") },
+              { text: "", audio: new File([], "") },
+            ],
+            option: "",
+          },
           preview: {
             label: label || "",
             image: new File([], ""),
@@ -112,6 +119,13 @@ function useNodeUtils() {
               new File([], ""),
             ] as ChoiceNodeData["audio"],
             options: ["", ""] as ChoiceNodeData["options"],
+            feedback: {
+              list: [
+                { text: "", audio: new File([], "") },
+                { text: "", audio: new File([], "") },
+              ],
+              option: "",
+            },
           },
         };
 
