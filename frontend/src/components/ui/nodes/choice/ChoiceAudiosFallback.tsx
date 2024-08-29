@@ -1,32 +1,28 @@
 import { Label } from "@/components/ui/label";
 
-type ChoiceAudiosFallbackProps<T> = {
+type ChoiceAudiosFallbackProps = {
   id: string;
-  data: T;
-  audios: [string, string, string];
+  audios: [File, File];
+  audiosUrls: [string, string];
 };
 
-function ChoiceAudiosFallback<T extends ChoiceNodeData | ChoiceNodeDataWithoutPreview>({
-  data,
-  audios,
-}: ChoiceAudiosFallbackProps<T>) {
+function ChoiceAudiosFallback({ audios, audiosUrls }: ChoiceAudiosFallbackProps) {
   return (
     <div className="flex items-center gap-x-2">
-      {data.audio.some(a => a.size > 0) &&
-        data.audio.map((a, i) =>
+      {audios.some(a => a.size > 0) &&
+        audios.map((a, i) =>
           a.size > 0 ? (
             <div
               key={`${a.name}-${i}`}
-              className="flex justify-center items-center gap-x-2 w-1/3"
+              className="flex-row justify-start items-center gap-x-2 w-1/2"
             >
               <Label className="font-extrabold">Audio attuale</Label>
               <audio
                 controls
                 autoPlay={false}
-                className="w-1/2"
               >
                 <source
-                  src={audios[i]}
+                  src={audiosUrls[i]}
                   type="audio/mp3"
                 />
               </audio>
@@ -34,7 +30,7 @@ function ChoiceAudiosFallback<T extends ChoiceNodeData | ChoiceNodeDataWithoutPr
           ) : (
             <p
               key={`fallback-${i}`}
-              className="flex justify-center items-center text-sm text-primary/70 ml-2 w-1/3"
+              className="flex-row justify-start items-center text-sm text-primary/70 ml-2 w-1/2"
             >
               Nessun audio selezionato
             </p>

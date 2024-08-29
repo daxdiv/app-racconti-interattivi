@@ -13,43 +13,7 @@ function ChoiceAudios({ id }: ChoiceAudiosProps) {
 
   return (
     <div className="flex justify-center items-center gap-x-2">
-      <div className="flex-row w-1/3">
-        <Label
-          htmlFor="audio-text"
-          className="font-extrabold"
-        >
-          Audio domanda
-        </Label>
-        <Input
-          id="audio-text"
-          type="file"
-          accept="audio/mp3"
-          placeholder="Audio domanda"
-          className="w-full cursor-pointer"
-          onChange={e => {
-            const file = e.target.files?.[0];
-
-            if (!file) return;
-            if (file.size > MAX_FILE_SIZE) {
-              toast.error("Audio troppo grande");
-
-              e.target.value = "";
-
-              return;
-            }
-
-            updateNodeData(id, ({ data }) => ({
-              ...data,
-              preview: {
-                ...data.preview,
-                audio: [file, data.preview.audio[1], data.preview.audio[2]],
-              },
-            }));
-          }}
-        />
-      </div>
-
-      <div className="flex-row w-1/3">
+      <div className="flex-row w-1/2">
         <Label
           htmlFor="audio-option-1"
           className="font-extrabold"
@@ -78,14 +42,14 @@ function ChoiceAudios({ id }: ChoiceAudiosProps) {
               ...data,
               preview: {
                 ...data.preview,
-                audio: [data.preview.audio[0], file, data.preview.audio[2]],
+                audio: [data.audio[0], file, data.audio[2]],
               },
             }));
           }}
         />
       </div>
 
-      <div className="flex-row w-1/3">
+      <div className="flex-row w-1/2">
         <Label
           htmlFor="audio-option-2"
           className="font-extrabold"
@@ -114,7 +78,7 @@ function ChoiceAudios({ id }: ChoiceAudiosProps) {
               ...data,
               preview: {
                 ...data.preview,
-                audio: [data.preview.audio[0], data.preview.audio[1], file],
+                audio: [data.audio[0], data.audio[1], file],
               },
             }));
           }}
