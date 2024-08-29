@@ -183,6 +183,12 @@ export default function useReactFlowConnection() {
       const nodes = getNodes();
       const edges = getEdges();
       const target = nodes.find(node => node.id === connection.target);
+
+      if (!target) return false;
+      if (target.id === connection.source) return false;
+      if (target.id.includes("choice") && connection.source.includes("choice"))
+        return false;
+
       const hasCycle = (node: Node, visited = new Set()) => {
         if (visited.has(node.id)) return false;
 
@@ -193,9 +199,6 @@ export default function useReactFlowConnection() {
           if (hasCycle(outGoer, visited)) return true;
         });
       };
-
-      if (!target) return false;
-      if (target.id === connection.source) return false;
 
       return !hasCycle(target);
     },
