@@ -23,6 +23,7 @@ import ChoiceOptions from "@/components/ui/nodes/choice/ChoiceOptions";
 import ChoiceAudios from "@/components/ui/nodes/choice/ChoiceAudios";
 import ChoiceAudiosFallback from "@/components/ui/nodes/choice/ChoiceAudiosFallback";
 import PreviewChoiceDialog from "@/components/ui/nodes/choice/PreviewChoiceDialog";
+import ChoiceFeedback from "@/components/ui/nodes/choice/ChoiceFeedback";
 
 type EditChoiceDialogProps = {
   id: string;
@@ -47,11 +48,13 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
       label: data.label,
       text: data.text,
       options: data.options,
+      feedback: data.feedback,
     };
     const newData: Partial<ChoiceNodeData> = {
       label: data.preview.label,
       text: data.preview.text,
       options: data.preview.options,
+      feedback: data.preview.feedback,
     };
 
     if (equalObjects(oldData, newData) && !isImageUploaded && !isSomeAudioUploaded)
@@ -149,10 +152,17 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
 
         <ChoiceAudios id={id} />
 
-        <ChoiceAudiosFallback
+        {data.audio.some(a => a.size > 0) && (
+          <ChoiceAudiosFallback
+            id={id}
+            audios={[data.audio[1], data.audio[2]]}
+            audiosUrls={[audiosObjectURLs[1], audiosObjectURLs[2]]}
+          />
+        )}
+
+        <ChoiceFeedback
           id={id}
-          audios={[data.audio[1], data.audio[2]]}
-          audiosUrls={[audiosObjectURLs[1], audiosObjectURLs[2]]}
+          data={data}
         />
 
         <AlertDialogFooter>
@@ -212,6 +222,7 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
                         text: data.text,
                         audio: data.audio,
                         options: data.options,
+                        feedback: data.feedback,
                       },
                     }));
                   }}
