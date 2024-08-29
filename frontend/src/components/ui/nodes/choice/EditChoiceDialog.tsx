@@ -81,14 +81,22 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
     <AlertDialog
       open={alertDialogOpen}
       onOpenChange={open => {
-        const isImageUploaded = data.preview.image.size > 0;
-        const isSomeAudioUploaded = data.preview.audio.some(a => a.size > 0);
-
         setAlertDialogOpen(open);
 
-        if (!open) {
-          if (isImageUploaded) URL.revokeObjectURL(imageObjectURL);
-          if (isSomeAudioUploaded) audiosObjectURLs.forEach(u => URL.revokeObjectURL(u));
+        if (open) return;
+
+        const isImageUploaded = data.preview.image.size > 0;
+        const audiosIdxToRevoke = data.preview.audio.map((a, i) =>
+          a.size > 0 ? i : null
+        );
+        const isSomeAudiosUploaded = audiosIdxToRevoke.length > 0;
+
+        if (isImageUploaded) URL.revokeObjectURL(imageObjectURL);
+
+        if (isSomeAudiosUploaded) {
+          audiosIdxToRevoke.forEach(idx => {
+            if (idx) URL.revokeObjectURL(audiosObjectURLs[idx]);
+          });
         }
       }}
     >
@@ -131,6 +139,7 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
         <ChoiceText
           id={id}
           data={data}
+          audio={audiosObjectURLs[0]}
         />
 
         <ChoiceOptions
@@ -142,8 +151,8 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
 
         <ChoiceAudiosFallback
           id={id}
-          data={data}
-          audios={audiosObjectURLs}
+          audios={[data.audio[1], data.audio[2]]}
+          audiosUrls={[audiosObjectURLs[1], audiosObjectURLs[2]]}
         />
 
         <AlertDialogFooter>
