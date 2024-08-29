@@ -2,6 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useReactFlow, type Node } from "@xyflow/react";
 import toast from "react-hot-toast";
+import { MAX_OPTION_LENGTH } from "@/constants";
 
 type ChoiceOptionsProps = { id: string; data: ChoiceNodeData };
 
@@ -22,10 +23,18 @@ function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
           value={data.preview.options[0]}
           placeholder="Parlarci"
           onChange={e => {
-            const spaceCount = (e.target.value.match(/ /g) || []).length;
+            const value = e.target.value;
+            const spaceCount = (value.match(/ /g) || []).length;
 
             if (spaceCount > 1) {
               toast.error("Le opzioni possono essere di massimo due parole");
+
+              return;
+            }
+            if (value.length > MAX_OPTION_LENGTH) {
+              toast.error(
+                `Le opzioni possono essere di massimo ${MAX_OPTION_LENGTH} caratteri`
+              );
 
               return;
             }
@@ -34,7 +43,7 @@ function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
               ...data,
               preview: {
                 ...data.preview,
-                options: [e.target.value, data.preview.options[1]],
+                options: [value, data.preview.options[1]],
               },
             }));
           }}
@@ -53,10 +62,18 @@ function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
           value={data.preview.options[1]}
           placeholder="Non parlarci"
           onChange={e => {
-            const spaceCount = (e.target.value.match(/ /g) || []).length;
+            const value = e.target.value;
+            const spaceCount = (value.match(/ /g) || []).length;
 
             if (spaceCount > 1) {
               toast.error("Le opzioni possono essere di massimo due parole");
+
+              return;
+            }
+            if (value.length > MAX_OPTION_LENGTH) {
+              toast.error(
+                `Le opzioni possono essere di massimo ${MAX_OPTION_LENGTH} caratteri`
+              );
 
               return;
             }
@@ -65,7 +82,7 @@ function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
               ...data,
               preview: {
                 ...data.preview,
-                options: [data.preview.options[0], e.target.value],
+                options: [data.preview.options[0], value],
               },
             }));
           }}
