@@ -17,10 +17,10 @@ import PageTextContents from "@/components/ui/nodes/doublePage/PageTextContents"
 import PageTextPositions from "@/components/ui/nodes/doublePage/PageTextPositions";
 import PreviewDialog from "@/components/ui/nodes/doublePage/PreviewDialog";
 import toast from "react-hot-toast";
-import useDownloadMedia from "@/hooks/useDownloadMedia";
+import useDoublePageDownload from "@/hooks/nodes/doublePage/useDoublePageDownload";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { useState } from "react";
-import useUploadMedia from "@/hooks/useUploadMedia";
+import useDoublePageUpload from "@/hooks/nodes/doublePage/useDoublePageUpload";
 import { useReactFlow, type Node } from "@xyflow/react";
 import { equalObjects } from "@/lib/utils";
 
@@ -33,8 +33,8 @@ function EditDialog({ id }: EditNodeDialogProps) {
   const { getNodeData } = useNodeUtils();
   const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
   const data = getNodeData(id) as DoublePageNodeData;
-  const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
-  const { uploadBackgroundImageMutation, uploadAudioMutation } = useUploadMedia(id, {
+  const { backgroundImageQuery, audioQuery } = useDoublePageDownload(id);
+  const { uploadBackgroundImageMutation, uploadAudioMutation } = useDoublePageUpload(id, {
     backgroundImage: data.preview.backgroundImage,
     audio: data.preview.audio,
   });
