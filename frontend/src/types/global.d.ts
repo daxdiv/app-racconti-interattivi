@@ -67,6 +67,7 @@ declare global {
     text: string;
     audio: [File, File, File];
     options: [string, string];
+    feedback: Feedback;
   }
 }
 
