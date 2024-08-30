@@ -21,7 +21,6 @@ import ChoiceImage from "@/components/ui/nodes/choice/ChoiceImage";
 import ChoiceText from "@/components/ui/nodes/choice/ChoiceText";
 import ChoiceOptions from "@/components/ui/nodes/choice/ChoiceOptions";
 import ChoiceAudios from "@/components/ui/nodes/choice/ChoiceAudios";
-import ChoiceAudiosFallback from "@/components/ui/nodes/choice/ChoiceAudiosFallback";
 import PreviewChoiceDialog from "@/components/ui/nodes/choice/PreviewChoiceDialog";
 import ChoiceFeedback from "@/components/ui/nodes/choice/ChoiceFeedback";
 
@@ -39,10 +38,17 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
     () => data.audio.map(a => URL.createObjectURL(a)),
     [data.audio]
   ) as [string, string, string];
+  const feedbackAudiosObjectURLs = useMemo(
+    () => data.feedback.list.map(li => URL.createObjectURL(li.audio)),
+    [data.feedback.list]
+  ) as [string, string];
 
   const handleSave = () => {
     const isImageUploaded = data.preview.image.size > 0;
     const isSomeAudioUploaded = data.preview.audio.some(a => a.size > 0);
+    const isSomeFeedbackAudioUploaded = data.preview.feedback.list.some(
+      li => li.audio.size > 0
+    );
 
     const oldData: Partial<ChoiceNodeData> = {
       label: data.label,
@@ -57,7 +63,12 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
       feedback: data.preview.feedback,
     };
 
-    if (equalObjects(oldData, newData) && !isImageUploaded && !isSomeAudioUploaded)
+    if (
+      equalObjects(oldData, newData) &&
+      !isImageUploaded &&
+      !isSomeAudioUploaded &&
+      !isSomeFeedbackAudioUploaded
+    )
       return;
     if (isImageUploaded)
       updateNodeData(id, {
@@ -67,6 +78,13 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
       updateNodeData(id, {
         audio: data.preview.audio,
       });
+    if (isSomeFeedbackAudioUploaded)
+      updateNodeData(id, {
+        feedback: {
+          ...data.preview.feedback,
+          list: data.preview.feedback.list,
+        },
+      });
 
     updateNodeData(id, {
       ...newData,
@@ -74,6 +92,19 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
         ...data.preview,
         image: new File([], ""),
         audio: [new File([], ""), new File([], ""), new File([], "")],
+        feedback: {
+          ...data.preview.feedback,
+          list: [
+            {
+              ...data.preview.feedback.list[0],
+              audio: new File([], ""),
+            },
+            {
+              ...data.preview.feedback.list[1],
+              audio: new File([], ""),
+            },
+          ],
+        },
       },
     });
 
@@ -92,13 +123,22 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
         const audiosIdxToRevoke = data.preview.audio.map((a, i) =>
           a.size > 0 ? i : null
         );
+        const feedbackAudiosIdxToRevoke = data.preview.feedback.list.map((li, i) =>
+          li.audio.size > 0 ? i : null
+        );
         const isSomeAudiosUploaded = audiosIdxToRevoke.length > 0;
+        const isSomeFeedbackAudioUploaded = feedbackAudiosIdxToRevoke.length > 0;
 
         if (isImageUploaded) URL.revokeObjectURL(imageObjectURL);
 
         if (isSomeAudiosUploaded) {
           audiosIdxToRevoke.forEach(idx => {
             if (idx) URL.revokeObjectURL(audiosObjectURLs[idx]);
+          });
+        }
+        if (isSomeFeedbackAudioUploaded) {
+          feedbackAudiosIdxToRevoke.forEach(idx => {
+            if (idx) URL.revokeObjectURL(feedbackAudiosObjectURLs[idx]);
           });
         }
       }}
@@ -150,19 +190,16 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
           data={data}
         />
 
-        <ChoiceAudios id={id} />
-
-        {data.audio.some(a => a.size > 0) && (
-          <ChoiceAudiosFallback
-            id={id}
-            audios={[data.audio[1], data.audio[2]]}
-            audiosUrls={[audiosObjectURLs[1], audiosObjectURLs[2]]}
-          />
-        )}
+        <ChoiceAudios
+          id={id}
+          audios={[data.audio[1], data.audio[2]]}
+          audiosURLs={[audiosObjectURLs[1], audiosObjectURLs[2]]}
+        />
 
         <ChoiceFeedback
           id={id}
           data={data}
+          audiosURLs={[feedbackAudiosObjectURLs[0], feedbackAudiosObjectURLs[1]]}
         />
 
         <AlertDialogFooter>
