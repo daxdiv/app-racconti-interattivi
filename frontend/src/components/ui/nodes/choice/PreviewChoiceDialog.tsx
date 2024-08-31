@@ -28,25 +28,59 @@ function PreviewChoiceDialog({ data, trigger }: PreviewChoiceDialogProps) {
         </DialogHeader>
 
         <Card>
-          <CardContent className="pt-6 justify-center items-center gap-y-3">
+          <CardContent className="pt-6 flex flex-col justify-center items-center">
             {data.text && (
               <p
-                className={cn({
+                className={cn("break-words", {
                   "text-muted-foreground": data.text.length === 0,
                 })}
               >
-                {data.text || "Cosa deve fare Cappuccetto Rosso quando incontra il lupo?"}
+                {data.text}
               </p>
             )}
 
             <div className="flex justify-center items-center gap-x-5">
-              <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-28">
+              <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-32">
                 {data.options[0]}
               </div>
-              <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-28">
+              <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-32">
                 {data.options[1]}
               </div>
             </div>
+
+            {data.options[0] && (
+              <div className="flex-col mt-4">
+                <p className="font-extrabold justify-start mb-2">
+                  {" "}
+                  Feedback scegliendo "{data.options[0]}"
+                </p>
+
+                <div className="flex justify-center items-center flex-col">
+                  <p className="text-sm break-words">{data.feedback.list[0].text}</p>
+
+                  <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-24 text-sm mt-2">
+                    Continuare
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {data.options[1] && (
+              <div className="flex-col mt-4">
+                <p className="font-extrabold mb-2">
+                  {" "}
+                  Feedback scegliendo "{data.options[1]}"
+                </p>
+
+                <div className="flex justify-center items-center flex-col">
+                  <p className="text-sm break-words">{data.feedback.list[0].text}</p>
+
+                  <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-24 text-sm mt-2">
+                    Continuare
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </DialogContent>
