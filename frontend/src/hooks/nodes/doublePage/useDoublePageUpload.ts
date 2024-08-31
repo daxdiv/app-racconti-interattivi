@@ -34,12 +34,9 @@ export default function useUploadMedia(
         throw new Error(error.message);
       }
 
-      const blob = await response.blob();
-
-      return URL.createObjectURL(blob);
+      return response.json();
     },
-    onSuccess(oldData) {
-      URL.revokeObjectURL(oldData);
+    onSuccess() {
       queryClient.invalidateQueries({
         queryKey: ["get-background", id],
       });
@@ -81,12 +78,9 @@ export default function useUploadMedia(
         throw new Error(error.message);
       }
 
-      const blob = await response.blob();
-
-      return URL.createObjectURL(blob);
+      return response.json();
     },
-    onSuccess(oldData) {
-      URL.revokeObjectURL(oldData);
+    onSuccess() {
       queryClient.invalidateQueries({
         queryKey: ["get-audio", id],
       });
