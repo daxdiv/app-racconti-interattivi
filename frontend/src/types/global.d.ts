@@ -65,11 +65,9 @@ declare global {
   }
   interface ChoiceNodeDataWithoutPreview {
     label: string;
-    image: File;
     text: string;
-    audio: [File, File, File];
     options: [string, string];
-    feedback: Feedback;
+    feedback: FeedbackWithoutAudio;
   }
 }
 
