@@ -5,7 +5,7 @@ export default function useDownloadMedia(id: string) {
     queryKey: ["get-background", id],
     queryFn: async () => {
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/uploads/backgrounds/${id}_background`
+        `${import.meta.env.VITE_SERVER_URL}/uploads/page/backgrounds/${id}_background`
       );
 
       if (!response.ok) throw new Error(`Background with id ${id} not found`);
@@ -21,7 +21,7 @@ export default function useDownloadMedia(id: string) {
     queryKey: ["get-audio", id],
     queryFn: async () => {
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/uploads/audios/${id}_audio`
+        `${import.meta.env.VITE_SERVER_URL}/uploads/page/audios/${id}_audio`
       );
 
       if (!response.ok) throw new Error(`Audio with id ${id} not found`);
