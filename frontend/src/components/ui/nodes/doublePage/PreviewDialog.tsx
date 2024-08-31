@@ -9,7 +9,7 @@ import {
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from "@/lib/utils";
-import useDownloadMedia from "@/hooks/useDownloadMedia";
+import useDoublePageDownload from "@/hooks/nodes/doublePage/useDoublePageDownload";
 import { useMemo } from "react";
 
 type PreviewDialogProps = {
@@ -36,7 +36,7 @@ function PreviewDialog({
   media,
   trigger,
 }: PreviewDialogProps) {
-  const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
+  const { backgroundImageQuery, audioQuery } = useDoublePageDownload(id);
   const audioSrc = audioQuery.data || media?.audio || "";
   const audio = useMemo(() => new Audio(audioSrc), [audioSrc]);
 
@@ -88,29 +88,35 @@ function PreviewDialog({
             }
             className="absolute rounded-md object-cover w-full h-full"
           />
-          <div className="absolute w-1/2 h-full border-r border-r-primary border-dashed">
+          <div className="absolute w-1/2  max-w-1/2 h-full border-r border-r-primary border-dashed">
             <p
-              className={cn("whitespace-pre font-extrabold italic absolute", {
-                "top-10": leftTextPosition.includes("Top"),
-                "bottom-10": leftTextPosition.includes("Bottom"),
-                "left-10": leftTextPosition.includes("Left"),
-                "right-10": leftTextPosition.includes("Right"),
-                "top-1/2": leftTextPosition.includes("Middle"),
-              })}
+              className={cn(
+                "whitespace-pre-line font-extrabold italic absolute max-w-full",
+                {
+                  "top-10": leftTextPosition.includes("Top"),
+                  "bottom-10": leftTextPosition.includes("Bottom"),
+                  "left-10": leftTextPosition.includes("Left"),
+                  "right-10": leftTextPosition.includes("Right"),
+                  "top-1/2": leftTextPosition.includes("Middle"),
+                }
+              )}
             >
               {leftTextContent || "C'era una volta..."}
             </p>
           </div>
 
-          <div className="absolute left-1/2 w-1/2 h-full">
+          <div className="absolute left-1/2 w-1/2 max-w-1/2 h-full">
             <p
-              className={cn("whitespace-pre font-extrabold italic absolute", {
-                "top-10": rightTextPosition.includes("Top"),
-                "bottom-10": rightTextPosition.includes("Bottom"),
-                "left-10": rightTextPosition.includes("Left"),
-                "right-10": rightTextPosition.includes("Right"),
-                "top-1/2": rightTextPosition.includes("Middle"),
-              })}
+              className={cn(
+                "whitespace-pre-line font-extrabold italic absolute max-w-full",
+                {
+                  "top-10": rightTextPosition.includes("Top"),
+                  "bottom-10": rightTextPosition.includes("Bottom"),
+                  "left-10": rightTextPosition.includes("Left"),
+                  "right-10": rightTextPosition.includes("Right"),
+                  "top-1/2": rightTextPosition.includes("Middle"),
+                }
+              )}
             >
               {rightTextContent || "...una bambina..."}
             </p>

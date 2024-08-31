@@ -72,6 +72,11 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
       })
     );
 
+    updateNodeData(id, {
+      ...data.preview,
+      preview: data.preview,
+    });
+
     toast.success("Modifiche salvate", { duration: 3000 });
 
     await Promise.all(uploads);
