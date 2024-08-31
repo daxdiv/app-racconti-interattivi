@@ -7,10 +7,10 @@ import toast from "react-hot-toast";
 type ChoiceFeedbackProps = {
   id: string;
   data: ChoiceNodeData;
-  audiosURLs: [string, string];
+  audios: (string | undefined)[] | undefined;
 };
 
-function ChoiceFeedback({ id, data, audiosURLs }: ChoiceFeedbackProps) {
+function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
   const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
 
   return (
@@ -179,12 +179,12 @@ function ChoiceFeedback({ id, data, audiosURLs }: ChoiceFeedbackProps) {
         </div>
       </div>
 
-      {data.feedback.list.some(li => li.audio.size > 0) && (
+      {audios?.some(Boolean) && (
         <div className="flex items-center gap-x-2">
-          {data.feedback.list.map((li, i) =>
-            li.audio.size > 0 ? (
+          {audios.map((a, i) =>
+            a ? (
               <div
-                key={`feedback-audio-${li.audio.name}-${i}`}
+                key={`feedback-audio-${a}-${i}`}
                 className="flex-row justify-start items-center gap-x-2 w-1/2"
               >
                 <Label className="font-extrabold">Audio attuale</Label>
@@ -193,7 +193,7 @@ function ChoiceFeedback({ id, data, audiosURLs }: ChoiceFeedbackProps) {
                   autoPlay={false}
                 >
                   <source
-                    src={audiosURLs[i]}
+                    src={audios[i]}
                     type="audio/mp3"
                   />
                 </audio>

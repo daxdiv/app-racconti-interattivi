@@ -6,11 +6,10 @@ import toast from "react-hot-toast";
 
 type ChoiceAudiosProps = {
   id: string;
-  audios: [File, File];
-  audiosURLs: [string, string];
+  audios: (string | undefined)[] | undefined;
 };
 
-function ChoiceAudios({ id, audios, audiosURLs }: ChoiceAudiosProps) {
+function ChoiceAudios({ id, audios }: ChoiceAudiosProps) {
   const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
 
   return (
@@ -45,7 +44,7 @@ function ChoiceAudios({ id, audios, audiosURLs }: ChoiceAudiosProps) {
                 ...data,
                 preview: {
                   ...data.preview,
-                  audio: [data.audio[0], file, data.audio[2]],
+                  audio: [data.preview.audio[0], file, data.preview.audio[2]],
                 },
               }));
             }}
@@ -81,7 +80,7 @@ function ChoiceAudios({ id, audios, audiosURLs }: ChoiceAudiosProps) {
                 ...data,
                 preview: {
                   ...data.preview,
-                  audio: [data.audio[0], data.audio[1], file],
+                  audio: [data.preview.audio[0], data.preview.audio[1], file],
                 },
               }));
             }}
@@ -89,12 +88,12 @@ function ChoiceAudios({ id, audios, audiosURLs }: ChoiceAudiosProps) {
         </div>
       </div>
 
-      {audios.some(a => a.size > 0) && (
+      {audios?.some(Boolean) && (
         <div className="flex justify-center items-center gap-x-2">
           {audios.map((a, i) =>
-            a.size > 0 ? (
+            a ? (
               <div
-                key={`${a.name}-${i}`}
+                key={`${a}-${i}`}
                 className="flex-row justify-start items-center gap-x-2 w-1/2"
               >
                 <Label className="font-extrabold">Audio attuale</Label>
@@ -103,7 +102,7 @@ function ChoiceAudios({ id, audios, audiosURLs }: ChoiceAudiosProps) {
                   autoPlay={false}
                 >
                   <source
-                    src={audiosURLs[i]}
+                    src={a}
                     type="audio/mp3"
                   />
                 </audio>
@@ -111,7 +110,7 @@ function ChoiceAudios({ id, audios, audiosURLs }: ChoiceAudiosProps) {
             ) : (
               <p
                 key={`fallback-${i}`}
-                className="flex-row justify-start items-center text-sm text-primary/70 ml-2 w-1/2"
+                className="flex justify-start items-center text-sm text-primary/70 ml-2 w-1/2"
               >
                 Nessun audio selezionato
               </p>

@@ -8,18 +8,17 @@ import toast from "react-hot-toast";
 
 type ChoiceImageProps = {
   id: string;
-  data: ChoiceNodeData;
-  image: string;
+  image: string | undefined;
 };
 
-function ChoiceImage({ id, data, image }: ChoiceImageProps) {
+function ChoiceImage({ id, image }: ChoiceImageProps) {
   const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
 
   return (
     <div className="flex justify-center items-center gap-x-2">
       <div
         className={cn("flex-row w-full", {
-          "w-1/2": data.image.size > 0,
+          "w-1/2": image,
         })}
       >
         <Label
@@ -54,7 +53,7 @@ function ChoiceImage({ id, data, image }: ChoiceImageProps) {
         />
       </div>
 
-      {data.image.size > 0 && (
+      {image && (
         <div className="flex-row w-1/2">
           <Label
             htmlFor="old-image"

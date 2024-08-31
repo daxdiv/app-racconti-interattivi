@@ -10,19 +10,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Edit, Eye, Save, X } from "lucide-react";
-import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import { useReactFlow, type Node } from "@xyflow/react";
-import { equalObjects } from "@/lib/utils";
-import ChoiceLabel from "@/components/ui/nodes/choice/ChoiceLabel";
-import ChoiceImage from "@/components/ui/nodes/choice/ChoiceImage";
-import ChoiceText from "@/components/ui/nodes/choice/ChoiceText";
-import ChoiceOptions from "@/components/ui/nodes/choice/ChoiceOptions";
 import ChoiceAudios from "@/components/ui/nodes/choice/ChoiceAudios";
-import PreviewChoiceDialog from "@/components/ui/nodes/choice/PreviewChoiceDialog";
 import ChoiceFeedback from "@/components/ui/nodes/choice/ChoiceFeedback";
+import ChoiceImage from "@/components/ui/nodes/choice/ChoiceImage";
+import ChoiceLabel from "@/components/ui/nodes/choice/ChoiceLabel";
+import ChoiceOptions from "@/components/ui/nodes/choice/ChoiceOptions";
+import ChoiceText from "@/components/ui/nodes/choice/ChoiceText";
+import PreviewChoiceDialog from "@/components/ui/nodes/choice/PreviewChoiceDialog";
+import toast from "react-hot-toast";
+import useChoiceDownload from "@/hooks/nodes/choice/useChoiceDownload";
+import useChoiceUpload from "@/hooks/nodes/choice/useChoiceUpload";
+import { useState } from "react";
+import { useReactFlow, type Node } from "@xyflow/react";
 
 type EditChoiceDialogProps = {
   id: string;
@@ -32,83 +33,48 @@ type EditChoiceDialogProps = {
 function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
   const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
+  const { uploadImage, uploadAudio } = useChoiceUpload(id);
+  const { backgroundQuery, audioQuery, feedbackAudioQuery } = useChoiceDownload(id);
 
-  const imageObjectURL = useMemo(() => URL.createObjectURL(data.image), [data.image]);
-  const audiosObjectURLs = useMemo(
-    () => data.audio.map(a => URL.createObjectURL(a)),
-    [data.audio]
-  ) as [string, string, string];
-  const feedbackAudiosObjectURLs = useMemo(
-    () => data.feedback.list.map(li => URL.createObjectURL(li.audio)),
-    [data.feedback.list]
-  ) as [string, string];
-
-  const handleSave = () => {
+  const handleSave = async () => {
     const isImageUploaded = data.preview.image.size > 0;
-    const isSomeAudioUploaded = data.preview.audio.some(a => a.size > 0);
-    const isSomeFeedbackAudioUploaded = data.preview.feedback.list.some(
-      li => li.audio.size > 0
-    );
-
-    const oldData: Partial<ChoiceNodeData> = {
-      label: data.label,
-      text: data.text,
-      options: data.options,
-      feedback: data.feedback,
-    };
-    const newData: Partial<ChoiceNodeData> = {
-      label: data.preview.label,
-      text: data.preview.text,
-      options: data.preview.options,
-      feedback: data.preview.feedback,
+    const fileSuffixMap: Record<number, "choice" | "option-1" | "option-2"> = {
+      0: "choice",
+      1: "option-1",
+      2: "option-2",
     };
 
-    if (
-      equalObjects(oldData, newData) &&
-      !isImageUploaded &&
-      !isSomeAudioUploaded &&
-      !isSomeFeedbackAudioUploaded
-    )
-      return;
-    if (isImageUploaded)
-      updateNodeData(id, {
-        image: data.preview.image,
-      });
-    if (isSomeAudioUploaded)
-      updateNodeData(id, {
-        audio: data.preview.audio,
-      });
-    if (isSomeFeedbackAudioUploaded)
-      updateNodeData(id, {
-        feedback: {
-          ...data.preview.feedback,
-          list: data.preview.feedback.list,
-        },
-      });
+    if (isImageUploaded) uploadImage.mutate(data.preview.image);
 
-    updateNodeData(id, {
-      ...newData,
-      preview: {
-        ...data.preview,
-        image: new File([], ""),
-        audio: [new File([], ""), new File([], ""), new File([], "")],
-        feedback: {
-          ...data.preview.feedback,
-          list: [
-            {
-              ...data.preview.feedback.list[0],
-              audio: new File([], ""),
-            },
-            {
-              ...data.preview.feedback.list[1],
-              audio: new File([], ""),
-            },
-          ],
-        },
-      },
+    const uploads = data.preview.audio.map((a, i) => {
+      if (a.size > 0) {
+        return uploadAudio.mutateAsync({
+          file: a,
+          of: fileSuffixMap[i],
+          feedback: false,
+        });
+      }
+
+      return new Promise(() => {});
     });
 
+    uploads.concat(
+      data.preview.feedback.list.map((li, i) => {
+        if (li.audio.size > 0) {
+          return uploadAudio.mutateAsync({
+            file: li.audio,
+            of: i === 0 ? "option-1" : "option-2",
+            feedback: true,
+          });
+        }
+
+        return new Promise(() => {});
+      })
+    );
+
     toast.success("Modifiche salvate", { duration: 3000 });
+
+    await Promise.all(uploads);
   };
 
   return (
@@ -117,29 +83,10 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
       onOpenChange={open => {
         setAlertDialogOpen(open);
 
-        if (open) return;
-
-        const isImageUploaded = data.preview.image.size > 0;
-        const audiosIdxToRevoke = data.preview.audio.map((a, i) =>
-          a.size > 0 ? i : null
-        );
-        const feedbackAudiosIdxToRevoke = data.preview.feedback.list.map((li, i) =>
-          li.audio.size > 0 ? i : null
-        );
-        const isSomeAudiosUploaded = audiosIdxToRevoke.length > 0;
-        const isSomeFeedbackAudioUploaded = feedbackAudiosIdxToRevoke.length > 0;
-
-        if (isImageUploaded) URL.revokeObjectURL(imageObjectURL);
-
-        if (isSomeAudiosUploaded) {
-          audiosIdxToRevoke.forEach(idx => {
-            if (idx) URL.revokeObjectURL(audiosObjectURLs[idx]);
-          });
-        }
-        if (isSomeFeedbackAudioUploaded) {
-          feedbackAudiosIdxToRevoke.forEach(idx => {
-            if (idx) URL.revokeObjectURL(feedbackAudiosObjectURLs[idx]);
-          });
+        if (open) {
+          backgroundQuery.refetch();
+          audioQuery.refetch();
+          feedbackAudioQuery.refetch();
         }
       }}
     >
@@ -175,14 +122,13 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
 
         <ChoiceImage
           id={id}
-          data={data}
-          image={imageObjectURL}
+          image={backgroundQuery.data}
         />
 
         <ChoiceText
           id={id}
           data={data}
-          audio={audiosObjectURLs[0]}
+          audio={audioQuery.data?.[0]}
         />
 
         <ChoiceOptions
@@ -192,14 +138,13 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
 
         <ChoiceAudios
           id={id}
-          audios={[data.audio[1], data.audio[2]]}
-          audiosURLs={[audiosObjectURLs[1], audiosObjectURLs[2]]}
+          audios={[audioQuery.data?.[1], audioQuery.data?.[2]]}
         />
 
         <ChoiceFeedback
           id={id}
           data={data}
-          audiosURLs={[feedbackAudiosObjectURLs[0], feedbackAudiosObjectURLs[1]]}
+          audios={[feedbackAudioQuery.data?.[0], feedbackAudioQuery.data?.[1]]}
         />
 
         <AlertDialogFooter>
@@ -255,12 +200,32 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
                       ...data,
                       preview: {
                         label: data.label,
-                        image: data.image,
+                        image: new File([], ""),
                         text: data.text,
-                        audio: data.audio,
+                        audio: [new File([], ""), new File([], ""), new File([], "")],
                         options: data.options,
-                        feedback: data.feedback,
+                        feedback: {
+                          list: [
+                            {
+                              text: data.feedback.list[0].text,
+                              audio: new File([], ""),
+                            },
+                            {
+                              text: data.feedback.list[1].text,
+                              audio: new File([], ""),
+                            },
+                          ],
+                          option: data.feedback.option,
+                        },
                       },
+                      // preview: {
+                      // label: data.label,
+                      // image: new File([], ""),
+                      // text: data.text,
+                      // audio: [new File([], ""), new File([], ""), new File([], "")],
+                      // options: data.options,
+                      // feedback: data.feedback,
+                      // },
                     }));
                   }}
                 >

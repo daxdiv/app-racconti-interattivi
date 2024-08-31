@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 type ChoiceTextProps = {
   id: string;
   data: ChoiceNodeData;
-  audio: string;
+  audio: string | undefined;
 };
 
 function ChoiceText({ id, data, audio }: ChoiceTextProps) {
@@ -18,7 +18,7 @@ function ChoiceText({ id, data, audio }: ChoiceTextProps) {
     <div className="flex justify-center items-center gap-x-2">
       <div
         className={cn("flex-row justify-center items-center w-1/2", {
-          "w-1/3": data.audio[0].size > 0,
+          "w-1/3": audio,
         })}
       >
         <Label
@@ -42,7 +42,7 @@ function ChoiceText({ id, data, audio }: ChoiceTextProps) {
       </div>
       <div
         className={cn("flex-row justify-center items-center w-1/2", {
-          "w-1/3": data.audio[0].size > 0,
+          "w-1/3": audio,
         })}
       >
         <Label
@@ -73,14 +73,14 @@ function ChoiceText({ id, data, audio }: ChoiceTextProps) {
               ...data,
               preview: {
                 ...data.preview,
-                audio: [file, data.audio[1], data.audio[2]],
+                audio: [file, data.preview.audio[1], data.preview.audio[2]],
               },
             }));
           }}
         />
       </div>
 
-      {data.audio[0].size > 0 && (
+      {audio && (
         <div className="flex-row justify-center items-center w-1/3">
           <Label className="font-extrabold">Audio attuale</Label>
           <audio
