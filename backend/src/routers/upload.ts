@@ -93,7 +93,7 @@ const choiceAudioStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const id = parseInt(req.body.id);
-    const of = req.body.of;
+    const { of, feedback } = req.query;
 
     if (file.size > MAX_FILE_SIZE) {
       cb(new Error("File too large"), "");
@@ -104,7 +104,9 @@ const choiceAudioStorage = multer.diskStorage({
       return;
     }
 
-    cb(null, `/${id}_${of}_audio`);
+    const filename = feedback ? `/${id}_feedback_${of}_audio` : `/${id}_${of}_audio`;
+
+    cb(null, filename);
   },
 });
 

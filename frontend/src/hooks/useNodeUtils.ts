@@ -94,31 +94,18 @@ function useNodeUtils() {
         const { label } = options;
         const choiceNodeData: ChoiceNodeData = {
           label: label || "",
-          image: new File([], ""),
           text: "",
-          audio: [
-            new File([], ""),
-            new File([], ""),
-            new File([], ""),
-          ] as ChoiceNodeData["audio"],
-          options: ["", ""] as ChoiceNodeData["options"],
+          options: ["", ""],
           feedback: {
-            list: [
-              { text: "", audio: new File([], "") },
-              { text: "", audio: new File([], "") },
-            ],
+            list: [{ text: "" }, { text: "" }],
             option: "",
           },
           preview: {
             label: label || "",
             image: new File([], ""),
             text: "",
-            audio: [
-              new File([], ""),
-              new File([], ""),
-              new File([], ""),
-            ] as ChoiceNodeData["audio"],
-            options: ["", ""] as ChoiceNodeData["options"],
+            audio: [new File([], ""), new File([], ""), new File([], "")],
+            options: ["", ""],
             feedback: {
               list: [
                 { text: "", audio: new File([], "") },

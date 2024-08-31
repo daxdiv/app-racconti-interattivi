@@ -32,6 +32,10 @@ declare global {
     pages: [Page, Page];
   }
 
+  interface FeedbackWithoutAudio {
+    list: [{ text: string }, { text: string }];
+    option: string;
+  }
   interface Feedback {
     list: [
       {
@@ -47,11 +51,9 @@ declare global {
   }
   interface ChoiceNodeData extends Record<string, unknown> {
     label: string;
-    image: File;
     text: string;
-    audio: [File, File, File];
     options: [string, string];
-    feedback: Feedback;
+    feedback: FeedbackWithoutAudio;
     preview: {
       label: string;
       image: File;
