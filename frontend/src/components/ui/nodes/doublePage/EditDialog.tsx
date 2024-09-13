@@ -100,7 +100,7 @@ function EditDialog({ id }: EditNodeDialogProps) {
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent
-        className="max-w-3xl w-full"
+        className="max-w-4xl w-full"
         onEscapeKeyDown={e => {
           e.preventDefault();
         }}
@@ -124,42 +124,10 @@ function EditDialog({ id }: EditNodeDialogProps) {
           }}
         />
 
-        <AlertDialogFooter>
-          <AlertDialogAction
-            className="bg-confirm text-primary-foreground hover:bg-confirm-foreground flex justify-center items-center"
-            onClick={handleSave}
-          >
-            <Save
-              size={16}
-              className="mr-2"
-            />
-            Salva
-          </AlertDialogAction>
-
-          <PreviewDialog
-            id={id}
-            data={data.preview}
-            media={{
-              backgroundImage:
-                data.preview.backgroundImage.size > 0
-                  ? backgroundImageObjectURL
-                  : backgroundImageQuery.data || "",
-              audio: data.preview.audio.size > 0 ? audioObjectURL : audioQuery.data || "",
-            }}
-            trigger={
-              <Button>
-                <Eye
-                  className="mr-2"
-                  size={16}
-                />{" "}
-                Anteprima
-              </Button>
-            }
-          />
-
+        <AlertDialogFooter className="mt-2 flex justify-between sm:justify-between items-center w-full">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button>
+              <Button variant="destructive-outline">
                 <X
                   size={16}
                   className="mr-2"
@@ -194,12 +162,55 @@ function EditDialog({ id }: EditNodeDialogProps) {
                 >
                   Si
                 </AlertDialogAction>
-                <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
-                  No
+                <AlertDialogCancel asChild>
+                  <Button
+                    variant="outline"
+                    className="border-primary"
+                  >
+                    No
+                  </Button>
                 </AlertDialogCancel>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          <div className="flex justify-center items-center gap-x-2">
+            <PreviewDialog
+              id={id}
+              data={data.preview}
+              media={{
+                backgroundImage:
+                  data.preview.backgroundImage.size > 0
+                    ? backgroundImageObjectURL
+                    : backgroundImageQuery.data || "",
+                audio:
+                  data.preview.audio.size > 0 ? audioObjectURL : audioQuery.data || "",
+              }}
+              trigger={
+                <Button
+                  variant="outline"
+                  className="border-primary"
+                >
+                  <Eye
+                    className="mr-2"
+                    size={16}
+                  />{" "}
+                  Anteprima
+                </Button>
+              }
+            />
+
+            <AlertDialogAction
+              className="bg-confirm text-primary-foreground hover:bg-confirm-foreground flex justify-center items-center"
+              onClick={handleSave}
+            >
+              <Save
+                size={16}
+                className="mr-2"
+              />
+              Salva
+            </AlertDialogAction>
+          </div>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
