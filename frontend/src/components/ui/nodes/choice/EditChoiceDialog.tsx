@@ -152,35 +152,10 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
           audios={[feedbackAudioQuery.data?.[0], feedbackAudioQuery.data?.[1]]}
         />
 
-        <AlertDialogFooter>
-          <AlertDialogAction
-            className="bg-confirm text-primary-foreground hover:bg-confirm-foreground flex justify-center items-center"
-            onClick={handleSave}
-          >
-            <Save
-              size={16}
-              className="mr-2"
-            />
-            Salva
-          </AlertDialogAction>
-
-          <PreviewChoiceDialog
-            id={id}
-            data={data.preview}
-            trigger={
-              <Button>
-                <Eye
-                  className="mr-2"
-                  size={16}
-                />{" "}
-                Anteprima
-              </Button>
-            }
-          />
-
+        <AlertDialogFooter className="mt-2 flex justify-between sm:justify-between items-center w-full">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button>
+              <Button variant="destructive-outline">
                 <X
                   size={16}
                   className="mr-2"
@@ -236,12 +211,47 @@ function EditChoiceDialog({ id, data }: EditChoiceDialogProps) {
                 >
                   Si
                 </AlertDialogAction>
-                <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
-                  No
+                <AlertDialogCancel asChild>
+                  <Button
+                    variant="outline"
+                    className="border-primary"
+                  >
+                    No
+                  </Button>
                 </AlertDialogCancel>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          <div className="flex justify-center items-center gap-x-2">
+            <PreviewChoiceDialog
+              id={id}
+              data={data.preview}
+              trigger={
+                <Button
+                  variant="outline"
+                  className="border-primary"
+                >
+                  <Eye
+                    className="mr-2"
+                    size={16}
+                  />{" "}
+                  Anteprima
+                </Button>
+              }
+            />
+
+            <AlertDialogAction
+              className="bg-confirm text-primary-foreground hover:bg-confirm-foreground flex justify-center items-center"
+              onClick={handleSave}
+            >
+              <Save
+                size={16}
+                className="mr-2"
+              />
+              Salva
+            </AlertDialogAction>
+          </div>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

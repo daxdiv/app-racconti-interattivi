@@ -94,21 +94,21 @@ function CreateNode() {
           autoFocus={true}
         />
 
-        <AlertDialogFooter>
-          <AlertDialogAction
-            onClick={handleCreate}
-            className="bg-confirm text-primary-foreground hover:bg-confirm-foreground"
-          >
-            Crea
-          </AlertDialogAction>
+        <AlertDialogFooter className="mt-2 justify-between sm:justify-between">
           <AlertDialogCancel
-            className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary"
+            className="border border-destructive text-destructive bg-background hover:bg-accent hover:text-destructive"
             onClick={() => {
               setOpen(false);
             }}
           >
             Annulla
           </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleCreate}
+            className="bg-confirm text-primary-foreground hover:bg-confirm-foreground"
+          >
+            Crea
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
