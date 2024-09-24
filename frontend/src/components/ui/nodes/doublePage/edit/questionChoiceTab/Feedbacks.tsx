@@ -4,18 +4,19 @@ import { MAX_FILE_SIZE } from "@/constants";
 import { useReactFlow, type Node } from "@xyflow/react";
 import toast from "react-hot-toast";
 
-type ChoiceFeedbackProps = {
+type FeedbacksProps = {
   id: string;
-  data: ChoiceNodeData;
+  data: DoublePageNodeData;
+  field: "question" | "choice";
   audios: (string | undefined)[] | undefined;
 };
 
-function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
-  const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
+function Feedbacks({ id, data, field, audios }: FeedbacksProps) {
+  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
 
   return (
     <>
-      <div className="flex justify-center items-center gap-x-2">
+      <div className="mt-2 flex justify-center items-center gap-x-2">
         <div className="flex-row justify-center items-center gap-x-2 w-1/2">
           <Label
             htmlFor="feedback-option-1"
@@ -26,7 +27,7 @@ function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
           <Input
             id="feedback-option-1"
             placeholder="Ben fatto!"
-            value={data.preview.feedback.list[0].text}
+            value={data.preview[field]?.feedback.list[0].text || ""}
             className="w-full"
             onChange={e => {
               const value = e.target.value;
@@ -34,17 +35,18 @@ function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
               updateNodeData(id, ({ data }) => ({
                 preview: {
                   ...data.preview,
-                  feedback: {
-                    ...data.preview.feedback,
-                    list: [
-                      {
-                        text: value,
-                        audio: data.preview.feedback.list[0].audio,
-                      },
-                      {
-                        ...data.preview.feedback.list[1],
-                      },
-                    ],
+                  [field]: {
+                    ...data.preview[field],
+                    feedback: {
+                      ...data.preview[field]?.feedback,
+                      list: [
+                        {
+                          text: value,
+                          audio: data.preview[field]?.feedback.list[0].audio,
+                        },
+                        { ...data.preview[field]?.feedback.list[1] },
+                      ],
+                    },
                   },
                 },
               }));
@@ -62,7 +64,7 @@ function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
           <Input
             id="feedback-option-2"
             placeholder="Ben fatto!"
-            value={data.preview.feedback.list[1].text}
+            value={data.preview[field]?.feedback.list[1].text || ""}
             className="w-full"
             onChange={e => {
               const value = e.target.value;
@@ -70,15 +72,18 @@ function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
               updateNodeData(id, ({ data }) => ({
                 preview: {
                   ...data.preview,
-                  feedback: {
-                    ...data.preview.feedback,
-                    list: [
-                      { ...data.preview.feedback.list[0] },
-                      {
-                        text: value,
-                        audio: data.preview.feedback.list[1].audio,
-                      },
-                    ],
+                  [field]: {
+                    ...data.preview[field],
+                    feedback: {
+                      ...data.preview[field]?.feedback,
+                      list: [
+                        { ...data.preview[field]?.feedback.list[0] },
+                        {
+                          text: value,
+                          audio: data.preview[field]?.feedback.list[1].audio,
+                        },
+                      ],
+                    },
                   },
                 },
               }));
@@ -87,7 +92,7 @@ function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
         </div>
       </div>
 
-      <div className="flex justify-center items-center gap-x-2">
+      <div className="mt-2 flex justify-center items-center gap-x-2">
         <div className="flex-row w-1/2">
           <Label
             htmlFor="audio-feedback-1"
@@ -114,18 +119,20 @@ function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
               }
 
               updateNodeData(id, ({ data }) => ({
-                ...data,
                 preview: {
                   ...data.preview,
-                  feedback: {
-                    ...data.preview.feedback,
-                    list: [
-                      {
-                        ...data.preview.feedback.list[0],
-                        audio: file,
-                      },
-                      { ...data.preview.feedback.list[1] },
-                    ],
+                  [field]: {
+                    ...data.preview[field],
+                    feedback: {
+                      ...data.preview[field]?.feedback,
+                      list: [
+                        {
+                          ...data.preview[field]?.feedback.list[0],
+                          audio: file,
+                        },
+                        { ...data.preview[field]?.feedback.list[1] },
+                      ],
+                    },
                   },
                 },
               }));
@@ -159,18 +166,17 @@ function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
               }
 
               updateNodeData(id, ({ data }) => ({
-                ...data,
                 preview: {
                   ...data.preview,
-                  feedback: {
-                    ...data.preview.feedback,
-                    list: [
-                      { ...data.preview.feedback.list[0] },
-                      {
-                        ...data.preview.feedback.list[1],
-                        audio: file,
-                      },
-                    ],
+                  [field]: {
+                    ...data.preview[field],
+                    feedback: {
+                      ...data.preview[field]?.feedback,
+                      list: [
+                        { ...data.preview[field]?.feedback.list[0] },
+                        { ...data.preview[field]?.feedback.list[1], audio: file },
+                      ],
+                    },
                   },
                 },
               }));
@@ -180,7 +186,7 @@ function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
       </div>
 
       {audios?.some(Boolean) && (
-        <div className="flex items-center gap-x-2">
+        <div className="mt-2 flex items-center gap-x-2">
           {audios.map((a, i) =>
             a ? (
               <div
@@ -213,4 +219,4 @@ function ChoiceFeedback({ id, data, audios }: ChoiceFeedbackProps) {
   );
 }
 
-export default ChoiceFeedback;
+export default Feedbacks;

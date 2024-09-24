@@ -3,40 +3,43 @@ import { useEffect, useMemo } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import useNodeUtils from "@/hooks/useNodeUtils";
 import { useReactFlow, type Node } from "@xyflow/react";
 import { MAX_FILE_SIZE } from "@/constants";
+import useDownloadMedia from "@/hooks/nodes/doublePage/useDownloadMedia";
 import toast from "react-hot-toast";
+import { truncate } from "@/lib/utils";
 
-type PageMediaProps = {
+type MediaProps = {
   id: string;
-  media: {
-    backgroundImage: string;
-    audio: string;
-  };
+  data: DoublePageNodeData;
 };
 
-function PageMedia({ id, media }: PageMediaProps) {
-  const { getNodeData } = useNodeUtils();
+function Media({ id, data }: MediaProps) {
+  const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
   const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
-  const data = getNodeData(id) as DoublePageNodeData;
-  const audio = useMemo(() => new Audio(media.audio), [media.audio]);
+  const audio = useMemo(
+    () => new Audio(audioQuery.data?.[0] || ""),
+    [audioQuery.data?.[0]]
+  );
 
   useEffect(() => {
     return () => {
       audio.pause();
       audio.currentTime = 0;
     };
-  }, [media.audio]);
+  }, [audioQuery.data?.[0]]);
 
   return (
-    <div className="flex gap-2 w-full">
+    <div className="mt-3 flex gap-2 w-full">
       <div className="flex flex-col w-full gap-2">
         <Label
           htmlFor="background"
           className="font-extrabold"
         >
-          Sfondo pagine {data.leftPageNumber}/{data.rightPageNumber}
+          Sfondo per "{truncate(data.label, 12)}"{" "}
+          <span className="text-muted-foreground/50 text-xs">
+            (dimensioni consigliate 1920x1080)
+          </span>
         </Label>
         <Input
           id="background"
@@ -64,7 +67,7 @@ function PageMedia({ id, media }: PageMediaProps) {
           }}
         />
 
-        {media.backgroundImage && (
+        {backgroundImageQuery.data && (
           <div className="flex justify-start items-center gap-2">
             <Label
               htmlFor="selected-img"
@@ -76,7 +79,7 @@ function PageMedia({ id, media }: PageMediaProps) {
               id="selected-img"
               className="rounded-none"
             >
-              <AvatarImage src={media.backgroundImage} />
+              <AvatarImage src={backgroundImageQuery.data} />
               <AvatarFallback>IMG</AvatarFallback>
             </Avatar>
           </div>
@@ -88,7 +91,7 @@ function PageMedia({ id, media }: PageMediaProps) {
           htmlFor="audio"
           className="font-extrabold"
         >
-          Audio pagine {data.leftPageNumber}/{data.rightPageNumber}
+          Audio per "{truncate(data.label, 12)}"
         </Label>
         <Input
           id="audio"
@@ -116,7 +119,7 @@ function PageMedia({ id, media }: PageMediaProps) {
           }}
         />
 
-        {media.audio && (
+        {audioQuery.data?.[0] && (
           <div className="flex justify-start items-center gap-2">
             <Label
               htmlFor="selected-audio"
@@ -141,4 +144,4 @@ function PageMedia({ id, media }: PageMediaProps) {
   );
 }
 
-export default PageMedia;
+export default Media;

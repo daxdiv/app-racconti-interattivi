@@ -19,7 +19,7 @@ let nodeId = 0;
 const incrementNodeId = () => (nodeId += 2);
 
 function getLayoutedElements(
-  nodes: (Node<DoublePageNodeData> | Node<ChoiceNodeData>)[],
+  nodes: Node<DoublePageNodeData>[],
   edges: Edge[],
   options: { direction: "horizontal" | "vertical" }
 ) {
@@ -52,9 +52,8 @@ function getLayoutedElements(
 
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState<
-    Node<DoublePageNodeData> | Node<ChoiceNodeData>
-  >(INITIAL_NODES);
+  const [nodes, setNodes, onNodesChange] =
+    useNodesState<Node<DoublePageNodeData>>(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { getNodes, getEdges, screenToFlowPosition, fitView } = useReactFlow();
 
@@ -95,7 +94,7 @@ export default function useReactFlowConnection() {
       const leftPageNumber = newNodeId + 1;
       const rightPageNumber = newNodeId + 2;
       const preview: DoublePageNodeData["preview"] = {
-        label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
+        label: "Titolo",
         leftPageNumber,
         rightPageNumber,
         backgroundImage: new File([], ""),
@@ -116,7 +115,7 @@ export default function useReactFlowConnection() {
         audio: new File([], ""),
       };
       const data: DoublePageNodeData = {
-        label: `Pagine ${leftPageNumber}/${rightPageNumber}`,
+        label: "Titolo",
         leftPageNumber,
         rightPageNumber,
         pages: [

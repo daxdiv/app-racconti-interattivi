@@ -1,20 +1,21 @@
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useReactFlow, type Node } from "@xyflow/react";
+import { Label } from "@/components/ui/label";
 import { MAX_FILE_SIZE } from "@/constants";
+import { useReactFlow, type Node } from "@xyflow/react";
 import toast from "react-hot-toast";
 
-type ChoiceAudiosProps = {
+type AudiosProps = {
   id: string;
-  audios: (string | undefined)[] | undefined;
+  field: "question" | "choice";
+  audios: (string | undefined)[];
 };
 
-function ChoiceAudios({ id, audios }: ChoiceAudiosProps) {
-  const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
+function Audios({ id, field, audios }: AudiosProps) {
+  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
 
   return (
     <>
-      <div className="flex justify-center items-center gap-x-2">
+      <div className="mt-2 flex justify-center items-center gap-x-2">
         <div className="flex-row w-1/2">
           <Label
             htmlFor="audio-option-1"
@@ -41,10 +42,16 @@ function ChoiceAudios({ id, audios }: ChoiceAudiosProps) {
               }
 
               updateNodeData(id, ({ data }) => ({
-                ...data,
                 preview: {
                   ...data.preview,
-                  audio: [data.preview.audio[0], file, data.preview.audio[2]],
+                  [field]: {
+                    ...data.preview[field],
+                    audio: [
+                      data.preview[field]?.audio[0],
+                      file,
+                      data.preview[field]?.audio[2],
+                    ],
+                  },
                 },
               }));
             }}
@@ -77,10 +84,16 @@ function ChoiceAudios({ id, audios }: ChoiceAudiosProps) {
               }
 
               updateNodeData(id, ({ data }) => ({
-                ...data,
                 preview: {
                   ...data.preview,
-                  audio: [data.preview.audio[0], data.preview.audio[1], file],
+                  [field]: {
+                    ...data.preview[field],
+                    audio: [
+                      data.preview[field]?.audio[0],
+                      data.preview[field]?.audio[1],
+                      file,
+                    ],
+                  },
                 },
               }));
             }}
@@ -122,4 +135,4 @@ function ChoiceAudios({ id, audios }: ChoiceAudiosProps) {
   );
 }
 
-export default ChoiceAudios;
+export default Audios;

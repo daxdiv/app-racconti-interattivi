@@ -2,7 +2,6 @@ type HeightPosition = "Top" | "Middle" | "Bottom";
 type WidthPosition = "Left" | "Center" | "Right";
 
 declare global {
-  type DoublePageNodeLabel = `Pagine ${number}/${number}`;
   type PageTextPosition = `${HeightPosition}${WidthPosition}`;
   type Page = {
     text: {
@@ -12,62 +11,84 @@ declare global {
     };
   };
   interface DoublePageNodeData extends Record<string, unknown> {
-    readonly label: DoublePageNodeLabel;
+    label: string;
     readonly leftPageNumber: number;
     readonly rightPageNumber: number;
     pages: [Page, Page];
+    question?: {
+      text: string;
+      options: [string, string];
+      values: [string, string];
+      feedback: {
+        list: [{ text: string }, { text: string }];
+        option: string;
+      };
+    };
+    choice?: {
+      text: string;
+      options: [string, string];
+      values: [string, string];
+      feedback: {
+        list: [{ text: string }, { text: string }];
+        option: string;
+      };
+      nextSteps: [number, number];
+    };
     preview: {
-      readonly label: DoublePageNodeLabel;
+      label: string;
       readonly leftPageNumber: number;
       readonly rightPageNumber: number;
       backgroundImage: File;
       pages: [Page, Page];
       audio: File;
+      question?: {
+        text: string;
+        audio: [File, File, File];
+        options: [string, string];
+        values: [string, string];
+        feedback: {
+          list: [{ text: string; audio: File }, { text: string; audio: File }];
+          option: string;
+        };
+      };
+      choice?: {
+        text: string;
+        audio: [File, File, File];
+        options: [string, string];
+        values: [string, string];
+        feedback: {
+          list: [{ text: string; audio: File }, { text: string; audio: File }];
+          option: string;
+        };
+        nextSteps: [number, number];
+      };
     };
   }
+
   interface DoublePageNodeDataWithoutPreview {
     readonly label: DoublePageNodeLabel;
     readonly leftPageNumber: number;
     readonly rightPageNumber: number;
     pages: [Page, Page];
-  }
-
-  interface FeedbackWithoutAudio {
-    list: [{ text: string }, { text: string }];
-    option: string;
-  }
-  interface Feedback {
-    list: [
-      {
-        text: string;
-        audio: File;
-      },
-      {
-        text: string;
-        audio: File;
-      }
-    ];
-    option: string;
-  }
-  interface ChoiceNodeData extends Record<string, unknown> {
-    label: string;
-    text: string;
-    options: [string, string];
-    feedback: FeedbackWithoutAudio;
-    preview: {
-      label: string;
-      image: File;
+    question?: {
       text: string;
-      audio: [File, File, File];
       options: [string, string];
-      feedback: Feedback;
+      values: [string, string];
+      feedback: {
+        list: [{ text: string }, { text: string }];
+        option: string;
+      };
     };
-  }
-  interface ChoiceNodeDataWithoutPreview {
-    label: string;
-    text: string;
-    options: [string, string];
-    feedback: FeedbackWithoutAudio;
+    choice?: {
+      text: string;
+      options: [string, string];
+      values: [string, string];
+      feedback: {
+        list: [{ text: string }, { text: string }];
+        option: string;
+      };
+      nextSteps: [number, number];
+    };
   }
 }
 
