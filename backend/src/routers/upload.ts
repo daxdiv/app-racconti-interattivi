@@ -2,7 +2,7 @@ import express from "express";
 import fs from "fs";
 import multer from "multer";
 
-const MAX_FILE_SIZE = 104_857_600; // NOTE: 100MB
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // NOTE: 2MB
 
 const uploadRouter = express.Router();
 const backgroundStorage = multer.diskStorage({
@@ -40,73 +40,13 @@ const audioStorage = multer.diskStorage({
 
     cb(null, destPath);
   },
-  filename: (req, file, cb) => {
-    const id = parseInt(req.body.id);
-
+  filename: (_req, file, cb) => {
     if (file.size > MAX_FILE_SIZE) {
       cb(new Error("File too large"), "");
       return;
     }
-    if (isNaN(id) || !Number.isInteger(id) || id < 0) {
-      cb(new Error("Invalid id"), "");
-      return;
-    }
 
-    cb(null, `${id}_audio`);
-  },
-});
-
-const choiceBackgroundStorage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    const destPath = "public/uploads/choice/backgrounds";
-
-    if (!fs.existsSync(destPath)) {
-      fs.mkdirSync(destPath, { recursive: true });
-    }
-
-    cb(null, destPath);
-  },
-  filename: (req, file, cb) => {
-    const id = parseInt(req.body.id);
-
-    if (file.size > MAX_FILE_SIZE) {
-      cb(new Error("File too large"), "");
-      return;
-    }
-    if (isNaN(id) || !Number.isInteger(id) || id < 0) {
-      cb(new Error("Invalid id"), "");
-      return;
-    }
-
-    cb(null, `/${id}_background`);
-  },
-});
-const choiceAudioStorage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    const destPath = `public/uploads/choice/audios`;
-
-    if (!fs.existsSync(destPath)) {
-      fs.mkdirSync(destPath, { recursive: true });
-    }
-
-    cb(null, destPath);
-  },
-  filename: (req, file, cb) => {
-    const id = parseInt(req.body.id);
-    const { of, feedback } = req.query;
-
-    if (file.size > MAX_FILE_SIZE) {
-      cb(new Error("File too large"), "");
-      return;
-    }
-    if (isNaN(id) || !Number.isInteger(id) || id < 0) {
-      cb(new Error("Invalid id"), "");
-      return;
-    }
-
-    const filename = feedback ? `/${id}_feedback_${of}_audio` : `/${id}_${of}_audio`;
-
-    cb(null, filename);
+    cb(null, file.originalname);
   },
 });
 
@@ -121,26 +61,10 @@ const uploadAudio = multer({
   limits: {
     fileSize: MAX_FILE_SIZE,
   },
-}).single("audio");
-
-const uploadChoiceBackground = multer({
-  storage: choiceBackgroundStorage,
-  limits: {
-    fileSize: MAX_FILE_SIZE,
-  },
-}).single("background");
-const uploadChoiceAudio = multer({
-  storage: choiceAudioStorage,
-  limits: {
-    fileSize: MAX_FILE_SIZE,
-  },
-}).single("audio");
+}).array("audio[]");
 
 uploadRouter.post("/background", (req, res) => {
-  const nodeType = req.query.nodeType;
-  const uploadFn = nodeType === "choice" ? uploadChoiceBackground : uploadBackground;
-
-  uploadFn(req, res, err => {
+  uploadBackground(req, res, err => {
     if (err) {
       const error404Messages = ["Invalid id", "File too large"];
 
@@ -158,12 +82,9 @@ uploadRouter.post("/background", (req, res) => {
 });
 
 uploadRouter.post("/audio", (req, res) => {
-  const nodeType = req.query.nodeType;
-  const uploadFn = nodeType === "choice" ? uploadChoiceAudio : uploadAudio;
-
-  uploadFn(req, res, err => {
+  uploadAudio(req, res, err => {
     if (err) {
-      const error404Messages = ["Invalid id", "File too large"];
+      const error404Messages = ["File too large"];
 
       if (error404Messages.includes(err.message)) {
         res.status(400).json({ message: err.message });
@@ -176,6 +97,35 @@ uploadRouter.post("/audio", (req, res) => {
 
     res.status(201).json({ message: "Audio uploaded" });
   });
+});
+
+uploadRouter.delete("/audio/:id", (req, res) => {
+  const id = req.params.id;
+
+  const filePaths = [
+    `${id}_question`,
+    `${id}_choice`,
+    `${id}_question_opt1`,
+    `${id}_question_opt2`,
+    `${id}_choice_opt1`,
+    `${id}_choice_opt2`,
+    `${id}_question_feedback_opt1`,
+    `${id}_question_feedback_opt2`,
+    `${id}_choice_feedback_opt1`,
+    `${id}_choice_feedback_opt2`,
+  ];
+
+  filePaths.forEach(f => {
+    const path = `public/uploads/page/audios/${f}`;
+
+    if (fs.existsSync(path)) {
+      fs.unlink(path, err => {
+        if (err) console.error(err);
+      });
+    }
+  });
+
+  res.status(200).json({ message: "Files deleted" });
 });
 
 export default uploadRouter;
