@@ -53,7 +53,7 @@ function CreateNode() {
       return;
     }
 
-    onNodeCreate({ id: valueAsNumber - 1, type: "doublePage" }); // NOTE: leftPageNumber = id + 1 so ==> id = leftPageNumber - 1
+    onNodeCreate(valueAsNumber); // NOTE: leftPageNumber = id + 1 so ==> id = leftPageNumber - 1
     setOpen(false);
   };
 

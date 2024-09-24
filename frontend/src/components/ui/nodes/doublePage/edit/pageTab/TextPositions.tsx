@@ -7,26 +7,24 @@ import {
 } from "@/components/ui/select";
 
 import { Label } from "@/components/ui/label";
-import useNodeUtils from "@/hooks/useNodeUtils";
 import { useReactFlow, type Node } from "@xyflow/react";
 
-type PageTextPositionsProps = {
+type TextPositionsProps = {
   id: string;
+  data: DoublePageNodeData;
 };
 
-function PageTextPositions({ id }: PageTextPositionsProps) {
-  const { getNodeData } = useNodeUtils();
+function TextPositions({ id, data }: TextPositionsProps) {
   const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
-  const data = getNodeData(id) as DoublePageNodeData;
 
   return (
-    <div className="flex justify-center items-center gap-2">
+    <div className="mt-3 flex justify-center items-center gap-2">
       <div className="flex flex-col w-full gap-2">
         <Label
           htmlFor="pos"
           className="font-extrabold"
         >
-          Posizione contenuto pagina {data.leftPageNumber}
+          Posizione contenuto pagina sinistra
         </Label>
 
         <Select
@@ -67,7 +65,7 @@ function PageTextPositions({ id }: PageTextPositionsProps) {
           htmlFor="pos"
           className="font-extrabold"
         >
-          Posizione contenuto pagina {data.rightPageNumber}
+          Posizione contenuto pagina destra
         </Label>
 
         <Select
@@ -106,4 +104,4 @@ function PageTextPositions({ id }: PageTextPositionsProps) {
   );
 }
 
-export default PageTextPositions;
+export default TextPositions;

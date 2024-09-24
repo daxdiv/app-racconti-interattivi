@@ -1,16 +1,20 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useReactFlow, type Node } from "@xyflow/react";
 import toast from "react-hot-toast";
 import { MAX_OPTION_LENGTH } from "@/constants";
+import { useReactFlow, type Node } from "@xyflow/react";
 
-type ChoiceOptionsProps = { id: string; data: ChoiceNodeData };
+type OptionProps = {
+  id: string;
+  data: DoublePageNodeData;
+  field: "question" | "choice";
+};
 
-function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
-  const { updateNodeData } = useReactFlow<Node<ChoiceNodeData>>();
+function Options({ id, data, field }: OptionProps) {
+  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
 
   return (
-    <div className="flex justify-center items-center gap-x-2">
+    <div className="mt-2 flex justify-center items-center gap-x-2">
       <div className="flex-row w-1/2">
         <Label
           htmlFor="option-1"
@@ -20,7 +24,7 @@ function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
         </Label>
         <Input
           id="option-1"
-          value={data.preview.options[0]}
+          value={data.preview[field]?.options[0] || ""}
           placeholder="Parlarci"
           onChange={e => {
             const value = e.target.value;
@@ -40,10 +44,12 @@ function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
             }
 
             updateNodeData(id, ({ data }) => ({
-              ...data,
               preview: {
                 ...data.preview,
-                options: [value, data.preview.options[1]],
+                [field]: {
+                  ...data.preview[field],
+                  options: [value, data.preview[field]?.options[1]],
+                },
               },
             }));
           }}
@@ -59,7 +65,7 @@ function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
         </Label>
         <Input
           id="option-2"
-          value={data.preview.options[1]}
+          value={data.preview[field]?.options[1] || ""}
           placeholder="Non parlarci"
           onChange={e => {
             const value = e.target.value;
@@ -79,10 +85,12 @@ function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
             }
 
             updateNodeData(id, ({ data }) => ({
-              ...data,
               preview: {
                 ...data.preview,
-                options: [data.preview.options[0], value],
+                [field]: {
+                  ...data.preview[field],
+                  options: [data.preview[field]?.options[0], value],
+                },
               },
             }));
           }}
@@ -92,4 +100,4 @@ function ChoiceOptions({ id, data }: ChoiceOptionsProps) {
   );
 }
 
-export default ChoiceOptions;
+export default Options;

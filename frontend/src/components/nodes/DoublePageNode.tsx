@@ -1,4 +1,4 @@
-import { Eye, Notebook, Trash2, Unlink } from "lucide-react";
+import { Eye, Trash2, Unlink } from "lucide-react";
 import {
   Handle,
   Position,
@@ -7,10 +7,9 @@ import {
   type NodeProps,
 } from "@xyflow/react";
 
-import useSheetContext from "@/hooks/useSheetContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import EditDialog from "@/components/ui/nodes/doublePage/EditDialog";
-import PreviewDialog from "@/components/ui/nodes/doublePage/PreviewDialog";
+import Edit from "@/components/ui/nodes/doublePage/edit";
+import Preview from "@/components/ui/nodes/doublePage/preview";
 import {
   TooltipProvider,
   Tooltip,
@@ -31,17 +30,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { TOOLTIP_DELAY_DURATION } from "@/constants";
 import useNodeUtils from "@/hooks/useNodeUtils";
+import { truncate } from "@/lib/utils";
 
 type DoublePageNode = Node<DoublePageNodeData>;
 type DoublePageNodeProps = NodeProps<DoublePageNode>;
 
 function DoublePageNode(props: DoublePageNodeProps) {
-  const connections = useHandleConnections({ type: "source" });
+  const sourceConnectionsLimit = props.data.choice !== undefined ? 2 : 1;
+  const sourceConnections = useHandleConnections({ type: "source" });
   const { onNodeDelete, isNodeUnlinked } = useNodeUtils();
-  const { setIsSheetOpen, setDefaultAccordionValue } = useSheetContext();
 
   const { id } = props;
-  const { label, leftPageNumber, rightPageNumber } = props.data;
+  const { label } = props.data;
 
   return (
     <>
@@ -56,7 +56,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
       <Card className="w-[300px]">
         <CardHeader className="flex flex-row justify-between items-center space-y-0">
           <div className="flex justify-center items-center gap-x-2">
-            <CardTitle>{label}</CardTitle>
+            <CardTitle>{truncate(label, 12)}</CardTitle>
             {isNodeUnlinked(id) && (
               <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
                 <Tooltip>
@@ -73,21 +73,6 @@ function DoublePageNode(props: DoublePageNodeProps) {
           </div>
 
           <div className="flex justify-center items-center gap-x-1">
-            <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Notebook
-                    className="cursor-pointer text-secondary py-1 px-1 rounded-full bg-primary hover:bg-primary/70 nodrag nopan"
-                    onClick={() => {
-                      setIsSheetOpen(true);
-                      setDefaultAccordionValue(props.data.label);
-                    }}
-                    size={24}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>Apri riepilogo</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
             {parseInt(id) !== 0 && (
               <AlertDialog>
                 <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
@@ -100,16 +85,12 @@ function DoublePageNode(props: DoublePageNodeProps) {
                         />
                       </TooltipTrigger>
                     </AlertDialogTrigger>
-                    <TooltipContent>
-                      Elimina pagine {leftPageNumber}/{rightPageNumber}
-                    </TooltipContent>
+                    <TooltipContent>Elimina "{truncate(label, 12)}"</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Eliminare pagine {leftPageNumber}/{rightPageNumber}?
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Eliminare "{truncate(label, 12)}?</AlertDialogTitle>
                     <AlertDialogDescription>
                       Una volta eliminate, dovrai ricrearle da zero.
                     </AlertDialogDescription>
@@ -134,8 +115,8 @@ function DoublePageNode(props: DoublePageNodeProps) {
         </CardHeader>
 
         <CardContent className="flex justify-center items-center gap-x-1">
-          <EditDialog id={id} />
-          <PreviewDialog
+          <Edit id={id} />
+          <Preview
             id={id}
             data={props.data}
             trigger={
@@ -156,7 +137,7 @@ function DoublePageNode(props: DoublePageNodeProps) {
       <Handle
         type="source"
         position={Position.Right}
-        isConnectable={connections.length < 1}
+        isConnectable={sourceConnections.length < sourceConnectionsLimit}
         style={{ padding: "3px" }}
       />
     </>
