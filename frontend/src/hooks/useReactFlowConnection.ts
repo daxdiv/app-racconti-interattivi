@@ -19,7 +19,7 @@ let nodeId = 0;
 const incrementNodeId = () => (nodeId += 2);
 
 function getLayoutedElements(
-  nodes: Node<DoublePageNodeData>[],
+  nodes: Node[],
   edges: Edge[],
   options: { direction: "horizontal" | "vertical" }
 ) {
@@ -52,8 +52,7 @@ function getLayoutedElements(
 
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
-  const [nodes, setNodes, onNodesChange] =
-    useNodesState<Node<DoublePageNodeData>>(INITIAL_NODES);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { getNodes, getEdges, screenToFlowPosition, fitView } = useReactFlow();
 
@@ -91,57 +90,13 @@ export default function useReactFlowConnection() {
       if (!targetIsPane) return;
 
       const newNodeId = incrementNodeId();
-      const leftPageNumber = newNodeId + 1;
-      const rightPageNumber = newNodeId + 2;
-      const preview: DoublePageNodeData["preview"] = {
-        label: "Titolo",
-        leftPageNumber,
-        rightPageNumber,
-        backgroundImage: new File([], ""),
-        pages: [
-          {
-            text: {
-              content: "",
-              position: "TopLeft",
-            },
-          },
-          {
-            text: {
-              content: "",
-              position: "TopLeft",
-            },
-          },
-        ],
-        audio: new File([], ""),
-      };
-      const data: DoublePageNodeData = {
-        label: "Titolo",
-        leftPageNumber,
-        rightPageNumber,
-        pages: [
-          {
-            text: {
-              content: "",
-              position: "TopLeft",
-            },
-          },
-          {
-            text: {
-              content: "",
-              position: "TopLeft",
-            },
-          },
-        ],
-        preview,
-      };
-
-      const newNode: Node<DoublePageNodeData> = {
+      const newNode: Node = {
         id: `${newNodeId}`,
         position: screenToFlowPosition({
           x: (event as MouseEvent).clientX,
           y: (event as MouseEvent).clientY,
         }),
-        data,
+        data: {},
         origin: [0.5, 0.0],
         type: "doublePage",
       };
@@ -179,25 +134,22 @@ export default function useReactFlowConnection() {
 
   const isValidConnection: IsValidConnection = useCallback(
     connection => {
-      const nodes = getNodes();
-      const edges = getEdges();
+      const nodes: Node[] = getNodes();
+      const edges: Edge[] = getEdges();
       const target = nodes.find(node => node.id === connection.target);
-
-      if (!target) return false;
-      if (target.id === connection.source) return false;
-      if (target.id.includes("choice") && connection.source.includes("choice"))
-        return false;
-
       const hasCycle = (node: Node, visited = new Set()) => {
         if (visited.has(node.id)) return false;
 
         visited.add(node.id);
 
-        getOutgoers(node, nodes, edges).forEach(outGoer => {
-          if (outGoer.id === connection.source) return true;
-          if (hasCycle(outGoer, visited)) return true;
-        });
+        for (const o of getOutgoers(node, nodes, edges)) {
+          if (o.id === connection.source) return true;
+          if (hasCycle(o, visited)) return true;
+        }
       };
+
+      if (!target) return false;
+      if (target.id === connection.source) return false;
 
       return !hasCycle(target);
     },
