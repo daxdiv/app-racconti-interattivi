@@ -1,0 +1,6 @@
+export const MAX_FILE_SIZE = 2 * 1024 * 1024; // NOTE: 2MB
+export const MAX_TEXT_CONTENT_LENGTH = 900;
+export const MAX_QUESTION_CHOICE_TEXT_LENGTH = 20;
+export const MAX_OPTION_LENGTH = 15;
+export const MAX_VALUE_LENGTH = 15;
+export const MAX_CONTINUE_OPTION_LENGTH = 15;
