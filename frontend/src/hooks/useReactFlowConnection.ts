@@ -6,6 +6,7 @@ import {
   useNodesState,
   useReactFlow,
   getOutgoers,
+  MarkerType,
   type Edge,
   type Node,
   type OnConnect,
@@ -68,6 +69,12 @@ export default function useReactFlowConnection() {
             strokeWidth: 1,
           },
           type: "deleteButton",
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            width: 30,
+            height: 30,
+            color: "black",
+          },
         },
         eds
       )
@@ -110,6 +117,12 @@ export default function useReactFlowConnection() {
           strokeWidth: 1,
         },
         type: "deleteButton",
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 30,
+          height: 30,
+          color: "black",
+        },
       };
 
       setNodes(nds => nds.concat(newNode));
