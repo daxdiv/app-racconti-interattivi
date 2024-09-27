@@ -111,20 +111,26 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
     const newNode = new PageNodeModel(schema.data);
 
     try {
-      const nodeExists = await PageNodeModel.findOne({ nodeId: schema.data.nodeId });
+      const existingNode = await PageNodeModel.findOne({ nodeId: schema.data.nodeId });
 
-      if (nodeExists) {
-        await PageNodeModel.updateOne({ nodeId: schema.data.nodeId }, schema.data);
+      if (existingNode) {
+        // FIXME i have a "question" node, i change to a "choice node" so i need to unset the field(s)
+        // present in "question" nodes but not into "choice" nodes (field question in schema)
+        // but the $unset inside PageNodeModel.updateOne(...) doesn't work
+        // i'll leave like this for now
+        await PageNodeModel.deleteOne({ _id: existingNode._id });
+        await newNode.save();
       } else {
         await newNode.save();
       }
 
       res.status(201).json({ message: "Saved changes" });
-    } catch (saveError) {
-      if (saveError.code === 11000) {
+    } catch (error) {
+      if (error.code === 11000) {
         res.status(400).json({ message: "Duplicate label" });
         return;
       }
+
       res.status(500).json({ message: "Internal server error" });
     }
   });
