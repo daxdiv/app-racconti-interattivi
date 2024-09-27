@@ -113,5 +113,6 @@ export const pageNodeSchema = z.object({
       }),
     })
     .optional(),
+  nextSteps: z.array(z.number().int().positive()).min(2).max(2).optional(),
 });
 export type PageNodeSchema = z.infer<typeof pageNodeSchema>;
