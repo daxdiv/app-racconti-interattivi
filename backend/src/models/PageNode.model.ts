@@ -23,6 +23,7 @@ type FeedbackSchema = {
   option: string;
 };
 type NodeModelSchema = {
+  type: "base" | "question" | "choice";
   nodeId: string;
   label: string;
   pages: [Schema<PageSchema>, Schema<PageSchema>];
@@ -100,6 +101,11 @@ const feedbackSchema = new mongoose.Schema<FeedbackSchema>({
   },
 });
 const pageNodeSchema = new mongoose.Schema<NodeModelSchema>({
+  type: {
+    type: String,
+    enum: ["base", "question", "choice"],
+    required: true,
+  },
   nodeId: {
     type: String,
     required: true,
@@ -136,10 +142,10 @@ const pageNodeSchema = new mongoose.Schema<NodeModelSchema>({
 }).index({ nodeId: 1, label: 1 }, { unique: true });
 
 pageNodeSchema.pre("save", function (next) {
-  if (!this.choice) {
+  if (this.type !== "choice") {
     this.nextSteps = undefined;
   }
-  if (!this.choice && !this.question) {
+  if (this.type === "base") {
     this.values = undefined;
   }
 
