@@ -44,16 +44,16 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
       return;
     }
 
-    const fullUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
-    const baseUrl = fullUrl.substring(0, fullUrl.lastIndexOf("/"));
+    const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
+    const baseUrl = `${url.substring(0, url.lastIndexOf("/"))}/${req.body.nodeId}`;
 
     switch (req.body.type) {
       case "question":
         req.body.question = {
           ...req.body.question,
-          audio: new Array(3).map(
-            (_, i) => `${baseUrl}/${req.body.nodeId}_question[audio][${i}]`
-          ),
+          audio: new Array(3)
+            .fill(0)
+            .map((_, i) => `${baseUrl}/${req.body.nodeId}_question[audio][${i}]`),
         };
         req.body.feedback = {
           ...req.body.feedback,
@@ -72,9 +72,9 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
       case "choice":
         req.body.choice = {
           ...req.body.choice,
-          audio: new Array(3).map(
-            (_, i) => `${baseUrl}/${req.body.nodeId}_choice[audio][${i}]`
-          ),
+          audio: new Array(3)
+            .fill(0)
+            .map((_, i) => `${baseUrl}/${req.body.nodeId}_choice[audio][${i}]`),
         };
         req.body.feedback = {
           ...req.body.feedback,
@@ -94,7 +94,7 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
 
     const schema = pageNodeSchema.safeParse({
       ...req.body,
-      pages: new Array(2).map((_, i) => ({
+      pages: new Array(2).fill(0).map((_, i) => ({
         ...req.body.pages[i],
         background: `${baseUrl}/${req.body.nodeId}_background`,
       })),
