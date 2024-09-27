@@ -2,23 +2,37 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import uploadRouter from "./routers/upload";
+import mongoose from "mongoose";
+import pageNodeRouter from "./routers/pageNode.router";
 
-dotenv.config();
+(async () => {
+  dotenv.config();
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+  if (!process.env.DATABASE_URL) {
+    throw new Error("Missing DATABASE_URL inside .env");
+  }
 
-app.use(cors({ origin: process.env.CLIENT_URL }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
-app.use("/upload", uploadRouter);
+  await mongoose.connect(process.env.DATABASE_URL);
 
-app
-  .listen(PORT, () => {
-    console.log(`Server running at PORT: ${PORT}`);
-  })
-  .on("error", error => {
-    throw new Error(error.message);
-  });
+  const db = mongoose.connection;
+
+  // NOTE readyState 1 = connected
+  if (db.readyState !== 1) return;
+
+  const app = express();
+  const PORT = process.env.PORT || 3000;
+
+  app.use(cors({ origin: process.env.CLIENT_URL }));
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(express.static("public"));
+  app.use("/node", pageNodeRouter);
+
+  app
+    .listen(PORT, () => {
+      console.log(`Server running at PORT: ${PORT}`);
+    })
+    .on("error", error => {
+      throw new Error(error.message);
+    });
+})();
