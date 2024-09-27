@@ -1,70 +1,13 @@
-import multer, { MulterError } from "multer";
+import { MulterError } from "multer";
 
-import { MAX_FILE_SIZE } from "../constants";
 import PageNodeModel from "../models/PageNode.model";
 import express, { type Request } from "express";
-import fs from "fs";
 import { PageNodeSchema, pageNodeSchema } from "../lib/zod";
+import { uploadBaseMedia, uploadChoiceMedia, uploadQuestionMedia } from "../utils/upload";
 
 type MyRequest = Request<any, any, PageNodeSchema, { nodeType: PageNodeSchema["type"] }>;
 
 const pageNodeRouter = express.Router();
-const pageNodeStorage = multer.diskStorage({
-  destination(_req, _file, cb) {
-    const destPath = "public/";
-
-    if (!fs.existsSync(destPath)) {
-      fs.mkdirSync(destPath, { recursive: true });
-    }
-
-    cb(null, destPath);
-  },
-  async filename(req, file, cb) {
-    const id = parseInt(req.body.nodeId);
-
-    if (isNaN(id) || !Number.isInteger(id) || id < 0) {
-      cb(new Error("Invalid id"), "");
-      return;
-    }
-
-    cb(null, `${id}_${file.fieldname}`);
-  },
-});
-
-const uploadBaseMedia = multer({
-  storage: pageNodeStorage,
-  limits: {
-    fileSize: MAX_FILE_SIZE,
-  },
-}).fields([{ name: "backgroundImage" }, { name: "audio" }]);
-const uploadQuestionMedia = multer({
-  storage: pageNodeStorage,
-  limits: {
-    fileSize: MAX_FILE_SIZE,
-  },
-}).fields([
-  { name: "backgroundImage" },
-  { name: "audio" },
-  { name: "question[audio][0]" },
-  { name: "question[audio][1]" },
-  { name: "question[audio][2]" },
-  { name: "feedback[list][0][audio]" },
-  { name: "feedback[list][1][audio]" },
-]);
-const uploadChoiceMedia = multer({
-  storage: pageNodeStorage,
-  limits: {
-    fileSize: MAX_FILE_SIZE,
-  },
-}).fields([
-  { name: "backgroundImage" },
-  { name: "audio" },
-  { name: "choice[audio][0]" },
-  { name: "choice[audio][1]" },
-  { name: "choice[audio][2]" },
-  { name: "feedback[list][0][audio]" },
-  { name: "feedback[list][1][audio]" },
-]);
 
 pageNodeRouter.post("/", (req: MyRequest, res) => {
   let uploadMedia;
@@ -108,11 +51,9 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
       case "question":
         req.body.question = {
           ...req.body.question,
-          audio: [
-            `${baseUrl}/${req.body.nodeId}_question[audio][0]`,
-            `${baseUrl}/${req.body.nodeId}_question[audio][1]`,
-            `${baseUrl}/${req.body.nodeId}_question[audio][2]`,
-          ],
+          audio: new Array(3).map(
+            (_, i) => `${baseUrl}/${req.body.nodeId}_question[audio][${i}]`
+          ),
         };
         req.body.feedback = {
           ...req.body.feedback,
@@ -131,11 +72,9 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
       case "choice":
         req.body.choice = {
           ...req.body.choice,
-          audio: [
-            `${baseUrl}/${req.body.nodeId}_choice[audio][0]`,
-            `${baseUrl}/${req.body.nodeId}_choice[audio][1]`,
-            `${baseUrl}/${req.body.nodeId}_choice[audio][2]`,
-          ],
+          audio: new Array(3).map(
+            (_, i) => `${baseUrl}/${req.body.nodeId}_choice[audio][${i}]`
+          ),
         };
         req.body.feedback = {
           ...req.body.feedback,
@@ -155,10 +94,10 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
 
     const schema = pageNodeSchema.safeParse({
       ...req.body,
-      pages: [
-        { ...req.body.pages[0], background: `${baseUrl}/${req.body.nodeId}_background` },
-        { ...req.body.pages[1], background: `${baseUrl}/${req.body.nodeId}_background` },
-      ],
+      pages: new Array(2).map((_, i) => ({
+        ...req.body.pages[i],
+        background: `${baseUrl}/${req.body.nodeId}_background`,
+      })),
       audio: `${baseUrl}/${req.body.nodeId}_audio`,
     });
 
