@@ -23,6 +23,7 @@ type FeedbackSchema = {
   option: string;
 };
 type NodeModelSchema = {
+  nodeId: string;
   label: string;
   pages: [Schema<PageSchema>, Schema<PageSchema>];
   audio: string;
@@ -99,9 +100,15 @@ const feedbackSchema = new mongoose.Schema<FeedbackSchema>({
   },
 });
 const pageNodeSchema = new mongoose.Schema<NodeModelSchema>({
+  nodeId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   label: {
     type: String,
     required: true,
+    unique: true,
   },
   pages: {
     type: [pageSchema],
@@ -126,12 +133,14 @@ const pageNodeSchema = new mongoose.Schema<NodeModelSchema>({
   nextSteps: {
     type: [Number],
   },
-});
+}).index({ nodeId: 1, label: 1 }, { unique: true });
 
 pageNodeSchema.pre("save", function (next) {
+  if (!this.choice) {
+    this.nextSteps = undefined;
+  }
   if (!this.choice && !this.question) {
     this.values = undefined;
-    this.nextSteps = undefined;
   }
 
   next();
