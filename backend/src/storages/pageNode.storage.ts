@@ -1,4 +1,5 @@
 import { MAX_FILE_SIZE } from "../constants";
+import { RequestHandler } from "express";
 import fs from "fs";
 import multer from "multer";
 
@@ -31,13 +32,23 @@ const pageNodeStorage = multer.diskStorage({
   },
 });
 
-export const uploadBaseMedia = multer({
+export function getUploadHandler(nodeType: "base" | "question" | "choice") {
+  const uploadsMap: Record<typeof nodeType, RequestHandler> = {
+    base: uploadBaseMedia,
+    question: uploadQuestionMedia,
+    choice: uploadChoiceMedia,
+  };
+
+  return uploadsMap[nodeType];
+}
+
+const uploadBaseMedia = multer({
   storage: pageNodeStorage,
   limits: {
     fileSize: MAX_FILE_SIZE,
   },
 }).fields([{ name: "background" }, { name: "audio" }]);
-export const uploadQuestionMedia = multer({
+const uploadQuestionMedia = multer({
   storage: pageNodeStorage,
   limits: {
     fileSize: MAX_FILE_SIZE,
@@ -51,7 +62,7 @@ export const uploadQuestionMedia = multer({
   { name: "feedback[list][0][audio]" },
   { name: "feedback[list][1][audio]" },
 ]);
-export const uploadChoiceMedia = multer({
+const uploadChoiceMedia = multer({
   storage: pageNodeStorage,
   limits: {
     fileSize: MAX_FILE_SIZE,
