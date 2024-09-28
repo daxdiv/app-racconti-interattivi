@@ -3,13 +3,9 @@ import { MulterError } from "multer";
 import PageNodeModel from "../models/PageNode.model";
 import express, { type Request } from "express";
 import { PageNodeSchema, pageNodeSchema } from "../lib/zod";
-import {
-  uploadBaseMedia,
-  uploadChoiceMedia,
-  uploadQuestionMedia,
-} from "../storages/pageNode.storage";
-import sharp from "sharp";
+import { getUploadHandler } from "../storages/pageNode.storage";
 import path from "path";
+import { splitImage } from "../utils/misc";
 
 type MyRequest = Request<
   { nodeId: string },
@@ -44,26 +40,18 @@ pageNodeRouter.get("/:nodeId", async (req: MyRequest, res) => {
 });
 
 pageNodeRouter.post("/", (req: MyRequest, res) => {
-  let uploadMedia;
+  const acceptedNodeTypes = ["base", "question", "choice"];
 
-  switch (req.query.nodeType) {
-    case "base":
-      uploadMedia = uploadBaseMedia;
-      break;
-    case "question":
-      uploadMedia = uploadQuestionMedia;
-      break;
-    case "choice":
-      uploadMedia = uploadChoiceMedia;
-      break;
-    default:
-      res
-        .status(400)
-        .json({ message: `Accepted node types: "base", "question" or "choice"` });
-      return;
+  if (!acceptedNodeTypes.includes(req.query.nodeType)) {
+    res
+      .status(400)
+      .json({ message: `Accepted node types: "base", "question" or "choice"` });
+    return;
   }
 
-  uploadMedia(req, res, async err => {
+  const upload = getUploadHandler(req.query.nodeType);
+
+  upload(req, res, async err => {
     if (err) {
       if (err.message === "Invalid id") {
         res.status(400).json({ message: err.message });
@@ -83,15 +71,12 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
     const publicUrl = `public/${req.body.nodeId}/${req.body.nodeId}`;
     const files = req.files as { [fieldName: string]: Express.Multer.File[] };
     const backgroundUrl = `${publicUrl}_background`;
-    const { width, height } = await sharp(backgroundUrl).metadata();
-    const halfWidth = Math.floor(width! / 2);
 
-    await sharp(backgroundUrl)
-      .extract({ width: halfWidth, height: height!, left: 0, top: 0 })
-      .toFile(`${publicUrl}_background_left`);
-    await sharp(backgroundUrl)
-      .extract({ width: halfWidth, height: height!, left: halfWidth, top: 0 })
-      .toFile(`${publicUrl}_background_right`);
+    await splitImage(
+      backgroundUrl,
+      `${publicUrl}_background_left`,
+      `${publicUrl}_background_right`
+    );
 
     switch (req.body.type) {
       case "question":
