@@ -4,7 +4,6 @@ import PageNodeModel from "../models/PageNode.model";
 import express, { type Request } from "express";
 import { PageNodeSchema, pageNodeSchema } from "../lib/zod";
 import { getUploadHandler } from "../storages/pageNode.storage";
-import path from "path";
 import { splitImage } from "../utils/misc";
 
 type MyRequest = Request<
@@ -69,7 +68,6 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
     const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
     const baseUrl = `${url.substring(0, url.lastIndexOf("/"))}/${req.body.nodeId}`;
     const publicUrl = `public/${req.body.nodeId}/${req.body.nodeId}`;
-    const files = req.files as { [fieldName: string]: Express.Multer.File[] };
     const backgroundUrl = `${publicUrl}_background`;
 
     await splitImage(
@@ -130,9 +128,7 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
 
         return {
           ...req.body.pages[i],
-          background: `${baseUrl}/${req.body.nodeId}_background${side}${path.extname(
-            files["background"][0].originalname
-          )}`,
+          background: `${baseUrl}/${req.body.nodeId}_background${side}`,
         };
       }),
       audio: `${baseUrl}/${req.body.nodeId}_audio`,
