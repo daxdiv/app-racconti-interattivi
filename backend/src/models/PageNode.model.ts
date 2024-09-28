@@ -151,6 +151,14 @@ pageNodeSchema.pre("save", function (next) {
 
   next();
 });
+pageNodeSchema.methods.toJSON = function () {
+  const pageNode = this.toObject();
+
+  delete pageNode._id;
+  delete pageNode.__v;
+
+  return pageNode;
+};
 
 const PageNodeModel = mongoose.model("PageNode", pageNodeSchema);
 
