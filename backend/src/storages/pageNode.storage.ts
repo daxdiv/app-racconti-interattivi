@@ -1,4 +1,4 @@
-import { MAX_FILE_SIZE } from "src/constants";
+import { MAX_FILE_SIZE } from "../constants";
 import fs from "fs";
 import multer from "multer";
 
