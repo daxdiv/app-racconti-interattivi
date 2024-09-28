@@ -3,11 +3,45 @@ import { MulterError } from "multer";
 import PageNodeModel from "../models/PageNode.model";
 import express, { type Request } from "express";
 import { PageNodeSchema, pageNodeSchema } from "../lib/zod";
-import { uploadBaseMedia, uploadChoiceMedia, uploadQuestionMedia } from "../utils/upload";
+import {
+  uploadBaseMedia,
+  uploadChoiceMedia,
+  uploadQuestionMedia,
+} from "../storages/pageNode.storage";
+import sharp from "sharp";
+import path from "path";
 
-type MyRequest = Request<any, any, PageNodeSchema, { nodeType: PageNodeSchema["type"] }>;
+type MyRequest = Request<
+  { nodeId: string },
+  any,
+  PageNodeSchema,
+  { nodeType: PageNodeSchema["type"] }
+>;
 
 const pageNodeRouter = express.Router();
+
+pageNodeRouter.get("/:nodeId", async (req: MyRequest, res) => {
+  const { nodeId } = req.params;
+
+  try {
+    const pageNode = await PageNodeModel.findOne({ nodeId });
+
+    if (!pageNode) {
+      res.status(404).json({ message: "Not found" });
+      return;
+    }
+
+    const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
+    const baseUrl = `${url.substring(0, url.lastIndexOf("/"))}/${nodeId}`;
+
+    res.status(200).json({
+      ...pageNode.toJSON(),
+      background: `${baseUrl}/${nodeId}_background`,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 pageNodeRouter.post("/", (req: MyRequest, res) => {
   let uploadMedia;
@@ -46,6 +80,18 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
 
     const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
     const baseUrl = `${url.substring(0, url.lastIndexOf("/"))}/${req.body.nodeId}`;
+    const publicUrl = `public/${req.body.nodeId}/${req.body.nodeId}`;
+    const files = req.files as { [fieldName: string]: Express.Multer.File[] };
+    const backgroundUrl = `${publicUrl}_background`;
+    const { width, height } = await sharp(backgroundUrl).metadata();
+    const halfWidth = Math.floor(width! / 2);
+
+    await sharp(backgroundUrl)
+      .extract({ width: halfWidth, height: height!, left: 0, top: 0 })
+      .toFile(`${publicUrl}_background_left`);
+    await sharp(backgroundUrl)
+      .extract({ width: halfWidth, height: height!, left: halfWidth, top: 0 })
+      .toFile(`${publicUrl}_background_right`);
 
     switch (req.body.type) {
       case "question":
@@ -94,10 +140,16 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
 
     const schema = pageNodeSchema.safeParse({
       ...req.body,
-      pages: new Array(2).fill(0).map((_, i) => ({
-        ...req.body.pages[i],
-        background: `${baseUrl}/${req.body.nodeId}_background`,
-      })),
+      pages: new Array(2).fill(0).map((_, i) => {
+        const side = i === 0 ? "_left" : "_right";
+
+        return {
+          ...req.body.pages[i],
+          background: `${baseUrl}/${req.body.nodeId}_background${side}${path.extname(
+            files["background"][0].originalname
+          )}`,
+        };
+      }),
       audio: `${baseUrl}/${req.body.nodeId}_audio`,
     });
 
@@ -125,6 +177,7 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
       }
 
       res.status(201).json({ message: "Saved changes" });
+      return;
     } catch (error) {
       if (error.code === 11000) {
         res.status(400).json({ message: "Duplicate label" });
