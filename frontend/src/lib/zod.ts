@@ -30,14 +30,16 @@ export const pageSchema = z.object({
     )
     .min(2)
     .max(2),
-  backgroundImage: z
+  background: z
     .instanceof(File)
     .refine(file => file.size > 0, "Inserire un file")
-    .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande"),
+    .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
+    .or(z.string().url()),
   audio: z
     .instanceof(File)
     .refine(file => file.size > 0, "Inserire un file")
-    .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande"),
+    .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
+    .or(z.string().url()),
   question: z
     .object({
       text: z
@@ -53,6 +55,7 @@ export const pageSchema = z.object({
             .instanceof(File)
             .refine(file => file.size > 0, "Inserire un file")
             .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
+            .or(z.string().url())
         )
         .min(3)
         .max(3),
@@ -85,6 +88,7 @@ export const pageSchema = z.object({
             .instanceof(File)
             .refine(file => file.size > 0, "Inserire un file")
             .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
+            .or(z.string().url())
         )
         .max(3),
       options: z
@@ -111,8 +115,8 @@ export const pageSchema = z.object({
         })
         .default("")
     )
-    .min(2)
-    .max(2)
+    // .min(2)
+    // .max(2)
     .optional(),
   feedback: z
     .object({
@@ -123,7 +127,8 @@ export const pageSchema = z.object({
             audio: z
               .instanceof(File)
               .refine(file => file.size > 0, "Inserire un file")
-              .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande"),
+              .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
+              .or(z.string().url()),
           })
         )
         .min(2)
