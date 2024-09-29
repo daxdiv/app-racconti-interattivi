@@ -4,7 +4,7 @@ import { type DefaultError, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 function useNodeMutation(id: string, onSuccess: () => void) {
-  const nodeMutation = useMutation<unknown, DefaultError, PageSchema>({
+  const saveNode = useMutation<unknown, DefaultError, PageSchema>({
     mutationKey: ["save-node", id],
     mutationFn: data => savePageNode(id, data),
     onSuccess() {
@@ -15,7 +15,7 @@ function useNodeMutation(id: string, onSuccess: () => void) {
     },
   });
 
-  return { nodeMutation };
+  return { saveNode };
 }
 
 export default useNodeMutation;
