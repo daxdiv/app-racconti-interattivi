@@ -119,7 +119,7 @@ function PageNode({ id }: { id: WithNodeQueryProps["id"] }) {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Unlink
-                      className="cursor-default text-primary py-1 px-1 rounded-full bg-yellow-500 hover:bg-yellow-500/70 nodrag nopan"
+                      className="cursor-default text-primary py-1 px-1 rounded-full bg-alert nodrag nopan"
                       size={24}
                     />
                   </TooltipTrigger>

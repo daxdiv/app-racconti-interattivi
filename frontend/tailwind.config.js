@@ -39,6 +39,7 @@ module.exports = {
           DEFAULT: "hsl(var(--confirm))",
           foreground: "hsl(var(--confirm-foreground))",
         },
+        alert: "hsl(var(--alert))",
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
