@@ -4,7 +4,7 @@ import PageNodeModel from "../models/PageNode.model";
 import express, { type Request } from "express";
 import { PageNodeSchema, pageNodeSchema } from "../lib/zod";
 import { getUploadHandler } from "../storages/pageNode.storage";
-import { splitImage } from "../utils/misc";
+import { splitImage } from "../lib/utils";
 import fs from "fs";
 
 type MyRequest = Request<
