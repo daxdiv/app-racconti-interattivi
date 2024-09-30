@@ -16,12 +16,10 @@ function Text({ field }: TextProps) {
 
   return (
     <div className="flex justify-center items-center gap-x-2 mb-4">
-      {data?.[field]?.text && (
-        <p className="break-words">
-          <span className="font-extrabold">Testo: </span>
-          {data[field].text}
-        </p>
-      )}
+      <p className="break-words">
+        <span className="font-extrabold">Testo: </span>
+        {form.getValues(`${field}.text`)}
+      </p>
 
       {textAudio && (
         <audio

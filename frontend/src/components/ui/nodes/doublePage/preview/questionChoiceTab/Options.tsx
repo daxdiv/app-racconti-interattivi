@@ -23,10 +23,10 @@ function Options({ field }: OptionsProps) {
     <div>
       <div className="flex justify-center items-center gap-x-5">
         <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-32">
-          <p>{data?.[field]?.options[0]}</p>
+          <p>{form.getValues(`${field}.options.0`)}</p>
         </div>
         <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-32">
-          <p>{data?.[field]?.options[1]}</p>
+          <p>{form.getValues(`${field}.options.1`)}</p>
         </div>
       </div>
 
