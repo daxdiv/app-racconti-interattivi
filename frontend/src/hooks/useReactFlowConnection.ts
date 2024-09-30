@@ -60,7 +60,7 @@ export default function useReactFlowConnection() {
   const { getNodes, getEdges, screenToFlowPosition, fitView } = useReactFlow();
 
   useEffect(() => {
-    if (!data) return;
+    if (!data || data.length === 0) return;
 
     setNodes(
       data.map(
