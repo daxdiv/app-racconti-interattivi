@@ -1,156 +1,116 @@
 import mongoose, { Schema } from "mongoose";
 
-type PageTextSchema = {
-  content: string;
-  position: PageTextPosition;
-  class?: string;
-};
-type PageSchema = {
-  background: string;
-  text: Schema<PageTextSchema>;
-};
-type QuestionChoiceSchema = {
-  text: string;
-  audio: [string, string, string];
-  options: [string, string];
-};
-type FeedbackListSchema = {
-  text: string;
-  audio: string;
-};
-type FeedbackSchema = {
-  list: [Schema<FeedbackListSchema>, Schema<FeedbackListSchema>];
-  option: string;
-};
-type NodeModelSchema = {
-  type: "base" | "question" | "choice";
-  nodeId: string;
-  label: string;
-  pages: [Schema<PageSchema>, Schema<PageSchema>];
-  audio: string;
-  question?: Schema<QuestionChoiceSchema>;
-  choice?: Schema<QuestionChoiceSchema>;
-  values?: [string, string];
-  feedback?: Schema<FeedbackSchema>;
-  nextSteps?: [number, number];
-};
+const PageTextSchema = new Schema(
+  {
+    content: { type: String, required: true },
+    position: {
+      type: String,
+      enum: [
+        "TopLeft",
+        "TopCenter",
+        "TopRight",
+        "MiddleLeft",
+        "MiddleCenter",
+        "MiddleRight",
+        "BottomLeft",
+        "BottomCenter",
+        "BottomRight",
+      ],
+      required: true,
+    },
+    class: {
+      type: String,
+    },
+  },
+  { _id: false }
+);
 
-const pageTextSchema = new mongoose.Schema<PageTextSchema>({
-  content: {
+const PageSchema = new Schema(
+  {
+    background: { type: String, required: true },
+    text: { type: PageTextSchema, required: true },
+  },
+  { _id: false }
+);
+
+const QuestionChoiceSchema = new Schema(
+  {
+    text: { type: String, required: true },
+    audio: {
+      type: [String],
+      validate: [(arr: any[]) => arr.length === 3, "Audio array must have 3 elements"],
+    },
+    options: {
+      type: [String],
+      validate: [(arr: any[]) => arr.length === 2, "Options array must have 2 elements"],
+    },
+  },
+  { _id: false }
+);
+
+const FeedbackListSchema = new Schema(
+  {
+    text: { type: String, required: true },
+    audio: { type: String, required: true },
+  },
+  { _id: false }
+);
+
+const FeedbackSchema = new Schema(
+  {
+    list: {
+      type: [FeedbackListSchema],
+      validate: [(arr: any[]) => arr.length === 2, "List must contain 2 elements"],
+      required: true,
+    },
+    option: { type: String, required: true },
+  },
+  { _id: false }
+);
+
+const PositionSchema = new Schema({
+  x: {
     type: String,
     required: true,
   },
-  position: {
-    type: String,
-    enum: [
-      "TopLeft",
-      "TopCenter",
-      "TopRight",
-      "MiddleLeft",
-      "MiddleCenter",
-      "MiddleRight",
-      "BottomLeft",
-      "BottomCenter",
-      "BottomRight",
-    ],
-    required: true,
-  },
-  class: {
-    type: String,
-  },
-});
-const pageSchema = new mongoose.Schema<PageSchema>({
-  background: {
-    type: String,
-    required: true,
-  },
-  text: pageTextSchema,
-});
-const questionChoiceSchema = new mongoose.Schema<QuestionChoiceSchema>({
-  text: {
-    type: String,
-    required: true,
-  },
-  audio: {
-    type: [String, String, String],
-    required: true,
-  },
-  options: {
-    type: [String, String],
-    required: true,
-  },
-});
-const feedbackListSchema = new mongoose.Schema<FeedbackListSchema>({
-  text: {
-    type: String,
-    required: true,
-  },
-  audio: {
-    type: String,
-    required: true,
-  },
-});
-const feedbackSchema = new mongoose.Schema<FeedbackSchema>({
-  list: {
-    type: [feedbackListSchema],
-    required: true,
-  },
-  option: {
+  y: {
     type: String,
     required: true,
   },
 });
-const pageNodeSchema = new mongoose.Schema<NodeModelSchema>({
-  type: {
-    type: String,
-    enum: ["base", "question", "choice"],
-    required: true,
-  },
-  nodeId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  label: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+
+const pageNodeSchema = new Schema({
+  type: { type: String, enum: ["base", "question", "choice"], required: true },
+  nodeId: { type: String, required: true },
+  label: { type: String, required: true },
   pages: {
-    type: [pageSchema],
+    type: [PageSchema],
+    validate: [(arr: any[]) => arr.length === 2, "Pages array must contain 2 elements"],
     required: true,
   },
-  audio: {
-    type: String,
-    required: true,
-  },
-  question: {
-    type: questionChoiceSchema,
-  },
-  choice: {
-    type: questionChoiceSchema,
-  },
+  audio: { type: String, required: true },
+  question: { type: QuestionChoiceSchema, default: undefined },
+  choice: { type: QuestionChoiceSchema, default: undefined },
   values: {
     type: [String],
+    validate: [(arr: any[]) => arr.length === 2, "Values array must contain 2 elements"],
+    default: undefined,
   },
-  feedback: {
-    type: feedbackSchema,
-  },
+  feedback: { type: FeedbackSchema, default: undefined },
   nextSteps: {
     type: [Number],
+    validate: [
+      (arr: any[]) => arr.length === 2,
+      "NextSteps array must contain 2 elements",
+    ],
+    default: undefined,
   },
-}).index({ nodeId: 1, label: 1 }, { unique: true });
-
-pageNodeSchema.pre("save", function (next) {
-  if (this.type !== "choice") {
-    this.nextSteps = undefined;
-  }
-  if (this.type === "base") {
-    this.values = undefined;
-  }
-
-  next();
+  position: {
+    type: PositionSchema,
+    required: true,
+  },
 });
+
 pageNodeSchema.methods.toJSON = function () {
   const pageNode = this.toObject();
 
