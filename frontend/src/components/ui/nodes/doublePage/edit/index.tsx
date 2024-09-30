@@ -9,8 +9,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Edit, Eye, Save, X } from "lucide-react";
+import { CircleAlert, Edit, Eye, Save, X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { Button } from "@/components/ui/button";
 // import { DevTool } from "@hookform/devtools";
@@ -19,6 +25,7 @@ import type { PageSchema } from "@/lib/zod";
 import PageTab from "@/components/ui/nodes/doublePage/edit/pageTab";
 import Preview from "@/components/ui/nodes/doublePage/preview";
 import QuestionChoiceTab from "@/components/ui/nodes/doublePage/edit/questionChoiceTab";
+import { TOOLTIP_DELAY_DURATION } from "@/constants";
 import toast from "react-hot-toast";
 import { truncate } from "@/lib/utils";
 import { useFormContext } from "react-hook-form";
@@ -38,7 +45,6 @@ function EditDialog({ id }: EditDialogProps) {
     setAlertDialogOpen(false);
     toast.success("Modifiche salvate");
   });
-
   const formType = form.watch("type");
 
   const onSubmit = async (values: PageSchema) => {
@@ -69,8 +75,21 @@ function EditDialog({ id }: EditDialogProps) {
         }}
       >
         <AlertDialogHeader>
-          <AlertDialogTitle className="flex justify-start items-center">
+          <AlertDialogTitle className="flex justify-between items-center gap-x-1">
             Modifica "{truncate(form.getValues("label"), 12)}"
+            {!form.formState.isValid && (
+              <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <CircleAlert className="p-1 rounded-full text-primary bg-alert" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Compila tutti i campi{" "}
+                    {formType !== "base" && "i campi in tutte le tab"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogDescription />
