@@ -1,133 +1,76 @@
-import { useState } from "react";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useHandleConnections, useReactFlow, type Node } from "@xyflow/react";
-import Text from "@/components/ui/nodes/doublePage/edit/questionChoiceTab/Text";
-import Options from "@/components/ui/nodes/doublePage/edit/questionChoiceTab/Options";
+import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+
 import Audios from "@/components/ui/nodes/doublePage/edit/questionChoiceTab/Audios";
+import ContinueOption from "@/components/ui/nodes/doublePage/edit/questionChoiceTab/ContinueOption";
 import Feedbacks from "@/components/ui/nodes/doublePage/edit/questionChoiceTab/Feedbacks";
-import {
-  INITIAL_QUESTION_PREVIEW_VALUE,
-  INITIAL_CHOICE_PREVIEW_VALUE,
-} from "@/constants";
-import toast from "react-hot-toast";
+import Options from "@/components/ui/nodes/doublePage/edit/questionChoiceTab/Options";
+import type { PageSchema } from "@/lib/zod";
+import { Switch } from "@/components/ui/switch";
+import Text from "@/components/ui/nodes/doublePage/edit/questionChoiceTab/Text";
 import Values from "@/components/ui/nodes/doublePage/edit/questionChoiceTab/Values";
+import toast from "react-hot-toast";
+import { useFormContext } from "react-hook-form";
+import { useHandleConnections } from "@xyflow/react";
+import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 type QuestionChoiceTabProps = {
-  id: string;
-  data: DoublePageNodeData;
-  audios: {
-    text: string | undefined;
-    firstOption: string | undefined;
-    secondOption: string | undefined;
-    firstFeedback: string | undefined;
-    secondFeedback: string | undefined;
-  };
   field: "question" | "choice";
   disabled: boolean;
+  onCheckedChange: (e: boolean) => void;
 };
 
-function QuestionChoiceTab({
-  id,
-  data,
-  audios,
-  field,
-  disabled,
-}: QuestionChoiceTabProps) {
-  const [enable, setEnable] = useState(
-    data[field] !== undefined ||
-      data.preview[field] !== undefined ||
-      Object.values(audios).some(Boolean)
-  );
-  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
+function QuestionChoiceTab({ field, disabled, onCheckedChange }: QuestionChoiceTabProps) {
+  const { control } = useFormContext<PageSchema>();
+  const { isLoading } = useNodeQueryContext();
   const connections = useHandleConnections({ type: "source" });
 
   return (
     <>
-      <div className="flex items-center space-x-2">
-        <div className="flex items-center space-x-2">
-          <Label htmlFor="enable-question-choice">Abilita</Label>
-          <Switch
-            id="enable"
-            disabled={disabled}
-            checked={enable}
-            onCheckedChange={() => {
-              setEnable(e => {
-                if (connections.length === 2) {
-                  toast.error(
-                    "Impossibile disabilitare scelta: rimuovere uno dei collegamenti in uscita da questo nodo"
-                  );
-                  return e;
-                }
+      <FormField
+        control={control}
+        name="type"
+        disabled={isLoading}
+        render={({ field: { value } }) => (
+          <>
+            <FormItem className="flex justify-start items-center gap-x-2">
+              <FormLabel className="mt-2 font-extrabold text-md">Abilita</FormLabel>
+              <FormControl>
+                <Switch
+                  checked={value === field}
+                  disabled={disabled}
+                  onCheckedChange={checked => {
+                    if (connections.length === 2) {
+                      toast.error(
+                        "Impossibile disabilitare scelta: rimuovere uno dei collegamenti in uscita da questo nodo"
+                      );
 
-                // NOTE before disabling, reset
-                if (e) {
-                  updateNodeData(id, ({ data }) => ({
-                    preview: {
-                      ...data.preview,
-                      [field]: undefined,
-                    },
-                  }));
+                      return onCheckedChange(false);
+                    }
 
-                  return !e;
-                }
+                    onCheckedChange(checked);
+                  }}
+                />
+              </FormControl>
+            </FormItem>
 
-                updateNodeData(id, ({ data }) => ({
-                  preview: {
-                    ...data.preview,
-                    [field]:
-                      field === "question"
-                        ? data.question
-                          ? data.question
-                          : INITIAL_QUESTION_PREVIEW_VALUE
-                        : data.choice
-                        ? data.choice
-                        : INITIAL_CHOICE_PREVIEW_VALUE,
-                  },
-                }));
+            {value === field && (
+              <>
+                <Text field={field} />
 
-                return !e;
-              });
-            }}
-          />
-        </div>
-      </div>
+                <Options field={field} />
 
-      {enable && (
-        <>
-          <Text
-            id={id}
-            data={data}
-            field={field}
-            audio={audios.text}
-          />
+                <Values />
 
-          <Options
-            id={id}
-            data={data}
-            field={field}
-          />
+                <Audios field={field} />
 
-          <Values
-            id={id}
-            data={data}
-            field={field}
-          />
+                <Feedbacks field={field} />
 
-          <Audios
-            id={id}
-            field={field}
-            audios={[audios.firstOption, audios.secondOption]}
-          />
-
-          <Feedbacks
-            id={id}
-            data={data}
-            field={field}
-            audios={[audios.firstFeedback, audios.secondFeedback]}
-          />
-        </>
-      )}
+                <ContinueOption />
+              </>
+            )}
+          </>
+        )}
+      />
     </>
   );
 }

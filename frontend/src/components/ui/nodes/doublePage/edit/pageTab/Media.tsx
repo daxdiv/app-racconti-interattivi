@@ -1,145 +1,131 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useMemo } from "react";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useReactFlow, type Node } from "@xyflow/react";
-import { MAX_FILE_SIZE } from "@/constants";
-import useDownloadMedia from "@/hooks/nodes/doublePage/useDownloadMedia";
-import toast from "react-hot-toast";
-import { truncate } from "@/lib/utils";
+import type { PageSchema } from "@/lib/zod";
+import { cn } from "@/lib/utils";
+import { useFormContext } from "react-hook-form";
+import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
-type MediaProps = {
-  id: string;
-  data: DoublePageNodeData;
-};
-
-function Media({ id, data }: MediaProps) {
-  const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
-  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
-  const audio = useMemo(
-    () => new Audio(audioQuery.data?.[0] || ""),
-    [audioQuery.data?.[0]]
-  );
-
-  useEffect(() => {
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }, [audioQuery.data?.[0]]);
+function Media() {
+  const { data, isLoading } = useNodeQueryContext();
+  const { control } = useFormContext<PageSchema>();
 
   return (
-    <div className="mt-3 flex gap-2 w-full">
-      <div className="flex flex-col w-full gap-2">
-        <Label
-          htmlFor="background"
-          className="font-extrabold"
-        >
-          Sfondo per "{truncate(data.label, 12)}"{" "}
-          <span className="text-muted-foreground/50 text-xs">
-            (dimensioni consigliate 1920x1080)
-          </span>
-        </Label>
-        <Input
-          id="background"
-          type="file"
-          accept="image/*"
-          className="cursor-pointer w-full"
-          onChange={e => {
-            const file = e.target.files?.[0];
+    <div className="mt-2 flex justify-center items-center gap-x-2">
+      <FormField
+        control={control}
+        name="background"
+        disabled={isLoading}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        render={({ field: { value, onChange, ...rest } }) => (
+          <div
+            className={cn("flex flex-col justify-center items-center w-full space-y-4", {
+              "mt-2": data,
+            })}
+          >
+            <FormItem className="w-full">
+              <FormLabel className="font-extrabold text-md">
+                Sfondo pagine{" "}
+                <span className="text-muted-foreground/50 text-xs">
+                  (dimensioni consigliate 1920x1080)
+                </span>
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...rest}
+                  type="file"
+                  accept="image/*"
+                  className="cursor-pointer"
+                  onChange={event =>
+                    onChange(event.target.files && event.target.files[0])
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
 
-            if (!file) return;
-            if (file.size > MAX_FILE_SIZE) {
-              toast.error("Immagine troppo grande");
-
-              e.target.value = "";
-
-              return;
-            }
-
-            updateNodeData(id, {
-              preview: {
-                ...data.preview,
-                backgroundImage: file,
-              },
-            });
-          }}
-        />
-
-        {backgroundImageQuery.data && (
-          <div className="flex justify-start items-center gap-2">
-            <Label
-              htmlFor="selected-img"
-              className="font-extrabold ml-3"
-            >
-              Sfondo attuale
-            </Label>
-            <Avatar
-              id="selected-img"
-              className="rounded-none"
-            >
-              <AvatarImage src={backgroundImageQuery.data} />
-              <AvatarFallback>IMG</AvatarFallback>
-            </Avatar>
+            {data ? (
+              <div className="flex justify-start items-center w-full gap-x-2 ml-2">
+                <Label
+                  htmlFor="selected-img"
+                  className="font-extrabold ml-3"
+                >
+                  Sfondo attuale
+                </Label>
+                <Avatar
+                  id="selected-img"
+                  className="rounded-none"
+                >
+                  <AvatarImage src={data.background} />
+                  <AvatarFallback>IMG</AvatarFallback>
+                </Avatar>
+              </div>
+            ) : (
+              <p className="flex justify-start items-center text-sm text-primary/70 ml-2 w-full">
+                Nessuno sfondo selezionato
+              </p>
+            )}
           </div>
         )}
-      </div>
+      />
+      <FormField
+        control={control}
+        name="audio"
+        disabled={isLoading}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        render={({ field: { value, onChange, ...rest } }) => (
+          <div className="flex flex-col justify-center items-center w-full space-y-4">
+            <FormItem className="w-full">
+              <FormLabel className="font-extrabold text-md">Audio pagine</FormLabel>
+              <FormControl>
+                <Input
+                  {...rest}
+                  type="file"
+                  accept="audio/mp3"
+                  className="cursor-pointer"
+                  onChange={event =>
+                    onChange(event.target.files && event.target.files[0])
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
 
-      <div className="flex flex-col w-full gap-2">
-        <Label
-          htmlFor="audio"
-          className="font-extrabold"
-        >
-          Audio per "{truncate(data.label, 12)}"
-        </Label>
-        <Input
-          id="audio"
-          type="file"
-          accept="audio/mp3"
-          className="cursor-pointer w-full"
-          onChange={e => {
-            const file = e.target.files?.[0];
-
-            if (!file) return;
-            if (file.size > MAX_FILE_SIZE) {
-              toast.error("Audio troppo grande");
-
-              e.target.value = "";
-
-              return;
-            }
-
-            updateNodeData(id, {
-              preview: {
-                ...data.preview,
-                audio: file,
-              },
-            });
-          }}
-        />
-
-        {audioQuery.data?.[0] && (
-          <div className="flex justify-start items-center gap-2">
-            <Label
-              htmlFor="selected-audio"
-              className="font-extrabold ml-3"
-            >
-              Audio attuale
-            </Label>
-            <audio
-              id="selected-audio"
-              controls
-              autoPlay={false}
-            >
-              <source
-                src={audio.src}
-                type="audio/mp3"
-              />
-            </audio>
+            {data ? (
+              <div className="flex justify-start items-center gap-x-2 w-full ml-2">
+                <Label
+                  htmlFor="selected-audio"
+                  className="font-extrabold ml-3"
+                >
+                  Audio attuale
+                </Label>
+                <audio
+                  id="selected-audio"
+                  controls
+                  autoPlay={false}
+                >
+                  <source
+                    src={data.audio as string}
+                    type="audio/mp3"
+                  />
+                </audio>
+              </div>
+            ) : (
+              <p className="flex justify-start items-center text-sm text-primary/70 ml-2 w-full">
+                Nessun audio selezionato
+              </p>
+            )}
           </div>
         )}
-      </div>
+      />
     </div>
   );
 }

@@ -9,7 +9,6 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Edit from "@/components/ui/nodes/doublePage/edit";
-import Preview from "@/components/ui/nodes/doublePage/preview";
 import {
   TooltipProvider,
   Tooltip,
@@ -27,24 +26,66 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { TOOLTIP_DELAY_DURATION } from "@/constants";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { truncate } from "@/lib/utils";
+import { type PageSchema, pageSchema } from "@/lib/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormProvider, useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
+import { NodeQueryProvider } from "@/contexts/nodeQueryContext";
+import Preview from "@/components/ui/nodes/doublePage/preview";
+import { Button } from "@/components/ui/button";
 
-type DoublePageNode = Node<DoublePageNodeData>;
-type DoublePageNodeProps = NodeProps<DoublePageNode>;
+type WithNodeQueryProps = NodeProps<Node>;
 
-function DoublePageNode(props: DoublePageNodeProps) {
-  const sourceConnectionsLimit = props.data.choice !== undefined ? 2 : 1;
-  const sourceConnections = useHandleConnections({ type: "source" });
+function WithNodeQuery({ id }: WithNodeQueryProps) {
+  return (
+    <NodeQueryProvider id={id}>
+      <PageNode id={id} />
+    </NodeQueryProvider>
+  );
+}
+
+function PageNode({ id }: { id: WithNodeQueryProps["id"] }) {
   const { onNodeDelete, isNodeUnlinked } = useNodeUtils();
+  const { data, isLoading } = useNodeQueryContext();
+  const form = useForm<PageSchema>({
+    resolver: zodResolver(pageSchema),
+    defaultValues: data || {
+      type: "base",
+      label: "Titolo",
+      pages: [
+        {
+          text: {
+            content: "",
+            position: "TopLeft",
+          },
+        },
+        {
+          text: {
+            content: "",
+            position: "TopRight",
+          },
+        },
+      ],
+      background: new File([], ""),
+      audio: new File([], ""),
+    },
+  });
 
-  const { id } = props;
-  const { label } = props.data;
+  const sourceConnections = useHandleConnections({ type: "source" });
+  const sourceConnectionsLimit = form.watch("type") === "choice" ? 2 : 1;
+
+  useEffect(() => {
+    form.reset(data);
+  }, [data]); // eslint-disable-line
+
+  if (isLoading) return null;
 
   return (
-    <>
+    <FormProvider {...form}>
       {parseInt(id) !== 0 && (
         <Handle
           type="target"
@@ -53,10 +94,26 @@ function DoublePageNode(props: DoublePageNodeProps) {
           isConnectableStart={false}
         />
       )}
+
       <Card className="w-[300px]">
         <CardHeader className="flex flex-row justify-between items-center space-y-0">
           <div className="flex justify-center items-center gap-x-2">
-            <CardTitle>{truncate(label, 12)}</CardTitle>
+            <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CardTitle className="nodrag nopan cursor-default">
+                    {truncate(form.getValues("label"), 12)}
+                  </CardTitle>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-52 break-words px-6">
+                  <ul className="list-disc">
+                    <li>{form.getValues("pages.0.text.content")}</li>
+                    <li>{form.getValues("pages.1.text.content")}</li>
+                  </ul>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
             {isNodeUnlinked(id) && (
               <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
                 <Tooltip>
@@ -85,12 +142,16 @@ function DoublePageNode(props: DoublePageNodeProps) {
                         />
                       </TooltipTrigger>
                     </AlertDialogTrigger>
-                    <TooltipContent>Elimina "{truncate(label, 12)}"</TooltipContent>
+                    <TooltipContent>
+                      Elimina "{truncate(form.getValues("label"), 12)}"
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Eliminare "{truncate(label, 12)}?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                      Eliminare "{truncate(form.getValues("label"), 12)}?
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
                       Una volta eliminate, dovrai ricrearle da zero.
                     </AlertDialogDescription>
@@ -117,8 +178,6 @@ function DoublePageNode(props: DoublePageNodeProps) {
         <CardContent className="flex justify-center items-center gap-x-1">
           <Edit id={id} />
           <Preview
-            id={id}
-            data={props.data}
             trigger={
               <Button
                 className="w-1/2"
@@ -134,14 +193,15 @@ function DoublePageNode(props: DoublePageNodeProps) {
           />
         </CardContent>
       </Card>
+
       <Handle
         type="source"
         position={Position.Right}
         isConnectable={sourceConnections.length < sourceConnectionsLimit}
         style={{ padding: "3px" }}
       />
-    </>
+    </FormProvider>
   );
 }
 
-export default DoublePageNode;
+export default WithNodeQuery;

@@ -6,14 +6,14 @@ import { useMemo, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import DeleteButtonEdge from "@/components/edges/DeleteButtonEdge";
-import DoublePageNode from "@/components/nodes/DoublePageNode";
 import Header from "@/components/ui/header";
 import { Network } from "lucide-react";
 import { Toaster } from "react-hot-toast";
+import WithNodeQuery from "@/components/nodes/DoublePageNode";
 import useReactFlowConnection from "@/hooks/useReactFlowConnection";
 
 function App() {
-  const nodeTypes = useMemo(() => ({ doublePage: DoublePageNode }), []);
+  const nodeTypes = useMemo(() => ({ doublePage: WithNodeQuery }), []);
   const edgeTypes = useMemo(() => ({ deleteButton: DeleteButtonEdge }), []);
   const reactFlowWrapper = useRef(null);
   const {

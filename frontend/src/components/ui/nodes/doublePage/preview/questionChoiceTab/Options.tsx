@@ -1,29 +1,43 @@
+import { useFormContext } from "react-hook-form";
+import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
+
 type OptionsProps = {
-  data: DoublePageNodeDataWithoutPreview;
   field: "question" | "choice";
-  audios: (string | undefined)[];
 };
 
-function Options({ data, field, audios }: OptionsProps) {
+function Options({ field }: OptionsProps) {
+  const { data } = useNodeQueryContext();
+  const form = useFormContext();
+  const formFirstOptionAudio = form.watch(`${field}.audio.1`);
+  const formSecondOptionAudio = form.watch(`${field}.audio.2`);
+  const firstOptionAudio =
+    formFirstOptionAudio && formFirstOptionAudio.size > 0
+      ? URL.createObjectURL(formFirstOptionAudio)
+      : data?.[field]?.audio[1] || "";
+  const secondOptionAudio =
+    formSecondOptionAudio && formSecondOptionAudio.size > 0
+      ? URL.createObjectURL(formSecondOptionAudio)
+      : data?.[field]?.audio[1] || "";
+
   return (
     <div>
       <div className="flex justify-center items-center gap-x-5">
         <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-32">
-          <p>{data[field]?.options[0]}</p>
+          <p>{data?.[field]?.options[0]}</p>
         </div>
         <div className="flex justify-center items-center bg-muted-foreground/65 rounded-full size-32">
-          <p>{data[field]?.options[1]}</p>
+          <p>{data?.[field]?.options[1]}</p>
         </div>
       </div>
 
       <div className="mt-2 flex justify-center items-center gap-x-2">
-        {audios[0] ? (
+        {firstOptionAudio ? (
           <audio
             controls
             autoPlay={false}
           >
             <source
-              src={audios[0]}
+              src={firstOptionAudio as string}
               type="audio/mp3"
             />
           </audio>
@@ -33,13 +47,13 @@ function Options({ data, field, audios }: OptionsProps) {
           </p>
         )}
 
-        {audios[1] ? (
+        {secondOptionAudio ? (
           <audio
             controls
             autoPlay={false}
           >
             <source
-              src={audios[1]}
+              src={secondOptionAudio as string}
               type="audio/mp3"
             />
           </audio>

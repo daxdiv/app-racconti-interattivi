@@ -1,104 +1,83 @@
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import type { PageSchema } from "@/lib/zod";
 import { Textarea } from "@/components/ui/textarea";
-import { MAX_TEXT_CONTENT_LENGTH } from "@/constants";
-import { useReactFlow, type Node } from "@xyflow/react";
-import toast from "react-hot-toast";
+import { useFormContext } from "react-hook-form";
+import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
-type TextContentsProps = {
-  id: string;
-  data: DoublePageNodeData;
-};
-
-function TextContents({ id, data }: TextContentsProps) {
-  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
+function TextContents() {
+  const { control } = useFormContext<PageSchema>();
+  const { isLoading } = useNodeQueryContext();
 
   return (
-    <div className="flex flex-col justify-center items-center gap-2">
-      <div className="flex flex-col justify-center items-center w-full mb-3">
-        <Label
-          htmlFor="label"
-          className="font-extrabold w-full mb-2"
-        >
-          Titolo
-        </Label>
-        <Input
-          id="label"
-          value={data.preview.label || ""}
-          placeholder="Questa storia parla di..."
-          className="w-full"
-          onChange={e => {
-            const value = e.target.value;
+    <>
+      <FormField
+        control={control}
+        name="label"
+        disabled={isLoading}
+        render={({ field }) => (
+          <FormItem className="w-full">
+            <FormLabel className="font-extrabold text-md">Titolo</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="Questa storia parla di..."
+                {...field}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
-            updateNodeData(id, ({ data }) => ({
-              preview: {
-                ...data.preview,
-                label: value,
-              },
-            }));
-          }}
+      <div className="mt-2 flex justify-between items-center gap-x-2">
+        <FormField
+          control={control}
+          name="pages.0.text.content"
+          disabled={isLoading}
+          render={({ field }) => (
+            <FormItem className="w-1/2">
+              <FormLabel className="font-extrabold text-md">
+                Contenuto pagina sinistra
+              </FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="C'era una volta..."
+                  className="h-[200px] min-h-[200px] max-h-[200px] text-black"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="pages.1.text.content"
+          render={({ field }) => (
+            <FormItem className="w-1/2">
+              <FormLabel className="font-extrabold text-md">
+                Contenuto pagina destra
+              </FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="...una bambina"
+                  className="h-[200px] min-h-[200px] max-h-[200px] text-black"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
       </div>
-
-      <div className="flex justify-center items-center gap-x-2 w-full">
-        <Textarea
-          placeholder={"Contenuto pagina sinistra"}
-          className="h-[200px] min-h-[200px] max-h-[200px] text-black"
-          value={data.preview.pages[0].text.content}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            const value = e.target.value;
-            if (value.length > MAX_TEXT_CONTENT_LENGTH) {
-              toast.error(
-                `Il contenuto di una pagina può essere al massimo ${MAX_TEXT_CONTENT_LENGTH} caratteri`
-              );
-              return;
-            }
-            updateNodeData(id, {
-              preview: {
-                ...data.preview,
-                pages: [
-                  {
-                    text: {
-                      ...data.preview.pages[0].text,
-                      content: value,
-                    },
-                  },
-                  data.preview.pages[1],
-                ],
-              },
-            });
-          }}
-        />
-        <Textarea
-          placeholder={"Contenuto pagina destra"}
-          className="h-[200px] min-h-[200px] max-h-[200px] text-black"
-          value={data.preview.pages[1].text.content}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            const value = e.target.value;
-            if (value.length > MAX_TEXT_CONTENT_LENGTH) {
-              toast.error(
-                `Il contenuto di una pagina può essere al massimo ${MAX_TEXT_CONTENT_LENGTH} caratteri`
-              );
-              return;
-            }
-            updateNodeData(id, {
-              preview: {
-                ...data.preview,
-                pages: [
-                  data.preview.pages[0],
-                  {
-                    text: {
-                      ...data.preview.pages[1].text,
-                      content: value,
-                    },
-                  },
-                ],
-              },
-            });
-          }}
-        />
-      </div>
-    </div>
+    </>
   );
 }
 
