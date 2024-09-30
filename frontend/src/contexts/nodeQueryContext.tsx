@@ -13,7 +13,7 @@ export type MyQueryResult = PageSchema & { background: string };
 export const NodeQueryContext = createContext<UseQueryResult<MyQueryResult> | null>(null);
 export function NodeQueryProvider({ id, children }: NodeQueryProviderProps) {
   const nodeQuery = useQuery<unknown, DefaultError, MyQueryResult>({
-    queryKey: ["get-node"],
+    queryKey: ["get-node", id],
     queryFn: () => getPageNode(id),
     refetchOnMount: false,
     refetchOnReconnect: false,
