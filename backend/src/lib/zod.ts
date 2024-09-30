@@ -31,6 +31,10 @@ const baseSchema = z.object({
     .min(2)
     .max(2),
   audio: z.string(),
+  position: z.object({
+    x: z.string(),
+    y: z.string(),
+  }),
 });
 const questionSchema = z.object({
   type: z.literal("question"),
@@ -93,6 +97,10 @@ const questionSchema = z.object({
     option: z.string().min(1, "Option text required").max(MAX_CONTINUE_OPTION_LENGTH, {
       message: "Option text too long",
     }),
+  }),
+  position: z.object({
+    x: z.string(),
+    y: z.string(),
   }),
 });
 const choiceSchema = z.object({
@@ -158,6 +166,10 @@ const choiceSchema = z.object({
     }),
   }),
   nextSteps: z.array(z.number().int().positive()).min(2).max(2).optional(),
+  position: z.object({
+    x: z.string(),
+    y: z.string(),
+  }),
 });
 
 export const pageNodeSchema = baseSchema.or(questionSchema).or(choiceSchema);
