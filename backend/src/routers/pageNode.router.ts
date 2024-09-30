@@ -15,6 +15,30 @@ type MyRequest = Request<
 
 const pageNodeRouter = express.Router();
 
+pageNodeRouter.get("/", async (_req, res) => {
+  try {
+    const pageNodes = await PageNodeModel.find({});
+
+    if (!pageNodes) {
+      res.status(404).json({ message: "No nodes found" });
+      return;
+    }
+
+    res.status(200).json(
+      pageNodes.map(p => {
+        const pJSON = p.toJSON();
+
+        return {
+          id: pJSON.nodeId,
+          ...pJSON.position,
+        };
+      })
+    );
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 pageNodeRouter.get("/:nodeId", async (req: MyRequest, res) => {
   const { nodeId } = req.params;
 
@@ -144,18 +168,15 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
     const newNode = new PageNodeModel(schema.data);
 
     try {
-      const existingNode = await PageNodeModel.findOne({ nodeId: schema.data.nodeId });
+      // FIXME i have a "question" node, i change to a "choice node" so i need to unset the field(s)
+      // present in "question" nodes but not into "choice" nodes (field question in schema)
+      // but the $unset inside PageNodeModel.updateOne(...) doesn't work
+      // i'll leave like this for now
+      await PageNodeModel.findOneAndDelete({
+        nodeId: schema.data.nodeId,
+      });
 
-      if (existingNode) {
-        // FIXME i have a "question" node, i change to a "choice node" so i need to unset the field(s)
-        // present in "question" nodes but not into "choice" nodes (field question in schema)
-        // but the $unset inside PageNodeModel.updateOne(...) doesn't work
-        // i'll leave like this for now
-        await PageNodeModel.deleteOne({ _id: existingNode._id });
-        await newNode.save();
-      } else {
-        await newNode.save();
-      }
+      await newNode.save();
 
       res.status(201).json({ message: "Saved changes" });
       return;
@@ -164,6 +185,8 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
         res.status(400).json({ message: "Duplicate label" });
         return;
       }
+
+      console.log(error);
 
       res.status(500).json({ message: "Internal server error" });
     }
