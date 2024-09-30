@@ -37,6 +37,7 @@ import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 import { NodeQueryProvider } from "@/contexts/nodeQueryContext";
 import Preview from "@/components/ui/nodes/doublePage/preview";
 import { Button } from "@/components/ui/button";
+import useNodeMutation from "@/hooks/useNodeMutation";
 
 type WithNodeQueryProps = NodeProps<Node>;
 
@@ -49,7 +50,8 @@ function WithNodeQuery({ id }: WithNodeQueryProps) {
 }
 
 function PageNode({ id }: { id: WithNodeQueryProps["id"] }) {
-  const { onNodeDelete, isNodeUnlinked } = useNodeUtils();
+  const { isNodeUnlinked } = useNodeUtils();
+  const { deleteNode } = useNodeMutation(id);
   const { data, isLoading } = useNodeQueryContext();
   const form = useForm<PageSchema>({
     resolver: zodResolver(pageSchema),
@@ -158,8 +160,8 @@ function PageNode({ id }: { id: WithNodeQueryProps["id"] }) {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogAction
-                      onClick={() => {
-                        onNodeDelete(id);
+                      onClick={async () => {
+                        await deleteNode.mutateAsync();
                       }}
                       className="bg-destructive hover:bg-destructive/70"
                     >

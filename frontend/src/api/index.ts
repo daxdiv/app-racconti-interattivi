@@ -47,3 +47,17 @@ export async function getPageNode(id: string) {
 
   return await response.json();
 }
+
+export async function deletePageNode(id: string) {
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/node/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.message);
+  }
+
+  return await response.json();
+}
