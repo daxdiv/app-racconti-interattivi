@@ -182,6 +182,10 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
       res.status(201).json({ message: "Saved changes" });
       return;
     } catch (error) {
+      fs.rm(`public/${req.body.nodeId}`, { recursive: true, force: true }, err => {
+        if (err) throw new Error(err.message);
+      });
+
       if (error.code === 11000) {
         res.status(400).json({ message: "Duplicate label" });
         return;
