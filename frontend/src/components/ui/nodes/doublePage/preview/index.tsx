@@ -8,73 +8,34 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { DEFAULT_BACKGROUND_URL } from "@/constants";
 import PageTab from "@/components/ui/nodes/doublePage/preview/pageTab";
 import QuestionChoiceTab from "@/components/ui/nodes/doublePage/preview/questionChoiceTab";
 import { truncate } from "@/lib/utils";
-import useDownloadMedia from "@/hooks/nodes/doublePage/useDownloadMedia";
-import { useMemo } from "react";
+import { useFormContext } from "react-hook-form";
+import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 type PreviewDialogProps = {
-  id: string;
-  data: DoublePageNodeDataWithoutPreview;
-  media?: {
-    backgroundImage: string;
-    audio: string;
-    question: {
-      text: string;
-      firstOption: string;
-      secondOption: string;
-      firstFeedback: string;
-      secondFeedback: string;
-    };
-    choice: {
-      text: string;
-      firstOption: string;
-      secondOption: string;
-      firstFeedback: string;
-      secondFeedback: string;
-    };
-  };
   trigger: React.ReactNode;
 };
 
-function PreviewDialog({ id, data, media, trigger }: PreviewDialogProps) {
-  const { backgroundImageQuery, audioQuery } = useDownloadMedia(id);
-  const audioSrc = audioQuery.data?.[0] || media?.audio || "";
-  const audio = useMemo(() => new Audio(audioSrc), [audioSrc]);
-  const questionAudios = {
-    text: audioQuery.data?.[1] || "",
-    firstOption: audioQuery.data?.[3] || "",
-    secondOption: audioQuery.data?.[4] || "",
-    firstFeedback: audioQuery.data?.[7] || "",
-    secondFeedback: audioQuery.data?.[8] || "",
-  };
-  const choiceAudios = {
-    text: audioQuery.data?.[2] || "",
-    firstOption: audioQuery.data?.[5] || "",
-    secondOption: audioQuery.data?.[6] || "",
-    firstFeedback: audioQuery.data?.[9] || "",
-    secondFeedback: audioQuery.data?.[10] || "",
-  };
+function PreviewDialog({ trigger }: PreviewDialogProps) {
+  const form = useFormContext();
+  const { data } = useNodeQueryContext();
+  const formAudio = form.watch("audio");
+  const audio = formAudio.size > 0 ? URL.createObjectURL(formAudio) : data?.audio || "";
 
   return (
     <Dialog
       onOpenChange={open => {
-        if (open && !media) {
-          backgroundImageQuery.refetch();
-          audioQuery.refetch();
-        }
-        if (!open) {
-          audio.pause();
-          audio.currentTime = 0;
+        if (!open && formAudio.size > 0) {
+          URL.revokeObjectURL(audio as string);
         }
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-6xl w-full">
         <DialogHeader>
-          <DialogTitle>Anteprima "{truncate(data.label, 12)}"</DialogTitle>
+          <DialogTitle>Anteprima "{truncate(form.getValues("label"), 12)}"</DialogTitle>
           <DialogDescription />
         </DialogHeader>
 
@@ -89,25 +50,16 @@ function PreviewDialog({ id, data, media, trigger }: PreviewDialogProps) {
             value="preview-page"
             className="h-[700px]"
           >
-            <PageTab
-              data={data}
-              media={{
-                backgroundImage:
-                  (media?.backgroundImage
-                    ? media.backgroundImage
-                    : backgroundImageQuery.data) || DEFAULT_BACKGROUND_URL,
-                audio: (media?.audio ? media.audio : audioQuery.data?.[0]) || "",
-              }}
-            />
+            <PageTab />
 
-            {(media?.audio ? media.audio : audioQuery.data?.[0]) ? (
+            {audio ? (
               <audio
                 controls
                 autoPlay={false}
                 className="mt-2"
               >
                 <source
-                  src={audio.src}
+                  src={audio as string}
                   type="audio/mp3"
                 />
               </audio>
@@ -121,23 +73,15 @@ function PreviewDialog({ id, data, media, trigger }: PreviewDialogProps) {
             value="preview-question"
             className="h-[700px]"
           >
-            <QuestionChoiceTab
-              data={data}
-              audios={questionAudios}
-              media={media?.question}
-              field="question"
-            />
+            {form.getValues("type") === "question" && (
+              <QuestionChoiceTab field="question" />
+            )}
           </TabsContent>
           <TabsContent
             value="preview-choice"
             className="h-[700px]"
           >
-            <QuestionChoiceTab
-              data={data}
-              audios={choiceAudios}
-              media={media?.choice}
-              field="choice"
-            />
+            {form.getValues("type") === "choice" && <QuestionChoiceTab field="choice" />}
           </TabsContent>
         </Tabs>
       </DialogContent>

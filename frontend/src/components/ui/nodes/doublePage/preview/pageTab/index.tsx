@@ -1,16 +1,18 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { DEFAULT_BACKGROUND_URL } from "@/constants";
 import { cn } from "@/lib/utils";
+import { useFormContext } from "react-hook-form";
+import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
-type PageTabProps = {
-  data: DoublePageNodeDataWithoutPreview;
-  media: {
-    backgroundImage: string;
-    audio: string;
-  };
-};
-
-function PageTab({ data, media }: PageTabProps) {
-  const [leftPage, rightPage] = data.pages;
+function PageTab() {
+  const form = useFormContext();
+  const { data } = useNodeQueryContext();
+  const formBackground = form.watch("background");
+  const background =
+    formBackground.size > 0
+      ? URL.createObjectURL(formBackground)
+      : data?.background || DEFAULT_BACKGROUND_URL;
+  const [leftPage, rightPage] = form.getValues("pages");
 
   return (
     <AspectRatio
@@ -18,7 +20,7 @@ function PageTab({ data, media }: PageTabProps) {
       className="relative"
     >
       <img
-        src={media.backgroundImage}
+        src={background as string}
         className="absolute rounded-md object-cover w-full h-full max-h-full"
       />
       <div className="absolute w-1/2 max-w-1/2 h-full border-r border-r-primary border-dashed">

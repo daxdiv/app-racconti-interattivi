@@ -1,4 +1,11 @@
 import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -6,100 +13,80 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Label } from "@/components/ui/label";
-import { useReactFlow, type Node } from "@xyflow/react";
+import type { PageSchema } from "@/lib/zod";
+import { useFormContext } from "react-hook-form";
+import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
-type TextPositionsProps = {
-  id: string;
-  data: DoublePageNodeData;
-};
-
-function TextPositions({ id, data }: TextPositionsProps) {
-  const { updateNodeData } = useReactFlow<Node<DoublePageNodeData>>();
+function TextPositions() {
+  const { control } = useFormContext<PageSchema>();
+  const { isLoading } = useNodeQueryContext();
+  const form = useFormContext();
 
   return (
-    <div className="mt-3 flex justify-center items-center gap-2">
-      <div className="flex flex-col w-full gap-2">
-        <Label
-          htmlFor="pos"
-          className="font-extrabold"
-        >
-          Posizione contenuto pagina sinistra
-        </Label>
+    <div className="mt-2 flex justify-center items-center gap-x-2">
+      <FormField
+        control={control}
+        name="pages.0.text.position"
+        disabled={isLoading}
+        render={({ field }) => (
+          <FormItem className="w-full">
+            <FormLabel className="font-extrabold text-md">
+              Posizione contenuto pagina sinistra
+            </FormLabel>
+            <FormControl>
+              <Select
+                defaultValue={form.getValues("pages.0.text.position")}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Posizione contenuto" />
+                </SelectTrigger>
+                <SelectContent {...field}>
+                  <SelectItem value="TopLeft">Alto sinistra</SelectItem>
+                  <SelectItem value="TopRight">Alto destra</SelectItem>
+                  <SelectItem value="MiddleLeft">Centro sinistra</SelectItem>
+                  <SelectItem value="MiddleRight">Centro destra</SelectItem>
+                  <SelectItem value="BottomLeft">Basso sinistra</SelectItem>
+                  <SelectItem value="BottomRight">Basso destra</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
-        <Select
-          defaultValue={data.pages[0].text.position}
-          onValueChange={value => {
-            updateNodeData(id, {
-              preview: {
-                ...data.preview,
-                pages: [
-                  {
-                    text: {
-                      ...data.preview.pages[0].text,
-                      position: value as PageTextPosition,
-                    },
-                  },
-                  data.preview.pages[1],
-                ],
-              },
-            });
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Posizione contenuto" />
-          </SelectTrigger>
-          <SelectContent id="pos">
-            <SelectItem value="TopLeft">Alto sinistra</SelectItem>
-            <SelectItem value="TopRight">Alto destra</SelectItem>
-            <SelectItem value="MiddleLeft">Centro sinistra</SelectItem>
-            <SelectItem value="MiddleRight">Centro destra</SelectItem>
-            <SelectItem value="BottomLeft">Basso sinistra</SelectItem>
-            <SelectItem value="BottomRight">Basso destra</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex flex-col w-full gap-2">
-        <Label
-          htmlFor="pos"
-          className="font-extrabold"
-        >
-          Posizione contenuto pagina destra
-        </Label>
-
-        <Select
-          defaultValue={data.preview.pages[1].text.position}
-          onValueChange={value => {
-            updateNodeData(id, {
-              preview: {
-                ...data.preview,
-                pages: [
-                  data.preview.pages[0],
-                  {
-                    text: {
-                      ...data.preview.pages[1].text,
-                      position: value as PageTextPosition,
-                    },
-                  },
-                ],
-              },
-            });
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Posizione contenuto" />
-          </SelectTrigger>
-          <SelectContent id="pos">
-            <SelectItem value="TopLeft">Alto sinistra</SelectItem>
-            <SelectItem value="TopRight">Alto destra</SelectItem>
-            <SelectItem value="MiddleLeft">Centro sinistra</SelectItem>
-            <SelectItem value="MiddleRight">Centro destra</SelectItem>
-            <SelectItem value="BottomLeft">Basso sinistra</SelectItem>
-            <SelectItem value="BottomRight">Basso destra</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <FormField
+        control={control}
+        name="pages.1.text.position"
+        disabled={isLoading}
+        render={({ field }) => (
+          <FormItem className="w-full">
+            <FormLabel className="font-extrabold text-md">
+              Posizione contenuto pagina destra
+            </FormLabel>
+            <FormControl>
+              <Select
+                defaultValue={form.getValues("pages.1.text.position")}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Posizione contenuto" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="TopLeft">Alto sinistra</SelectItem>
+                  <SelectItem value="TopRight">Alto destra</SelectItem>
+                  <SelectItem value="MiddleLeft">Centro sinistra</SelectItem>
+                  <SelectItem value="MiddleRight">Centro destra</SelectItem>
+                  <SelectItem value="BottomLeft">Basso sinistra</SelectItem>
+                  <SelectItem value="BottomRight">Basso destra</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 }
