@@ -5,6 +5,7 @@ import express, { type Request } from "express";
 import { PageNodeSchema, pageNodeSchema } from "../lib/zod";
 import { getUploadHandler } from "../storages/pageNode.storage";
 import { splitImage } from "../utils/misc";
+import fs from "fs";
 
 type MyRequest = Request<
   { nodeId: string },
@@ -186,11 +187,35 @@ pageNodeRouter.post("/", (req: MyRequest, res) => {
         return;
       }
 
-      console.log(error);
-
       res.status(500).json({ message: "Internal server error" });
     }
   });
+});
+
+pageNodeRouter.delete("/:nodeId", async (req: MyRequest, res) => {
+  const { nodeId } = req.params;
+
+  if (nodeId === "0") {
+    res.status(400).json({ message: "Il nodo iniziale non può essere eliminato" });
+  }
+
+  try {
+    const deletedNode = await PageNodeModel.findOneAndDelete({ nodeId });
+
+    if (!deletedNode) {
+      res.status(404).json({ message: "Not found" });
+      return;
+    }
+
+    fs.rm(`public/${nodeId}`, { recursive: true, force: true }, err => {
+      if (err) throw new Error(err.message);
+    });
+
+    res.status(200).json({ message: "Nodo eliminato" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 export default pageNodeRouter;
