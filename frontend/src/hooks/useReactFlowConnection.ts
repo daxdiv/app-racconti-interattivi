@@ -1,5 +1,5 @@
 import Dagre from "@dagrejs/dagre";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   addEdge,
   useEdgesState,
@@ -15,6 +15,7 @@ import {
   type IsValidConnection,
 } from "@xyflow/react";
 import { INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants";
+import useSavedNodes from "@/hooks/useSavedNodes";
 
 let nodeId = 0;
 const incrementNodeId = () => (nodeId += 2);
@@ -53,9 +54,29 @@ function getLayoutedElements(
 
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
+  const { data } = useSavedNodes();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { getNodes, getEdges, screenToFlowPosition, fitView } = useReactFlow();
+
+  useEffect(() => {
+    if (!data) return;
+
+    setNodes(
+      data.map(
+        n =>
+          ({
+            id: n.id,
+            position: {
+              x: parseInt(n.x),
+              y: parseInt(n.y),
+            },
+            data: {},
+            type: "doublePage",
+          } as Node)
+      )
+    );
+  }, [data]);
 
   const onConnect: OnConnect = useCallback(params => {
     connectingNodeId.current = null;
