@@ -81,9 +81,9 @@ function EditDialog({ id }: EditDialogProps) {
               <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <CircleAlert className="p-1 rounded-full text-primary bg-alert" />
+                    <CircleAlert className="p-1 rounded-full text-secondary bg-destructive" />
                   </TooltipTrigger>
-                  <TooltipContent>
+                  <TooltipContent className="border-destructive text-destructive border-2">
                     Compila tutti i campi{" "}
                     {formType !== "base" && "i campi in tutte le tab"}
                   </TooltipContent>
