@@ -1,13 +1,16 @@
 import { savePageNode } from "@/api";
 import { PageSchema } from "@/lib/zod";
 import { type DefaultError, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useReactFlow } from "@xyflow/react";
 import toast from "react-hot-toast";
 
 function useNodeMutation(id: string, onSuccess: () => void) {
+  const { getNode } = useReactFlow();
+  const { x, y } = getNode(id)!.position;
   const queryClient = useQueryClient();
   const saveNode = useMutation<unknown, DefaultError, PageSchema>({
     mutationKey: ["save-node", id],
-    mutationFn: data => savePageNode(id, data),
+    mutationFn: data => savePageNode(id, { ...data, position: { x, y } }),
     onSuccess() {
       onSuccess();
       queryClient.invalidateQueries({ queryKey: ["get-node"] });
