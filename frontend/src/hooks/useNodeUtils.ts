@@ -1,5 +1,6 @@
 import { getIncomers, getOutgoers, useReactFlow, type Node } from "@xyflow/react";
 import toast from "react-hot-toast";
+import { DEFAULT_DATA } from "@/constants";
 
 function useNodeUtils() {
   const { getNode, getNodes, getEdges, setNodes, deleteElements } = useReactFlow<Node>();
@@ -16,12 +17,11 @@ function useNodeUtils() {
     toast.error("Nodo eliminato");
   };
 
-  const onNodeCreate = (id: number) => {
+  const onNodeCreate = (id: string) => {
     const initialNode = getNode("0")!;
-
     const newNode: Node = {
-      id: `${id}`,
-      data: {},
+      id,
+      data: DEFAULT_DATA,
       position: {
         x: initialNode.position.x - (Math.floor(Math.random() * 8) * 20 + 50),
         y: initialNode.position.y - (Math.floor(Math.random() * 8) * 20 + 50),
@@ -31,7 +31,6 @@ function useNodeUtils() {
     };
 
     toast.success("Pagine create", { duration: 3000 });
-
     setNodes(nds => nds.concat(newNode));
   };
   const isNodeUnlinked = (id: string) => {
