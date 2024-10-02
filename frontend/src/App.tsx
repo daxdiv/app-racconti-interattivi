@@ -50,7 +50,11 @@ function App() {
     if (rfInstance) {
       const flow = rfInstance.toObject();
 
-      await saveFlow.mutateAsync(flow);
+      toast.promise(saveFlow.mutateAsync(flow), {
+        loading: "Salvataggio in corso...",
+        success: ({ message }) => message,
+        error: ({ message }) => `Errore salvataggio racconto (${message})`,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rfInstance]);
@@ -74,7 +78,6 @@ function App() {
           return node;
         })
       );
-      // nodeId =
     }
     if (data.edges.length !== 0) {
       setEdges(
@@ -137,6 +140,7 @@ function App() {
               Ordina
             </Button>
             <Button
+              disabled={saveFlow.isPending}
               className="flex justify-center items-center"
               onClick={() => {
                 const existNodesUnchanged = nodes.some(
