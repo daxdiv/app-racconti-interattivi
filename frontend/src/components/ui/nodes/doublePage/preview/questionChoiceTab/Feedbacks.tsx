@@ -1,23 +1,26 @@
+import type { PageSchema } from "@/lib/zod";
 import { useFormContext } from "react-hook-form";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 type FeedbacksProps = {
   field: "question" | "choice";
 };
 
 function Feedbacks({ field }: FeedbacksProps) {
-  const { data } = useNodeQueryContext();
-  const form = useFormContext();
+  const form = useFormContext<PageSchema>();
   const formFirstFeedbackAudio = form.watch("feedback.list.0.audio");
   const formSecondFeedbackAudio = form.watch("feedback.list.0.audio");
   const firstFeedbackAudio =
-    formFirstFeedbackAudio && formFirstFeedbackAudio.size > 0
+    typeof formFirstFeedbackAudio === "object" && formFirstFeedbackAudio.size > 0
       ? URL.createObjectURL(formFirstFeedbackAudio)
-      : data?.feedback?.list[0].audio || "";
+      : formFirstFeedbackAudio || "";
   const secondFeedbackAudio =
-    formSecondFeedbackAudio && formSecondFeedbackAudio.size > 0
+    typeof formSecondFeedbackAudio === "object" && formSecondFeedbackAudio.size > 0
       ? URL.createObjectURL(formSecondFeedbackAudio)
-      : data?.feedback?.list[1].audio || "";
+      : formSecondFeedbackAudio || "";
+  const [firstFeedbackText, secondFeedbackText] = form.getValues([
+    "feedback.list.0.text",
+    "feedback.list.1.text",
+  ]);
 
   return (
     <div className="flex flex-col justify-center items-center gap-x-5 mt-2">
@@ -28,7 +31,7 @@ function Feedbacks({ field }: FeedbacksProps) {
 
         <div className="flex flex-col justify-center items-center">
           <p className="flex justify-center items-center gap-x-2 text-sm break-words">
-            {form.getValues("feedback.list.0.text")}
+            {firstFeedbackText}
 
             {firstFeedbackAudio ? (
               <audio
@@ -58,8 +61,7 @@ function Feedbacks({ field }: FeedbacksProps) {
 
         <div className="flex flex-col justify-center items-center">
           <p className="flex justify-center items-center gap-x-2 text-sm break-words">
-            {data?.feedback?.list[1].text}
-            {form.getValues("feedback.list.1.text")}
+            {secondFeedbackText}
 
             {secondFeedbackAudio ? (
               <audio

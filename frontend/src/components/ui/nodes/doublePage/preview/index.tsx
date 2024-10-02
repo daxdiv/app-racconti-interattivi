@@ -8,26 +8,29 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import type { PageSchema } from "@/lib/zod";
 import PageTab from "@/components/ui/nodes/doublePage/preview/pageTab";
 import QuestionChoiceTab from "@/components/ui/nodes/doublePage/preview/questionChoiceTab";
 import { truncate } from "@/lib/utils";
 import { useFormContext } from "react-hook-form";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 type PreviewDialogProps = {
   trigger: React.ReactNode;
 };
 
 function PreviewDialog({ trigger }: PreviewDialogProps) {
-  const form = useFormContext();
-  const { data } = useNodeQueryContext();
+  const form = useFormContext<PageSchema>();
+  const type = form.getValues("type");
   const formAudio = form.watch("audio");
-  const audio = formAudio.size > 0 ? URL.createObjectURL(formAudio) : data?.audio || "";
+  const audio =
+    typeof formAudio === "object" && formAudio.size > 0
+      ? URL.createObjectURL(formAudio)
+      : formAudio || "";
 
   return (
     <Dialog
       onOpenChange={open => {
-        if (!open && formAudio.size > 0) {
+        if (!open && typeof formAudio === "object" && formAudio.size > 0) {
           URL.revokeObjectURL(audio as string);
         }
       }}
@@ -73,15 +76,13 @@ function PreviewDialog({ trigger }: PreviewDialogProps) {
             value="preview-question"
             className="h-[700px]"
           >
-            {form.getValues("type") === "question" && (
-              <QuestionChoiceTab field="question" />
-            )}
+            {type === "question" && <QuestionChoiceTab field="question" />}
           </TabsContent>
           <TabsContent
             value="preview-choice"
             className="h-[700px]"
           >
-            {form.getValues("type") === "choice" && <QuestionChoiceTab field="choice" />}
+            {type === "choice" && <QuestionChoiceTab field="choice" />}
           </TabsContent>
         </Tabs>
       </DialogContent>
