@@ -1,11 +1,32 @@
 import type { Node } from "@xyflow/react";
+import type { PageSchema } from "@/lib/zod";
 
 export const REACT_FLOW_PANE_CLASS = "react-flow__pane";
-export const INITIAL_NODES: Node[] = [
+export const DEFAULT_DATA: PageSchema = {
+  type: "base",
+  label: "Titolo",
+  pages: [
+    {
+      text: {
+        content: "",
+        position: "TopLeft",
+      },
+    },
+    {
+      text: {
+        content: "",
+        position: "TopRight",
+      },
+    },
+  ],
+  background: "",
+  audio: "",
+};
+export const INITIAL_NODES: Node<PageSchema>[] = [
   {
     id: "0",
     type: "doublePage",
-    data: {},
+    data: DEFAULT_DATA,
     position: { x: 0, y: 50 },
   },
 ];
