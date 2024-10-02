@@ -2,8 +2,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import flowRouter from "./routers/flow.router";
 import mongoose from "mongoose";
-import pageNodeRouter from "./routers/pageNode.router";
 
 (async () => {
   dotenv.config();
@@ -26,7 +26,7 @@ import pageNodeRouter from "./routers/pageNode.router";
   app.use(express.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(express.static("public"));
-  app.use("/node", pageNodeRouter);
+  app.use("/flow", flowRouter);
 
   app
     .listen(PORT, () => {
