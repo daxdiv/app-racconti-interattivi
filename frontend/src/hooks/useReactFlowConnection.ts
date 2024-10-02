@@ -1,5 +1,5 @@
 import Dagre from "@dagrejs/dagre";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import {
   addEdge,
   useEdgesState,
@@ -14,11 +14,9 @@ import {
   type OnConnectStart,
   type IsValidConnection,
 } from "@xyflow/react";
-import { INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants";
-import useSavedNodes from "@/hooks/useSavedNodes";
-
-let nodeId = 0;
-const incrementNodeId = () => (nodeId += 2);
+import { DEFAULT_DATA, INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants";
+import { PageSchema } from "@/lib/zod";
+import { genId } from "@/lib/utils";
 
 function getLayoutedElements(
   nodes: Node[],
@@ -54,29 +52,9 @@ function getLayoutedElements(
 
 export default function useReactFlowConnection() {
   const connectingNodeId = useRef<null | string>(null);
-  const { data } = useSavedNodes();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { getNodes, getEdges, screenToFlowPosition, fitView } = useReactFlow();
-
-  useEffect(() => {
-    if (!data || data.length === 0) return;
-
-    setNodes(
-      data.map(
-        n =>
-          ({
-            id: n.id,
-            position: {
-              x: parseInt(n.x),
-              y: parseInt(n.y),
-            },
-            data: {},
-            type: "doublePage",
-          } as Node)
-      )
-    );
-  }, [data]);
 
   const onConnect: OnConnect = useCallback(params => {
     connectingNodeId.current = null;
@@ -117,21 +95,21 @@ export default function useReactFlowConnection() {
 
       if (!targetIsPane) return;
 
-      const newNodeId = incrementNodeId();
-      const newNode: Node = {
-        id: `${newNodeId}`,
+      const id = genId();
+      const newNode: Node<PageSchema> = {
+        id,
         position: screenToFlowPosition({
           x: (event as MouseEvent).clientX,
           y: (event as MouseEvent).clientY,
         }),
-        data: {},
+        data: DEFAULT_DATA,
         origin: [0.5, 0.0],
         type: "doublePage",
       };
       const newEgde: Edge = {
-        id: `${newNodeId}`,
+        id,
         source: connectingNodeId.current,
-        target: `${newNodeId}`,
+        target: id,
         animated: true,
         style: {
           stroke: "black",
@@ -194,6 +172,7 @@ export default function useReactFlowConnection() {
     nodes,
     edges,
     setNodes,
+    setEdges,
     onNodesChange,
     onEdgesChange,
     onConnect,
