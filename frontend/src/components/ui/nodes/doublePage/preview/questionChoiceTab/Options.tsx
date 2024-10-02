@@ -1,23 +1,21 @@
 import { useFormContext } from "react-hook-form";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 type OptionsProps = {
   field: "question" | "choice";
 };
 
 function Options({ field }: OptionsProps) {
-  const { data } = useNodeQueryContext();
   const form = useFormContext();
   const formFirstOptionAudio = form.watch(`${field}.audio.1`);
   const formSecondOptionAudio = form.watch(`${field}.audio.2`);
   const firstOptionAudio =
     formFirstOptionAudio && formFirstOptionAudio.size > 0
       ? URL.createObjectURL(formFirstOptionAudio)
-      : data?.[field]?.audio[1] || "";
+      : formFirstOptionAudio || "";
   const secondOptionAudio =
     formSecondOptionAudio && formSecondOptionAudio.size > 0
       ? URL.createObjectURL(formSecondOptionAudio)
-      : data?.[field]?.audio[1] || "";
+      : formSecondOptionAudio || "";
 
   return (
     <div>
