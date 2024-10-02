@@ -94,7 +94,7 @@ function PageNode({ id }: { id: PageNodeProps["id"] }) {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Unlink
-                      className="cursor-default text-primary py-1 px-1 rounded-full bg-alert nodrag nopan"
+                      className="cursor-default text-primary dark:text-secondary py-1 px-1 rounded-full bg-alert nodrag nopan"
                       size={24}
                     />
                   </TooltipTrigger>
@@ -126,7 +126,7 @@ function PageNode({ id }: { id: PageNodeProps["id"] }) {
                     <AlertDialogTrigger asChild>
                       <TooltipTrigger asChild>
                         <Trash2
-                          className="cursor-pointer text-secondary p-1 rounded-full bg-destructive hover:bg-destructive/70 nodrag nopan"
+                          className="cursor-pointer text-secondary p-1 rounded-full bg-destructive dark:bg-destructive hover:bg-destructive-foreground hover:dark:bg-destructive-foreground nodrag nopan"
                           size={24}
                         />
                       </TooltipTrigger>

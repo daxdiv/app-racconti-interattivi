@@ -141,7 +141,7 @@ function EditDialog({ id }: EditDialogProps) {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogAction
-                      className="bg-destructive hover:bg-destructive/70"
+                      className="bg-destructive hover:bg-destructive/70 dark:bg-destructive hover:dark:bg-destructive-foreground"
                       onClick={() => {
                         setAlertDialogOpen(false);
 
@@ -179,7 +179,7 @@ function EditDialog({ id }: EditDialogProps) {
                 />
                 <Button
                   type="submit"
-                  className="bg-confirm text-primary-foreground hover:bg-confirm-foreground flex justify-center items-center"
+                  className="bg-confirm dark:bg-confirm text-primary-foreground hover:bg-confirm-foreground dark:hover:bg-confirm-foreground flex justify-center items-center"
                   disabled={form.formState.isSubmitting}
                 >
                   <Check
