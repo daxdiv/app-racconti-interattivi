@@ -1,17 +1,16 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { DEFAULT_BACKGROUND_URL } from "@/constants";
+import type { PageSchema } from "@/lib/zod";
 import { cn } from "@/lib/utils";
 import { useFormContext } from "react-hook-form";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 function PageTab() {
-  const form = useFormContext();
-  const { data } = useNodeQueryContext();
+  const form = useFormContext<PageSchema>();
   const formBackground = form.watch("background");
   const background =
-    formBackground.size > 0
+    typeof formBackground === "object" && formBackground.size > 0
       ? URL.createObjectURL(formBackground)
-      : data?.background || DEFAULT_BACKGROUND_URL;
+      : formBackground || DEFAULT_BACKGROUND_URL;
   const [leftPage, rightPage] = form.getValues("pages");
 
   return (

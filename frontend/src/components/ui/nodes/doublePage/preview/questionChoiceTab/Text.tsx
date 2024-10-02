@@ -1,18 +1,17 @@
+import type { PageSchema } from "@/lib/zod";
 import { useFormContext } from "react-hook-form";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 type TextProps = {
   field: "question" | "choice";
 };
 
 function Text({ field }: TextProps) {
-  const { data } = useNodeQueryContext();
-  const form = useFormContext();
+  const form = useFormContext<PageSchema>();
   const formTextAudio = form.watch(`${field}.audio.0`);
   const textAudio =
-    formTextAudio && formTextAudio.size > 0
+    typeof formTextAudio === "object" && formTextAudio.size > 0
       ? URL.createObjectURL(formTextAudio)
-      : data?.[field]?.audio[0] || "";
+      : formTextAudio || "";
 
   return (
     <div className="flex justify-center items-center gap-x-2 mb-4">
