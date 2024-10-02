@@ -63,10 +63,6 @@ export default function useReactFlowConnection() {
         {
           ...params,
           animated: true,
-          style: {
-            stroke: "black",
-            strokeWidth: 1,
-          },
           type: "deleteButton",
           markerEnd: {
             type: MarkerType.ArrowClosed,
@@ -111,10 +107,6 @@ export default function useReactFlowConnection() {
         source: connectingNodeId.current,
         target: id,
         animated: true,
-        style: {
-          stroke: "black",
-          strokeWidth: 1,
-        },
         type: "deleteButton",
         markerEnd: {
           type: MarkerType.ArrowClosed,
