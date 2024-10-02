@@ -1,8 +1,9 @@
-import { Eye, Trash2, Unlink } from "lucide-react";
+import { CircleAlert, Eye, Trash2, Unlink } from "lucide-react";
 import {
   Handle,
   Position,
   useHandleConnections,
+  useReactFlow,
   type Node,
   type NodeProps,
 } from "@xyflow/react";
@@ -26,65 +27,37 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { TOOLTIP_DELAY_DURATION } from "@/constants";
+import { DEFAULT_DATA, TOOLTIP_DELAY_DURATION } from "@/constants";
 import useNodeUtils from "@/hooks/useNodeUtils";
 import { truncate } from "@/lib/utils";
 import { type PageSchema, pageSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { useEffect } from "react";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
-import { NodeQueryProvider } from "@/contexts/nodeQueryContext";
 import Preview from "@/components/ui/nodes/doublePage/preview";
 import { Button } from "@/components/ui/button";
-import useNodeMutation from "@/hooks/useNodeMutation";
+import { useEffect } from "react";
 
-type WithNodeQueryProps = NodeProps<Node>;
+type PageNodeProps = NodeProps<Node>;
 
-function WithNodeQuery({ id }: WithNodeQueryProps) {
-  return (
-    <NodeQueryProvider id={id}>
-      <PageNode id={id} />
-    </NodeQueryProvider>
-  );
-}
+function PageNode({ id }: { id: PageNodeProps["id"] }) {
+  const { onNodeDelete } = useNodeUtils();
+  const { getNode } = useReactFlow();
+  const node = getNode(id)!;
 
-function PageNode({ id }: { id: WithNodeQueryProps["id"] }) {
   const { isNodeUnlinked } = useNodeUtils();
-  const { deleteNode } = useNodeMutation(id);
-  const { data, isLoading } = useNodeQueryContext();
   const form = useForm<PageSchema>({
     resolver: zodResolver(pageSchema),
-    defaultValues: data || {
-      type: "base",
-      label: "Titolo",
-      pages: [
-        {
-          text: {
-            content: "",
-            position: "TopLeft",
-          },
-        },
-        {
-          text: {
-            content: "",
-            position: "TopRight",
-          },
-        },
-      ],
-      background: new File([], ""),
-      audio: new File([], ""),
-    },
+    defaultValues: getNode(id)?.data || DEFAULT_DATA,
   });
 
   const sourceConnections = useHandleConnections({ type: "source" });
   const sourceConnectionsLimit = form.watch("type") === "choice" ? 2 : 1;
 
   useEffect(() => {
-    form.reset(data);
-  }, [data]); // eslint-disable-line
+    form.reset(node.data);
 
-  if (isLoading) return null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [node.data]);
 
   return (
     <FormProvider {...form}>
@@ -132,6 +105,20 @@ function PageNode({ id }: { id: WithNodeQueryProps["id"] }) {
           </div>
 
           <div className="flex justify-center items-center gap-x-1">
+            {!form.formState.isValid && (
+              <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <CircleAlert
+                      className="cursor-default text-secondary p-1 rounded-full bg-destructive nodrag nopan"
+                      size={24}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Compila tutti i campi</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+
             {parseInt(id) !== 0 && (
               <AlertDialog>
                 <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
@@ -149,6 +136,7 @@ function PageNode({ id }: { id: WithNodeQueryProps["id"] }) {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
@@ -160,8 +148,8 @@ function PageNode({ id }: { id: WithNodeQueryProps["id"] }) {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogAction
-                      onClick={async () => {
-                        await deleteNode.mutateAsync();
+                      onClick={() => {
+                        onNodeDelete(id);
                       }}
                       className="bg-destructive hover:bg-destructive/70"
                     >
@@ -206,4 +194,4 @@ function PageNode({ id }: { id: WithNodeQueryProps["id"] }) {
   );
 }
 
-export default WithNodeQuery;
+export default PageNode;
