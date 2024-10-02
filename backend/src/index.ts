@@ -8,6 +8,9 @@ import mongoose from "mongoose";
 (async () => {
   dotenv.config();
 
+  if (!process.env.CLIENT_URL) {
+    throw new Error("Missing CLIENT_URL inside .env");
+  }
   if (!process.env.DATABASE_URL) {
     throw new Error("Missing DATABASE_URL inside .env");
   }
