@@ -10,7 +10,7 @@ import { z } from "zod";
 
 const baseSchema = z.object({
   type: z.literal("base"),
-  nodeId: z.string({ message: "Id required" }),
+  id: z.string({ message: "Id required" }),
   label: z.string().min(1, { message: "Label required" }),
   pages: z
     .array(
@@ -38,7 +38,7 @@ const baseSchema = z.object({
 });
 const questionSchema = z.object({
   type: z.literal("question"),
-  nodeId: z.string({ message: "Id required" }),
+  id: z.string({ message: "Id required" }),
   label: z.string().min(1, { message: "Label required" }),
   pages: z
     .array(
@@ -105,7 +105,7 @@ const questionSchema = z.object({
 });
 const choiceSchema = z.object({
   type: z.literal("choice"),
-  nodeId: z.string({ message: "Id required" }),
+  id: z.string({ message: "Id required" }),
   label: z.string().min(1, { message: "Label required" }),
   pages: z
     .array(
@@ -172,5 +172,16 @@ const choiceSchema = z.object({
   }),
 });
 
-export const pageNodeSchema = baseSchema.or(questionSchema).or(choiceSchema);
-export type PageNodeSchema = z.infer<typeof pageNodeSchema>;
+export const nodeSchema = baseSchema.or(questionSchema).or(choiceSchema);
+export const edgeSchema = z.object({
+  id: z.string({ message: "Id required" }),
+  source: z.string({ message: "Source id required" }),
+  target: z.string({ message: "Target id required" }),
+});
+export const flowSchema = z.object({
+  nodes: z.array(nodeSchema).min(1),
+  edges: z.array(edgeSchema),
+});
+export type NodeSchema = z.infer<typeof nodeSchema>;
+export type EdgeSchema = z.infer<typeof edgeSchema>;
+export type FlowSchema = z.infer<typeof flowSchema>;
