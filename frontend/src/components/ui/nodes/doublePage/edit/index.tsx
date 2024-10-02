@@ -103,12 +103,7 @@ function EditDialog({ id }: EditDialogProps) {
                   field="question"
                   disabled={formType === "choice"}
                   onCheckedChange={e => {
-                    if (e) {
-                      form.setValue("type", "question");
-                    } else {
-                      form.setValue("type", "base");
-                      form.unregister(["question", "feedback", "values"]);
-                    }
+                    form.setValue("type", e ? "question" : "base");
                   }}
                 />
               </TabsContent>
@@ -120,12 +115,7 @@ function EditDialog({ id }: EditDialogProps) {
                   field="choice"
                   disabled={formType === "question"}
                   onCheckedChange={e => {
-                    if (e) {
-                      form.setValue("type", "choice");
-                    } else {
-                      form.setValue("type", "base");
-                      form.unregister(["choice", "feedback", "values"]);
-                    }
+                    form.setValue("type", e ? "choice" : "base");
                   }}
                 />
               </TabsContent>
