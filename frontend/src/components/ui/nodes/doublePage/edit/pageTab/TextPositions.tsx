@@ -15,11 +15,9 @@ import {
 
 import type { PageSchema } from "@/lib/zod";
 import { useFormContext } from "react-hook-form";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 function TextPositions() {
   const { control } = useFormContext<PageSchema>();
-  const { isLoading } = useNodeQueryContext();
   const form = useFormContext();
 
   return (
@@ -27,7 +25,6 @@ function TextPositions() {
       <FormField
         control={control}
         name="pages.0.text.position"
-        disabled={isLoading}
         render={({ field }) => (
           <FormItem className="w-full">
             <FormLabel className="font-extrabold text-md">
@@ -59,7 +56,6 @@ function TextPositions() {
       <FormField
         control={control}
         name="pages.1.text.position"
-        disabled={isLoading}
         render={({ field }) => (
           <FormItem className="w-full">
             <FormLabel className="font-extrabold text-md">

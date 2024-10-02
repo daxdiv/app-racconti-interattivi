@@ -9,14 +9,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { CircleAlert, Edit, Eye, Save, X } from "lucide-react";
+import { Check, Edit, Eye, X } from "lucide-react";
+import { Node, useReactFlow } from "@xyflow/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 import { Button } from "@/components/ui/button";
 // import { DevTool } from "@hookform/devtools";
@@ -25,12 +20,9 @@ import type { PageSchema } from "@/lib/zod";
 import PageTab from "@/components/ui/nodes/doublePage/edit/pageTab";
 import Preview from "@/components/ui/nodes/doublePage/preview";
 import QuestionChoiceTab from "@/components/ui/nodes/doublePage/edit/questionChoiceTab";
-import { TOOLTIP_DELAY_DURATION } from "@/constants";
 import toast from "react-hot-toast";
 import { truncate } from "@/lib/utils";
 import { useFormContext } from "react-hook-form";
-import useNodeMutation from "@/hooks/useNodeMutation";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 import { useState } from "react";
 
 type EditDialogProps = {
@@ -39,16 +31,14 @@ type EditDialogProps = {
 
 function EditDialog({ id }: EditDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
+  const { updateNodeData } = useReactFlow<Node<PageSchema>>();
   const form = useFormContext<PageSchema>();
-  const { isLoading } = useNodeQueryContext();
-  const { saveNode } = useNodeMutation(id, () => {
-    setAlertDialogOpen(false);
-    toast.success("Modifiche salvate");
-  });
   const formType = form.watch("type");
 
-  const onSubmit = async (values: PageSchema) => {
-    await saveNode.mutateAsync(values);
+  const onSubmit = (values: PageSchema) => {
+    updateNodeData(id, values);
+    setAlertDialogOpen(false);
+    toast.success("Modifiche salvate");
   };
 
   return (
@@ -78,17 +68,9 @@ function EditDialog({ id }: EditDialogProps) {
           <AlertDialogTitle className="flex justify-between items-center gap-x-1">
             Modifica "{truncate(form.getValues("label"), 12)}"
             {!form.formState.isValid && (
-              <TooltipProvider delayDuration={TOOLTIP_DELAY_DURATION}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <CircleAlert className="p-1 rounded-full text-secondary bg-destructive" />
-                  </TooltipTrigger>
-                  <TooltipContent className="border-destructive text-destructive border-2">
-                    Compila tutti i campi{" "}
-                    {formType !== "base" && "i campi in tutte le tab"}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <p className="text-destructive text-sm">
+                Compila tutti i campi {formType !== "base" && "i campi in tutte le tab"}
+              </p>
             )}
           </AlertDialogTitle>
         </AlertDialogHeader>
@@ -208,13 +190,13 @@ function EditDialog({ id }: EditDialogProps) {
                 <Button
                   type="submit"
                   className="bg-confirm text-primary-foreground hover:bg-confirm-foreground flex justify-center items-center"
-                  disabled={form.formState.isSubmitting || isLoading}
+                  disabled={form.formState.isSubmitting}
                 >
-                  <Save
+                  <Check
                     size={16}
                     className="mr-2"
                   />
-                  Salva
+                  Conferma
                 </Button>
               </div>
             </AlertDialogFooter>

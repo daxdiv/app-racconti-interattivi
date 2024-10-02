@@ -10,18 +10,15 @@ import { Input } from "@/components/ui/input";
 import type { PageSchema } from "@/lib/zod";
 import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from "react-hook-form";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 function TextContents() {
   const { control } = useFormContext<PageSchema>();
-  const { isLoading } = useNodeQueryContext();
 
   return (
     <>
       <FormField
         control={control}
         name="label"
-        disabled={isLoading}
         render={({ field }) => (
           <FormItem className="w-full">
             <FormLabel className="font-extrabold text-md">Titolo</FormLabel>
@@ -40,7 +37,6 @@ function TextContents() {
         <FormField
           control={control}
           name="pages.0.text.content"
-          disabled={isLoading}
           render={({ field }) => (
             <FormItem className="w-1/2">
               <FormLabel className="font-extrabold text-md">
