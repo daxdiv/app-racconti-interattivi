@@ -1,8 +1,8 @@
-import { PageSchema } from "@/lib/zod";
+import type { ReactFlowJsonObject } from "@xyflow/react";
 import { objectToFormData } from "@/lib/utils";
 
-export async function getSavedNodes() {
-  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/node`);
+export async function restoreFlow() {
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow`);
 
   if (!response.ok) {
     const error = await response.json();
@@ -13,44 +13,15 @@ export async function getSavedNodes() {
   return await response.json();
 }
 
-export async function savePageNode(
-  id: string,
-  params: PageSchema & { position: { x: number; y: number } }
-) {
-  const formData = objectToFormData({ nodeId: id, ...params });
+export async function saveFlow(flow: ReactFlowJsonObject) {
+  const formData = objectToFormData({
+    nodes: flow.nodes.map(n => ({ id: n.id, position: n.position, ...n.data })),
+    edges: flow.edges.map(e => ({ id: e.id, source: e.source, target: e.target })), // FIXME formData edges è null
+  });
 
-  const response = await fetch(
-    `${import.meta.env.VITE_SERVER_URL}/node?nodeType=${params.type}`,
-    {
-      method: "POST",
-      body: formData,
-    }
-  );
-
-  if (response.status !== 201) {
-    const error = await response.json();
-
-    throw new Error(error.message);
-  }
-
-  return await response.json();
-}
-
-export async function getPageNode(id: string) {
-  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/node/${id}`);
-
-  if (!response.ok) {
-    const error = await response.json();
-
-    throw new Error(error.message);
-  }
-
-  return await response.json();
-}
-
-export async function deletePageNode(id: string) {
-  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/node/${id}`, {
-    method: "DELETE",
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow`, {
+    method: "POST",
+    body: formData,
   });
 
   if (!response.ok) {
