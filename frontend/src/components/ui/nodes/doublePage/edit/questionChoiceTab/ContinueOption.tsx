@@ -1,22 +1,27 @@
-import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
 import type { PageSchema } from "@/lib/zod";
 import { useFormContext } from "react-hook-form";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 function ContinueOption() {
-  const { control } = useFormContext<PageSchema>();
-  const { isLoading } = useNodeQueryContext();
+  const form = useFormContext<PageSchema>();
 
   return (
     <FormField
-      control={control}
+      control={form.control}
       name="feedback.option"
-      disabled={isLoading}
       render={({ field }) => (
         <FormItem className="mt-2 w-full">
-          <FormLabel className="font-extrabold text-md">Opzione per continuare</FormLabel>
+          <FormLabel className="flex justify-start items-center gap-x-2 font-extrabold text-md">
+            Opzione per continuare <FormMessage />
+          </FormLabel>
           <FormControl>
             <Input
               type="text"

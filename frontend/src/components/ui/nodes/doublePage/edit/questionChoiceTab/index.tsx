@@ -11,7 +11,6 @@ import Values from "@/components/ui/nodes/doublePage/edit/questionChoiceTab/Valu
 import toast from "react-hot-toast";
 import { useFormContext } from "react-hook-form";
 import { useHandleConnections } from "@xyflow/react";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 type QuestionChoiceTabProps = {
   field: "question" | "choice";
@@ -20,16 +19,14 @@ type QuestionChoiceTabProps = {
 };
 
 function QuestionChoiceTab({ field, disabled, onCheckedChange }: QuestionChoiceTabProps) {
-  const { control } = useFormContext<PageSchema>();
-  const { isLoading } = useNodeQueryContext();
+  const form = useFormContext<PageSchema>();
   const connections = useHandleConnections({ type: "source" });
 
   return (
     <>
       <FormField
-        control={control}
+        control={form.control}
         name="type"
-        disabled={isLoading}
         render={({ field: { value } }) => (
           <>
             <FormItem className="flex justify-start items-center gap-x-2">
@@ -59,11 +56,11 @@ function QuestionChoiceTab({ field, disabled, onCheckedChange }: QuestionChoiceT
 
                 <Options field={field} />
 
-                <Values />
-
                 <Audios field={field} />
 
-                <Feedbacks field={field} />
+                <Values />
+
+                <Feedbacks />
 
                 <ContinueOption />
               </>

@@ -1,23 +1,28 @@
-import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
 import type { PageSchema } from "@/lib/zod";
 import { useFormContext } from "react-hook-form";
-import { useNodeQueryContext } from "@/hooks/useNodeQueryContext";
 
 function Values() {
-  const { control } = useFormContext<PageSchema>();
-  const { isLoading } = useNodeQueryContext();
+  const form = useFormContext<PageSchema>();
 
   return (
     <div className="mt-2 flex justify-center items-center gap-x-2">
       <FormField
-        control={control}
+        control={form.control}
         name="values.0"
-        disabled={isLoading}
         render={({ field }) => (
           <FormItem className="w-full">
-            <FormLabel className="font-extrabold text-md">Primo valore</FormLabel>
+            <FormLabel className="flex justify-start items-center gap-x-2 font-extrabold text-md">
+              Primo valore <FormMessage />
+            </FormLabel>
             <FormControl>
               <Input
                 placeholder="Sincerità"
@@ -29,12 +34,13 @@ function Values() {
       />
 
       <FormField
-        control={control}
+        control={form.control}
         name="values.1"
-        disabled={isLoading}
         render={({ field }) => (
           <FormItem className="w-full">
-            <FormLabel className="font-extrabold text-md">Secondo valore</FormLabel>
+            <FormLabel className="flex justify-start items-center gap-x-2 font-extrabold text-md">
+              Secondo valore <FormMessage />
+            </FormLabel>
             <FormControl>
               <Input
                 placeholder="Cattiveria"
