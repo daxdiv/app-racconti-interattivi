@@ -16,7 +16,7 @@ export async function restoreFlow() {
 export async function saveFlow(flow: ReactFlowJsonObject) {
   const formData = objectToFormData({
     nodes: flow.nodes.map(n => ({ id: n.id, position: n.position, ...n.data })),
-    edges: flow.edges.map(e => ({ id: e.id, source: e.source, target: e.target })), // FIXME formData edges è null
+    edges: flow.edges.map(e => ({ id: e.id, source: e.source, target: e.target })),
   });
 
   const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow`, {

@@ -1,18 +1,11 @@
-import { saveFlow } from "@/api";
-import { type DefaultError, useMutation } from "@tanstack/react-query";
 import type { ReactFlowJsonObject } from "@xyflow/react";
-import toast from "react-hot-toast";
+import { saveFlow } from "@/api";
+import { useMutation } from "@tanstack/react-query";
 
 function useSaveFlow() {
-  return useMutation<{ message: string }, DefaultError, ReactFlowJsonObject>({
+  return useMutation<{ message: string }, { message: string }, ReactFlowJsonObject>({
     mutationKey: ["save-flow"],
     mutationFn: flow => saveFlow(flow),
-    onSuccess({ message }) {
-      toast.success(message);
-    },
-    onError(error) {
-      toast.error(`Errore salvataggio racconto (${error.message})`);
-    },
   });
 }
 
