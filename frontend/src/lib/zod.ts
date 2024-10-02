@@ -31,15 +31,15 @@ const baseSchema = z.object({
     .min(2)
     .max(2),
   background: z
-    .instanceof(File)
+    .instanceof(File, { message: "Inserire un file" })
     .refine(file => file.size > 0, "Inserire un file")
     .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-    .or(z.string().url()),
+    .or(z.string().url({ message: "Inserire un file" })),
   audio: z
-    .instanceof(File)
+    .instanceof(File, { message: "Inserire un file" })
     .refine(file => file.size > 0, "Inserire un file")
     .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-    .or(z.string().url()),
+    .or(z.string().url({ message: "Inserire un file" })),
 });
 const questionSchema = z.object({
   type: z.literal("question"),
@@ -63,15 +63,15 @@ const questionSchema = z.object({
     .min(2)
     .max(2),
   background: z
-    .instanceof(File)
+    .instanceof(File, { message: "Inserire un file" })
     .refine(file => file.size > 0, "Inserire un file")
     .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-    .or(z.string().url()),
+    .or(z.string().url({ message: "Inserire un file" })),
   audio: z
-    .instanceof(File)
+    .instanceof(File, { message: "Inserire un file" })
     .refine(file => file.size > 0, "Inserire un file")
     .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-    .or(z.string().url()),
+    .or(z.string().url({ message: "Inserire un file" })),
   question: z
     .object({
       text: z
@@ -84,10 +84,10 @@ const questionSchema = z.object({
       audio: z
         .array(
           z
-            .instanceof(File)
+            .instanceof(File, { message: "Inserire un file" })
             .refine(file => file.size > 0, "Inserire un file")
             .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-            .or(z.string().url())
+            .or(z.string().url({ message: "Inserire un file" }))
         )
         .min(3)
         .max(3),
@@ -125,10 +125,10 @@ const questionSchema = z.object({
           z.object({
             text: z.string().min(1, "Il feedback non può essere vuoto"),
             audio: z
-              .instanceof(File)
+              .instanceof(File, { message: "Inserire un file" })
               .refine(file => file.size > 0, "Inserire un file")
               .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-              .or(z.string().url()),
+              .or(z.string().url({ message: "Inserire un file" })),
           })
         )
         .min(2)
@@ -165,15 +165,15 @@ const choiceSchema = z.object({
     .min(2)
     .max(2),
   background: z
-    .instanceof(File)
+    .instanceof(File, { message: "Inserire un file" })
     .refine(file => file.size > 0, "Inserire un file")
     .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-    .or(z.string().url()),
+    .or(z.string().url({ message: "Inserire un file" })),
   audio: z
-    .instanceof(File)
+    .instanceof(File, { message: "Inserire un file" })
     .refine(file => file.size > 0, "Inserire un file")
     .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-    .or(z.string().url()),
+    .or(z.string().url({ message: "Inserire un file" })),
   choice: z
     .object({
       text: z
@@ -186,10 +186,10 @@ const choiceSchema = z.object({
       audio: z
         .array(
           z
-            .instanceof(File)
+            .instanceof(File, { message: "Inserire un file" })
             .refine(file => file.size > 0, "Inserire un file")
             .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-            .or(z.string().url())
+            .or(z.string().url({ message: "Inserire un file" }))
         )
         .min(3)
         .max(3),
@@ -227,10 +227,10 @@ const choiceSchema = z.object({
           z.object({
             text: z.string().min(1, "Il feedback non può essere vuoto"),
             audio: z
-              .instanceof(File)
+              .instanceof(File, { message: "Inserire un file" })
               .refine(file => file.size > 0, "Inserire un file")
               .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
-              .or(z.string().url()),
+              .or(z.string().url({ message: "Inserire un file" })),
           })
         )
         .min(2)
