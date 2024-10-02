@@ -24,8 +24,22 @@ import useReactFlowConnection from "@/hooks/useReactFlowConnection";
 import useRestoreFlow from "@/hooks/useRestoreFlow";
 import useSaveFlow from "@/hooks/useSaveFlow";
 import { PageSchema } from "@/lib/zod";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import useTheme from "@/hooks/useTheme";
+import { ModeToggle } from "@/components/ModeToggle";
 
 function App() {
+  return (
+    <ThemeProvider
+      defaultTheme="light"
+      storageKey="vite-ui-theme"
+    >
+      <Flow />
+    </ThemeProvider>
+  );
+}
+
+function Flow() {
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const nodeTypes = useMemo(() => ({ doublePage: PageNode }), []);
   const edgeTypes = useMemo(() => ({ deleteButton: DeleteButtonEdge }), []);
@@ -45,6 +59,7 @@ function App() {
   } = useReactFlowConnection();
   const saveFlow = useSaveFlow();
   const { data } = useRestoreFlow();
+  const { theme } = useTheme();
 
   const onSave = useCallback(async () => {
     if (rfInstance) {
@@ -84,16 +99,11 @@ function App() {
         data.edges.map(e => ({
           ...e,
           animated: true,
-          style: {
-            stroke: "black",
-            strokeWidth: 1,
-          },
           type: "deleteButton",
           markerEnd: {
             type: MarkerType.ArrowClosed,
             width: 30,
             height: 30,
-            color: "black",
           },
         }))
       );
@@ -117,6 +127,7 @@ function App() {
           onConnectStart={onConnectStart}
           onConnectEnd={onConnectEnd}
           onInit={setRfInstance}
+          colorMode={theme}
           fitView
           fitViewOptions={{ padding: 2 }}
           nodeOrigin={[0.5, 0]}
@@ -160,6 +171,7 @@ function App() {
               <Save className="mr-2 nodrag nopan" />
               Salva racconto
             </Button>
+            <ModeToggle />
           </Panel>
           <Controls
             orientation="horizontal"
@@ -170,7 +182,12 @@ function App() {
             zoomable
           />
         </ReactFlow>
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            className:
+              "bg-primary dark:bg-secondary dark:text-primary dark:border dark:border-white",
+          }}
+        />
       </div>
     </>
   );

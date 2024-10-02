@@ -68,7 +68,6 @@ export default function useReactFlowConnection() {
             type: MarkerType.ArrowClosed,
             width: 30,
             height: 30,
-            color: "black",
           },
         },
         eds
@@ -112,7 +111,6 @@ export default function useReactFlowConnection() {
           type: MarkerType.ArrowClosed,
           width: 30,
           height: 30,
-          color: "black",
         },
       };
 
