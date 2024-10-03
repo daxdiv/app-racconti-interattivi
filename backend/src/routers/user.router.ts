@@ -3,12 +3,12 @@ import UserModel from "../models/user.model";
 import bcrypt from "bcrypt";
 import express from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import { userSchema } from "../lib/zod";
+import { authSchema } from "../lib/zod";
 
 const userRouter = express.Router();
 
 userRouter.get("/", async (req, res) => {
-  const cookie = req.cookies["jwt"];
+  const cookie = req.cookies["user"];
 
   if (!cookie) {
     res.status(401).json({ message: "Not authenticated" });
@@ -36,11 +36,11 @@ userRouter.get("/", async (req, res) => {
   }
 });
 userRouter.post("/sign-in", async (req, res) => {
-  const { username, password } = req.body;
-  const schema = userSchema.safeParse({ username, password });
+  const { type, username, password } = req.body;
+  const schema = authSchema.safeParse({ type, username, password });
 
   if (!schema.success) {
-    res.status(400).json(schema.error.issues.map(i => i.message).join("\n"));
+    res.status(400).json({ message: schema.error.issues.map(i => i.message).join("\n") });
     return;
   }
 
@@ -68,11 +68,11 @@ userRouter.post("/sign-in", async (req, res) => {
   }
 });
 userRouter.post("/sign-up", async (req, res) => {
-  const { username, password } = req.body;
-  const schema = userSchema.safeParse({ username, password });
+  const { type, username, password } = req.body;
+  const schema = authSchema.safeParse({ type, username, password });
 
   if (!schema.success) {
-    res.status(400).json(schema.error.issues.map(i => i.message).join("\n"));
+    res.status(400).json({ message: schema.error.issues.map(i => i.message).join("\n") });
     return;
   }
 
@@ -95,8 +95,7 @@ userRouter.post("/sign-up", async (req, res) => {
   }
 });
 userRouter.post("/sign-out", async (_req, res) => {
-  res.cookie("jwt", "", { maxAge: 0 });
-
+  res.cookie("user", "", { maxAge: 0 });
   res.status(200).json({ message: "success" });
 });
 
