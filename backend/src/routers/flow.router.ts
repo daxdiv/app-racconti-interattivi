@@ -133,55 +133,6 @@ flowRouter.post("/", (req: MyRequest, res) => {
     }
 
     try {
-      // NOTE boring stuff to unset the fields based on node type
-      // for example if the user switch from node type "choice" to "base",
-      // the feedback field doesn't exist
-      // const bulkOperations = await Promise.all(
-      //   schema.data.nodes.map(async n => {
-      //     const existingDocument = await FlowModel.findOne(
-      //       { "nodes.id": n.id },
-      //       { "nodes.$": 1 }
-      //     );
-
-      //     if (existingDocument) {
-      //       const existingNode = existingDocument.nodes[0];
-      //       const fieldsToUnset: Record<string, unknown> = {};
-
-      //       Object.keys(existingNode).forEach(key => {
-      //         if (!Object.prototype.hasOwnProperty.call(n, key)) {
-      //           fieldsToUnset[`nodes.$.${key}`] = "";
-      //         }
-      //       });
-
-      //       return {
-      //         updateOne: {
-      //           filter: { "nodes.id": n.id },
-      //           update: {
-      //             $set: { "nodes.$": n, edges: schema.data.edges },
-      //             ...(Object.keys(fieldsToUnset).length > 0
-      //               ? { $unset: fieldsToUnset }
-      //               : {}),
-      //           },
-      //           upsert: false,
-      //         },
-      //       };
-      //     } else {
-      //       return {
-      //         updateOne: {
-      //           filter: { _id: new mongoose.Types.ObjectId() },
-      //           update: {
-      //             $push: { nodes: n },
-      //             $set: { edges: schema.data.edges },
-      //           },
-      //           upsert: true,
-      //         },
-      //       };
-      //     }
-      //   })
-      // );
-
-      // await FlowModel.bulkWrite(bulkOperations);
-
       const newFlow = new FlowModel(schema.data);
 
       await FlowModel.deleteMany({});
