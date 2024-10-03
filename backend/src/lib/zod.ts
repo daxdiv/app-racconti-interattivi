@@ -188,7 +188,8 @@ export type NodeSchema = z.infer<typeof nodeSchema>;
 export type EdgeSchema = z.infer<typeof edgeSchema>;
 export type FlowSchema = z.infer<typeof flowSchema>;
 
-export const userSchema = z.object({
+const signUpSchema = z.object({
+  type: z.literal("sign-up"),
   username: z
     .string()
     .min(
@@ -202,4 +203,10 @@ export const userSchema = z.object({
       `La password dev'essere di minimo ${MIN_PASSWORD_LENGTH} caratteri`
     ),
 });
-export type UserSchema = z.infer<typeof userSchema>;
+const signInSchema = z.object({
+  type: z.literal("sign-in"),
+  username: z.string().min(1, "Inserire il nome utente"),
+  password: z.string().min(1, "Inserire una password"),
+});
+export const authSchema = signUpSchema.or(signInSchema);
+export type AuthSchema = z.infer<typeof authSchema>;

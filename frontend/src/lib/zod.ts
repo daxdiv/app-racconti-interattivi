@@ -5,6 +5,8 @@ import {
   MAX_QUESTION_CHOICE_TEXT_LENGTH,
   MAX_TEXT_CONTENT_LENGTH,
   MAX_VALUE_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  MIN_USERNAME_LENGTH,
 } from "@/constants";
 
 import { z } from "zod";
@@ -248,3 +250,26 @@ const choiceSchema = z.object({
 
 export const pageSchema = baseSchema.or(questionSchema).or(choiceSchema);
 export type PageSchema = z.infer<typeof pageSchema>;
+
+const signUpSchema = z.object({
+  type: z.literal("sign-up"),
+  username: z
+    .string()
+    .min(
+      MIN_USERNAME_LENGTH,
+      `L'username dev'essere di almeno ${MIN_USERNAME_LENGTH} caratteri`
+    ),
+  password: z
+    .string()
+    .min(
+      MIN_PASSWORD_LENGTH,
+      `La password dev'essere di minimo ${MIN_PASSWORD_LENGTH} caratteri`
+    ),
+});
+const signInSchema = z.object({
+  type: z.literal("sign-in"),
+  username: z.string().min(1, "Inserire il nome utente"),
+  password: z.string().min(1, "Inserire una password"),
+});
+export const authSchema = signUpSchema.or(signInSchema);
+export type AuthSchema = z.infer<typeof authSchema>;
