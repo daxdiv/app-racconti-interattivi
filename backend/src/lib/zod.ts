@@ -4,6 +4,8 @@ import {
   MAX_QUESTION_CHOICE_TEXT_LENGTH,
   MAX_TEXT_CONTENT_LENGTH,
   MAX_VALUE_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  MIN_USERNAME_LENGTH,
 } from "../constants";
 
 import { z } from "zod";
@@ -185,3 +187,19 @@ export const flowSchema = z.object({
 export type NodeSchema = z.infer<typeof nodeSchema>;
 export type EdgeSchema = z.infer<typeof edgeSchema>;
 export type FlowSchema = z.infer<typeof flowSchema>;
+
+export const userSchema = z.object({
+  username: z
+    .string()
+    .min(
+      MIN_USERNAME_LENGTH,
+      `L'username dev'essere di almeno ${MIN_USERNAME_LENGTH} caratteri`
+    ),
+  password: z
+    .string()
+    .min(
+      MIN_PASSWORD_LENGTH,
+      `La password dev'essere di minimo ${MIN_PASSWORD_LENGTH} caratteri`
+    ),
+});
+export type UserSchema = z.infer<typeof userSchema>;
