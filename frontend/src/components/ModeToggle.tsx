@@ -4,7 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Palette, Sun } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import useTheme from "@/hooks/useTheme";
@@ -16,14 +16,26 @@ export function ModeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <Palette />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>Tema chiaro</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>Tema scuro</DropdownMenuItem>
+      <DropdownMenuContent
+        align="end"
+        className="w-36"
+      >
+        <DropdownMenuItem
+          onClick={() => setTheme("light")}
+          className="text-sm flex justify-between items-center cursor-pointer"
+        >
+          <Sun size={15} /> Tema chiaro
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => setTheme("dark")}
+          className="text-sm flex justify-between items-center cursor-pointer"
+        >
+          <Moon size={15} /> Tema scuro
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
