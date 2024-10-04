@@ -12,7 +12,12 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-}).index({ username: 1 });
+  flowsId: {
+    type: [Schema.Types.ObjectId],
+    ref: "flow",
+    default: [],
+  },
+});
 userSchema.pre("save", async function (next) {
   try {
     const hashedPassword = await bcrypt.hash(this.password, 10);

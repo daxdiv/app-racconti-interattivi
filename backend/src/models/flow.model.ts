@@ -85,7 +85,7 @@ const PositionSchema = new Schema(
 const NodeSchema = new Schema(
   {
     type: { type: String, enum: ["base", "question", "choice"], required: true },
-    id: { type: String, required: true, unique: true },
+    id: { type: String, required: true },
     label: { type: String, required: true },
     pages: {
       type: [PageSchema],
@@ -148,8 +148,19 @@ EdgeSchema.methods.toJSON = function () {
 };
 
 const flowSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
+  label: { type: String, required: true, unique: true },
   nodes: { type: [NodeSchema], required: true },
   edges: { type: [EdgeSchema], required: true },
-});
+}).index({ userId: 1, label: 1 }, { unique: true });
+
+flowSchema.methods.toJSON = function () {
+  const flow = this.toObject();
+
+  delete flow.userId;
+  delete flow.__v;
+
+  return flow;
+};
 
 export default mongoose.model("flow", flowSchema);

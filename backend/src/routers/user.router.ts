@@ -24,6 +24,7 @@ userRouter.get("/", auth, async (_req, res) => {
     res.status(500).json({ message: "Errore lato server" });
   }
 });
+
 userRouter.post("/sign-in", async (req, res) => {
   const { type, username, password } = req.body;
   const schema = authSchema.safeParse({ type, username, password });
@@ -88,6 +89,23 @@ userRouter.post("/sign-up", async (req, res) => {
 userRouter.post("/sign-out", async (_req, res) => {
   res.cookie("user", "", { maxAge: 0 });
   res.status(200).json({ message: "Successo" });
+});
+
+userRouter.delete("/:userId", auth, async (_req, res) => {
+  const { verified } = res.locals;
+
+  try {
+    const deletedUser = await UserModel.findByIdAndDelete(verified._id);
+
+    if (!deletedUser) {
+      res.status(404).json({ message: "Utente non trovato" });
+      return;
+    }
+
+    res.status(200).json({ message: "Successo" });
+  } catch (error) {
+    res.status(500).json({ message: "Errore lato server" });
+  }
 });
 
 export default userRouter;

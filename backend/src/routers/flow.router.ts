@@ -1,12 +1,20 @@
 import { MulterError } from "multer";
-import { flowSchema, type EdgeSchema, type NodeSchema } from "../lib/zod";
+import {
+  postFlowSchema,
+  putFlowSchema,
+  deleteFlowSchema,
+  type EdgeSchema,
+  type NodeSchema,
+} from "../lib/zod";
 import express, { type Request } from "express";
-import { writeFiles } from "../lib/utils";
+import { createNodesPayload, writeFiles } from "../lib/utils";
 import { upload } from "../storages/flow.storage";
 import FlowModel from "../models/flow.model";
+import { auth } from "../middlewares";
+import UserModel from "../models/user.model";
 
-type MyRequest = Request<
-  { [key: string]: string },
+type PatchRequest = Request<
+  { flowId: string },
   any,
   {
     nodes: NodeSchema[] & { id: string; position: { x: string; y: string } };
@@ -14,81 +22,18 @@ type MyRequest = Request<
   }
 >;
 
-function createNodesPayload(payload: NodeSchema[], basePath: string) {
-  const nodes: NodeSchema[] = [];
-
-  payload.forEach(n => {
-    const url = `${basePath.substring(0, basePath.lastIndexOf("/"))}/${n.id}`;
-
-    switch (n.type) {
-      case "base":
-        nodes.push({
-          ...n,
-          pages: [
-            { ...n.pages[0], background: `${url}/${n.id}_background_left` },
-            { ...n.pages[1], background: `${url}/${n.id}_background_right` },
-          ],
-          audio: `${url}/${n.id}_audio`,
-        });
-        break;
-      case "question":
-        nodes.push({
-          ...n,
-          pages: [
-            { ...n.pages[0], background: `${url}/${n.id}_background_left` },
-            { ...n.pages[1], background: `${url}/${n.id}_background_right` },
-          ],
-          audio: `${url}/${n.id}_audio`,
-          question: {
-            ...n.question,
-            audio: new Array(3).fill(0).map(() => `${url}/${n.id}_question`),
-          },
-          feedback: {
-            ...n.feedback,
-            list: [
-              { ...n.feedback.list[0], audio: `${url}/${n.id}_feedback_opt1` },
-              { ...n.feedback.list[1], audio: `${url}/${n.id}_feedback_opt2` },
-            ],
-          },
-        });
-        break;
-      case "choice":
-        nodes.push({
-          ...n,
-          pages: [
-            { ...n.pages[0], background: `${url}/${n.id}_background_left` },
-            { ...n.pages[1], background: `${url}/${n.id}_background_right` },
-          ],
-          audio: `${url}/${n.id}_audio`,
-          choice: {
-            ...n.choice,
-            audio: new Array(3).fill(0).map(() => `${url}/${n.id}_choice`),
-          },
-          feedback: {
-            ...n.feedback,
-            list: [
-              { ...n.feedback.list[0], audio: `${url}/${n.id}_feedback_opt1` },
-              { ...n.feedback.list[1], audio: `${url}/${n.id}_feedback_opt2` },
-            ],
-          },
-        });
-        break;
-    }
-  });
-
-  return nodes;
-}
-
 const flowRouter = express.Router();
 
-flowRouter.get("/", async (req, res) => {
+flowRouter.get("/", auth, async (req, res) => {
+  const { verified } = res.locals;
+
   try {
     const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
     const baseUrl = `${url.substring(0, url.lastIndexOf("/"))}`;
-    const flow = await FlowModel.findOne({});
+    const flow = await FlowModel.findOne({ userId: verified._id });
 
     if (!flow) {
-      res.status(404).json({ message: "Nessun nodo trovare" });
+      res.status(404).json({ message: "Nessun racconto trovato" });
       return;
     }
 
@@ -100,18 +45,64 @@ flowRouter.get("/", async (req, res) => {
       edges: flow.edges,
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Errore lato server" });
   }
 });
 
-flowRouter.post("/", (req: MyRequest, res) => {
+flowRouter.post("/", auth, async (req, res) => {
+  const { verified } = res.locals;
+
+  const schema = postFlowSchema.safeParse({ userId: verified._id, ...req.body });
+
+  if (!schema.success) {
+    res.status(400).json({ message: schema.error.issues.map(i => i.message).join("\n") });
+    return;
+  }
+
+  try {
+    const newFlow = new FlowModel(schema.data);
+
+    await newFlow.save();
+    await UserModel.findByIdAndUpdate(schema.data.userId, {
+      $addToSet: { flowsId: newFlow._id },
+    });
+
+    res.status(201).json(newFlow);
+  } catch (error) {
+    if (error.code === 11000) {
+      res
+        .status(409)
+        .json({ message: "Esiste già un racconto creato da te con questo titolo" });
+      return;
+    }
+    res.status(500).json({ message: "Errore lato server" });
+  }
+});
+
+flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
   upload(req, res, async err => {
     if (err instanceof MulterError) {
-      res.status(400).json({ message: "Bad file(s) provided" });
+      res.status(400).json({ message: "File forniti non nel formato corretto" });
       return;
     }
     if (err) {
       res.status(400).json({ message: err.message });
+      return;
+    }
+
+    const { verified } = res.locals;
+
+    try {
+      const flowExists = await FlowModel.findById(req.params.flowId, {
+        userId: verified._id,
+      });
+
+      if (!flowExists) {
+        res.status(404).json({ message: "Nessun racconto trovato" });
+        return;
+      }
+    } catch (error) {
+      res.status(500).json({ message: error });
       return;
     }
 
@@ -122,10 +113,15 @@ flowRouter.post("/", (req: MyRequest, res) => {
 
     const nodes = createNodesPayload(req.body.nodes, url);
     const edges = req.body.edges || [];
-    const schema = flowSchema.safeParse({ nodes, edges });
+    const flowId = req.params.flowId;
+    const schema = putFlowSchema.safeParse({
+      userId: verified._id,
+      nodes,
+      edges,
+      flowId,
+    });
 
     if (!schema.success) {
-      console.error(schema.error.issues);
       res
         .status(400)
         .json({ message: schema.error.issues.map(i => i.message).join("\n") });
@@ -133,17 +129,52 @@ flowRouter.post("/", (req: MyRequest, res) => {
     }
 
     try {
-      const newFlow = new FlowModel(schema.data);
+      const flow = await FlowModel.findOneAndUpdate(
+        {
+          userId: verified._id,
+          _id: schema.data.flowId,
+        },
+        {
+          $set: {
+            nodes: schema.data.nodes,
+            edges: schema.data.edges,
+          },
+        }
+      );
 
-      await FlowModel.deleteMany({});
-      await newFlow.save();
+      if (!flow) {
+        res.status(404).json({ message: "Nessun racconto trovato" });
+        return;
+      }
 
-      res.status(200).json({ message: "Racconto salvato" });
+      res.status(200).json({ message: "Modifiche salvate" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: "Errore lato server" });
     }
   });
+});
+
+flowRouter.delete("/:flowId", auth, async (req: Request<{ flowId: string }>, res) => {
+  const { verified } = res.locals;
+  const schema = deleteFlowSchema.safeParse(req.params);
+
+  if (!schema.success) {
+    res.status(400).json({ message: schema.error.issues.map(i => i.message).join("\n") });
+    return;
+  }
+
+  try {
+    await FlowModel.findOneAndDelete({ _id: schema.data.flowId, userId: verified._id });
+    await UserModel.findByIdAndUpdate(verified._id, {
+      $pull: {
+        flowsId: schema.data.flowId,
+      },
+    });
+
+    res.status(200).json({ message: "Racconto eliminato" });
+  } catch (error) {
+    res.status(500).json({ message: "Errore lato server" });
+  }
 });
 
 export default flowRouter;
