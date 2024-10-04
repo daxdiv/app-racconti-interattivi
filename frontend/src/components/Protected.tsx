@@ -18,7 +18,7 @@ function Protected({ children }: ProtectedProps) {
     );
   }
   if (me.isError) {
-    navigate(`/?error=${me.error.message}`);
+    navigate(`/?error=${me.error.message}`, { replace: true });
 
     return null;
   }
