@@ -34,6 +34,20 @@ export async function saveFlow(flow: ReactFlowJsonObject) {
   return await response.json();
 }
 
+export async function me() {
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/user`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.message);
+  }
+
+  return await response.json();
+}
+
 export async function signUp(user: AuthSchema) {
   const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/user/sign-up`, {
     method: "POST",
