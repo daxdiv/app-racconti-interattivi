@@ -1,3 +1,4 @@
+import type { NodeSchema } from "./zod";
 import fs from "fs";
 import sharp from "sharp";
 
@@ -37,4 +38,69 @@ export function writeFiles(files: Express.Multer.File[]) {
         `${destPath}/${id}_background_right`
       );
   });
+}
+
+export function createNodesPayload(payload: NodeSchema[], basePath: string) {
+  const nodes: NodeSchema[] = [];
+
+  payload.forEach(n => {
+    const url = `${basePath.substring(0, basePath.lastIndexOf("/"))}/${n.id}`;
+
+    switch (n.type) {
+      case "base":
+        nodes.push({
+          ...n,
+          pages: [
+            { ...n.pages[0], background: `${url}/${n.id}_background_left` },
+            { ...n.pages[1], background: `${url}/${n.id}_background_right` },
+          ],
+          audio: `${url}/${n.id}_audio`,
+        });
+        break;
+      case "question":
+        nodes.push({
+          ...n,
+          pages: [
+            { ...n.pages[0], background: `${url}/${n.id}_background_left` },
+            { ...n.pages[1], background: `${url}/${n.id}_background_right` },
+          ],
+          audio: `${url}/${n.id}_audio`,
+          question: {
+            ...n.question,
+            audio: new Array(3).fill(0).map(() => `${url}/${n.id}_question`),
+          },
+          feedback: {
+            ...n.feedback,
+            list: [
+              { ...n.feedback.list[0], audio: `${url}/${n.id}_feedback_opt1` },
+              { ...n.feedback.list[1], audio: `${url}/${n.id}_feedback_opt2` },
+            ],
+          },
+        });
+        break;
+      case "choice":
+        nodes.push({
+          ...n,
+          pages: [
+            { ...n.pages[0], background: `${url}/${n.id}_background_left` },
+            { ...n.pages[1], background: `${url}/${n.id}_background_right` },
+          ],
+          audio: `${url}/${n.id}_audio`,
+          choice: {
+            ...n.choice,
+            audio: new Array(3).fill(0).map(() => `${url}/${n.id}_choice`),
+          },
+          feedback: {
+            ...n.feedback,
+            list: [
+              { ...n.feedback.list[0], audio: `${url}/${n.id}_feedback_opt1` },
+              { ...n.feedback.list[1], audio: `${url}/${n.id}_feedback_opt2` },
+            ],
+          },
+        });
+        break;
+    }
+  });
+
+  return nodes;
 }

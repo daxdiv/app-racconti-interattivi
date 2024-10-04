@@ -8,6 +8,7 @@ import {
   MIN_USERNAME_LENGTH,
 } from "../constants";
 
+import mongoose from "mongoose";
 import { z } from "zod";
 
 const baseSchema = z.object({
@@ -180,13 +181,33 @@ export const edgeSchema = z.object({
   source: z.string({ message: "Source id required" }),
   target: z.string({ message: "Target id required" }),
 });
-export const flowSchema = z.object({
+export const postFlowSchema = z.object({
+  userId: z.custom<mongoose.Schema.Types.ObjectId>(
+    data => mongoose.isValidObjectId(data),
+    { message: "Invalid ObjectId" }
+  ),
+  label: z.string().min(1),
   nodes: z.array(nodeSchema).min(1),
   edges: z.array(edgeSchema),
 });
+export const putFlowSchema = postFlowSchema.merge(
+  z.object({
+    flowId: z.custom<mongoose.Schema.Types.ObjectId>(
+      data => mongoose.isValidObjectId(data),
+      { message: "Invalid ObjectId" }
+    ),
+  })
+);
+export const deleteFlowSchema = z.object({
+  flowId: z.custom<mongoose.Schema.Types.ObjectId>(
+    data => mongoose.isValidObjectId(data),
+    { message: "Invalid ObjectId" }
+  ),
+});
 export type NodeSchema = z.infer<typeof nodeSchema>;
 export type EdgeSchema = z.infer<typeof edgeSchema>;
-export type FlowSchema = z.infer<typeof flowSchema>;
+export type PostFlowSchema = z.infer<typeof postFlowSchema>;
+export type PutFlowSchema = z.infer<typeof putFlowSchema>;
 
 const signUpSchema = z.object({
   type: z.literal("sign-up"),
