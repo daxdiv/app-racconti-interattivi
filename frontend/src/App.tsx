@@ -1,13 +1,48 @@
 import "@xyflow/react/dist/style.css";
 import "@/styles/globals.css";
 
-import Flow from "@/components/Flow";
+import { Navigate, Route, Routes } from "react-router-dom";
+
+import Auth from "@/pages/Auth";
+import Flow from "@/pages/Flow";
+import Profile from "@/pages/Profile";
+import Protected from "@/components/Protected";
 import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <>
-      <Flow />
+      <Routes>
+        <Route
+          path="/"
+          element={<Auth />}
+        />
+        <Route
+          path="/profile"
+          element={
+            <Protected>
+              <Profile />
+            </Protected>
+          }
+        />
+        <Route
+          path="flow"
+          element={
+            <Protected>
+              <Flow />
+            </Protected>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
+        />
+      </Routes>
       <Toaster
         toastOptions={{
           className:
