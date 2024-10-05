@@ -1,11 +1,13 @@
 import { authSchema, passwordSchema, usernameSchema } from "../lib/zod";
 
+import FlowModel from "../models/flow.model";
 import { JWT_EXPIRES_IN } from "../constants";
 import UserModel from "../models/user.model";
 import { auth } from "../middlewares";
 import bcrypt from "bcrypt";
 import express from "express";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const userRouter = express.Router();
 
@@ -13,15 +15,50 @@ userRouter.get("/", auth, async (_req, res) => {
   const { verified } = res.locals;
 
   try {
-    const user = await UserModel.findById(verified._id);
+    const user = await UserModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(verified._id as string) } },
+      {
+        $lookup: {
+          from: "flows",
+          localField: "_id",
+          foreignField: "userId",
+          as: "flows",
+        },
+      },
+      {
+        $project: {
+          username: 1,
+          flows: {
+            $map: {
+              input: "$flows",
+              as: "flow",
+              in: {
+                label: "$$flow.label",
+                nodesLength: { $size: "$$flow.nodes" },
+                createdAt: "$$flow.createdAt",
+              },
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          username: { $first: "$username" },
+          flows: { $first: "$flows" },
+        },
+      },
+      { $project: { username: 1, flows: 1 } },
+    ]);
 
-    if (!user) {
+    if (user.length === 0) {
       res.status(404).json({ message: "Utente non trovato" });
       return;
     }
 
-    res.status(200).json(user);
+    res.status(200).json(user[0]);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Errore lato server" });
   }
 });
@@ -177,6 +214,8 @@ userRouter.delete("/:userId", auth, async (req, res) => {
       res.status(404).json({ message: "Utente non trovato" });
       return;
     }
+
+    await FlowModel.deleteMany({ userId: verified._id });
 
     res.cookie("user", "", { maxAge: 0 });
     res.status(200).json({ message: "Successo" });
