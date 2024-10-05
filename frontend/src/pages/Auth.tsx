@@ -26,6 +26,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ModeToggle } from "@/components/ModeToggle";
 import { useEffect } from "react";
+import UserActions from "@/components/UserActions";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { UserPen } from "lucide-react";
 
 function Auth() {
   const [searchParams] = useSearchParams();
@@ -44,7 +47,7 @@ function Auth() {
     toast.promise(signIn.mutateAsync(values), {
       loading: "Caricamento...",
       success: () => {
-        navigate("/profile");
+        navigate("user/profile");
 
         return "Accesso effettuato correttamente";
       },
@@ -54,11 +57,7 @@ function Auth() {
   const onSignUp = (values: AuthSchema) => {
     toast.promise(signUp.mutateAsync(values), {
       loading: "Caricamento...",
-      success: () => {
-        form.setValue("type", "sign-in");
-
-        return "Utente creato";
-      },
+      success: "Utente creato",
       error: ({ message }) => `Errore creazione utente \n ${message}`,
     });
   };
@@ -74,7 +73,21 @@ function Auth() {
 
   return (
     <>
-      <div className="absolute top-2 left-2 flex gap-x-1">
+      <div className="absolute top-2 right-2 flex gap-x-1">
+        <UserActions
+          renderItems={() => (
+            <>
+              <DropdownMenuItem
+                className="text-sm flex justify-between items-center cursor-pointer"
+                onClick={() => {
+                  navigate("/user/profile", { replace: true });
+                }}
+              >
+                <UserPen size={15} /> Profilo
+              </DropdownMenuItem>
+            </>
+          )}
+        />
         <ModeToggle />
       </div>
       <div className="flex justify-center items-center h-screen min-h-screen">
@@ -111,7 +124,7 @@ function Auth() {
                           <FormLabel>Nome utente</FormLabel>
                           <FormControl>
                             <Input
-                              type="email"
+                              type="text"
                               autoCapitalize="none"
                               autoComplete="username"
                               autoCorrect="off"
@@ -148,6 +161,7 @@ function Auth() {
                     <Button
                       type="submit"
                       disabled={form.formState.isSubmitting}
+                      className="w-full"
                     >
                       Invia
                     </Button>
@@ -213,6 +227,7 @@ function Auth() {
                     <Button
                       type="submit"
                       disabled={form.formState.isSubmitting}
+                      className="w-full"
                     >
                       Invia
                     </Button>
