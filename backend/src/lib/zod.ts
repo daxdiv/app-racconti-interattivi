@@ -231,3 +231,38 @@ const signInSchema = z.object({
 });
 export const authSchema = signUpSchema.or(signInSchema);
 export type AuthSchema = z.infer<typeof authSchema>;
+
+export const usernameSchema = z.object({
+  username: z
+    .string()
+    .min(
+      MIN_USERNAME_LENGTH,
+      `L'username dev'essere di almeno ${MIN_USERNAME_LENGTH} caratteri`
+    ),
+});
+export type UsernameSchema = z.infer<typeof usernameSchema>;
+export const passwordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(
+        MIN_PASSWORD_LENGTH,
+        `La password dev'essere di almeno ${MIN_PASSWORD_LENGTH} caratteri`
+      ),
+    newPassword: z
+      .string()
+      .min(
+        MIN_PASSWORD_LENGTH,
+        `La password dev'essere di almeno ${MIN_PASSWORD_LENGTH} caratteri`
+      ),
+  })
+  .superRefine(({ password, newPassword }, ctx) => {
+    if (password === newPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "La password nuova non può essere quella vecchia",
+        path: ["newPassword"],
+      });
+    }
+  });
+export type PasswordSchema = z.infer<typeof passwordSchema>;

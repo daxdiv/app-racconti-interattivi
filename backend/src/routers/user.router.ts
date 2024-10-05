@@ -1,7 +1,8 @@
+import { authSchema, passwordSchema, usernameSchema } from "../lib/zod";
+
 import { JWT_EXPIRES_IN } from "../constants";
 import UserModel from "../models/user.model";
 import { auth } from "../middlewares";
-import { authSchema } from "../lib/zod";
 import bcrypt from "bcrypt";
 import express from "express";
 import jwt from "jsonwebtoken";
@@ -91,8 +92,83 @@ userRouter.post("/sign-out", async (_req, res) => {
   res.status(200).json({ message: "Successo" });
 });
 
-userRouter.delete("/:userId", auth, async (_req, res) => {
+userRouter.put("/:userId/username", auth, async (req, res) => {
   const { verified } = res.locals;
+  const { userId } = req.params;
+  const { username } = req.body;
+
+  if (verified._id !== userId) {
+    res.status(403).json({ message: "Forbidden" });
+    return;
+  }
+
+  const schema = usernameSchema.safeParse({ username });
+
+  if (!schema.success) {
+    res.status(400).json({ message: schema.error.issues.map(i => i.message).join("\n") });
+    return;
+  }
+
+  try {
+    const updatedUser = await UserModel.findByIdAndUpdate(userId, {
+      username: schema.data.username,
+    });
+
+    if (!updatedUser) {
+      res.status(404).json({ message: "Utente non trovato" });
+      return;
+    }
+
+    res.status(200).json({ message: "Nome utente aggiornato correttamente" });
+  } catch (error) {
+    res.status(500).json({ message: "Errore lato server" });
+  }
+});
+userRouter.put("/:userId/password", auth, async (req, res) => {
+  const { verified } = res.locals;
+  const { userId } = req.params;
+  const { password, newPassword } = req.body;
+
+  if (verified._id !== userId) {
+    res.status(403).json({ message: "Forbidden" });
+    return;
+  }
+
+  const schema = passwordSchema.safeParse({ password, newPassword });
+
+  if (!schema.success) {
+    res.status(400).json({ message: schema.error.issues.map(i => i.message).join("\n") });
+    return;
+  }
+
+  try {
+    const newHashedPassword = await bcrypt.hash(schema.data.newPassword, 10);
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { _id: userId },
+      { password: newHashedPassword }
+    );
+
+    console.log(updatedUser);
+
+    if (!updatedUser) {
+      res.status(404).json({ message: "Utente non trovato" });
+      return;
+    }
+
+    res.status(200).json({ message: "Password aggiornata correttamente" });
+  } catch (error) {
+    res.status(500).json({ message: "Errore lato server" });
+  }
+});
+
+userRouter.delete("/:userId", auth, async (req, res) => {
+  const { verified } = res.locals;
+  const { userId } = req.params;
+
+  if (verified._id !== userId) {
+    res.status(403).json({ message: "Forbidden" });
+    return;
+  }
 
   try {
     const deletedUser = await UserModel.findByIdAndDelete(verified._id);
@@ -102,6 +178,7 @@ userRouter.delete("/:userId", auth, async (_req, res) => {
       return;
     }
 
+    res.cookie("user", "", { maxAge: 0 });
     res.status(200).json({ message: "Successo" });
   } catch (error) {
     res.status(500).json({ message: "Errore lato server" });
