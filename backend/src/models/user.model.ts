@@ -2,22 +2,25 @@ import mongoose, { Schema } from "mongoose";
 
 import bcrypt from "bcrypt";
 
-const userSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
+const userSchema = new Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    flowsId: {
+      type: [Schema.Types.ObjectId],
+      ref: "flow",
+      default: [],
+    },
   },
-  password: {
-    type: String,
-    required: true,
-  },
-  flowsId: {
-    type: [Schema.Types.ObjectId],
-    ref: "flow",
-    default: [],
-  },
-});
+  { timestamps: true }
+);
 userSchema.pre("save", async function (next) {
   try {
     const hashedPassword = await bcrypt.hash(this.password, 10);
@@ -37,6 +40,7 @@ userSchema.methods.comparePassword = async function (password: string) {
 userSchema.methods.toJSON = function () {
   const user = this.toObject();
 
+  delete user.flowsId;
   delete user.password;
   delete user.__v;
 
