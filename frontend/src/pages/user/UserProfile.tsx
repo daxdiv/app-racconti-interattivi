@@ -7,6 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import useUser, { Data } from "@/hooks/useUser";
 
 import { Button } from "@/components/ui/button";
@@ -99,14 +109,40 @@ function UserProfile(user: UserProfileProps) {
 
                 <Separator />
 
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={handleDeleteAccount}
-                  className="w-full dark:text-primary hover:dark:bg-destructive-foreground"
-                >
-                  Elimina account
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      className="w-full dark:text-primary hover:dark:bg-destructive-foreground"
+                    >
+                      Elimina account
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>
+                        Sei sicuro di voler eliminare il tuo account?
+                      </DialogTitle>
+                      <DialogDescription>Questa azione è irreversibile</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={handleDeleteAccount}
+                          className="dark:text-primary hover:dark:bg-destructive-foreground"
+                        >
+                          Si
+                        </Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button type="button">No</Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </>
             )}
           </CardContent>
