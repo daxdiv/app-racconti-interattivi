@@ -4,10 +4,10 @@ import "@/styles/globals.css";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Auth from "@/pages/Auth";
-import Flow from "@/pages/Flow";
-import Profile from "@/pages/Profile";
 import Protected from "@/components/Protected";
 import { Toaster } from "react-hot-toast";
+import UserFlows from "@/pages/user/UserFlows";
+import UserProfile from "@/pages/user/UserProfile";
 
 function App() {
   return (
@@ -18,20 +18,12 @@ function App() {
           element={<Auth />}
         />
         <Route
-          path="/profile"
-          element={
-            <Protected>
-              <Profile />
-            </Protected>
-          }
+          path="user/profile"
+          element={<Protected>{me => <UserProfile {...me} />}</Protected>}
         />
         <Route
-          path="flow"
-          element={
-            <Protected>
-              <Flow />
-            </Protected>
-          }
+          path="user/flows"
+          element={<Protected>{me => <UserFlows {...me} />}</Protected>}
         />
         <Route
           path="*"

@@ -1,13 +1,12 @@
 import { LoaderCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import useUser from "@/hooks/useUser";
+import { Navigate } from "react-router-dom";
+import useUser, { type Data } from "@/hooks/useUser";
 
 type ProtectedProps = {
-  children: React.ReactNode;
+  children: (props: { data: Data; isLoading: boolean }) => React.ReactNode;
 };
 
 function Protected({ children }: ProtectedProps) {
-  const navigate = useNavigate();
   const { me } = useUser();
 
   if (me.isLoading) {
@@ -18,12 +17,15 @@ function Protected({ children }: ProtectedProps) {
     );
   }
   if (me.isError) {
-    navigate(`/?error=${me.error.message}`, { replace: true });
-
-    return null;
+    return (
+      <Navigate
+        to={`/?error=${me.error.message}`}
+        replace
+      />
+    );
   }
 
-  return children;
+  return children({ data: me.data!, isLoading: me.isLoading });
 }
 
 export default Protected;
