@@ -1,6 +1,11 @@
-import type { AuthSchema } from "@/lib/zod";
+import type { AuthSchema, PasswordSchema, UsernameSchema } from "@/lib/zod";
+
 import type { ReactFlowJsonObject } from "@xyflow/react";
 import { objectToFormData } from "@/lib/utils";
+
+type SetPasswordPayload = Pick<PasswordSchema, "password" | "newPassword"> & {
+  userId: string;
+};
 
 export async function restoreFlow() {
   const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow`);
@@ -90,6 +95,68 @@ export async function signOut() {
     method: "POST",
     credentials: "include",
   });
+
+  return await response.json();
+}
+
+export async function setUsername(payload: UsernameSchema & { userId: string }) {
+  const response = await fetch(
+    `${import.meta.env.VITE_SERVER_URL}/user/${payload.userId}/username`,
+    {
+      method: "PUT",
+      body: JSON.stringify({ username: payload.username }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.message);
+  }
+
+  return await response.json();
+}
+
+export async function setPassword(payload: SetPasswordPayload) {
+  const response = await fetch(
+    `${import.meta.env.VITE_SERVER_URL}/user/${payload.userId}/password`,
+    {
+      method: "PUT",
+      body: JSON.stringify({
+        password: payload.password,
+        newPassword: payload.newPassword,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.message);
+  }
+
+  return await response.json();
+}
+
+export async function deleteAccount(userId: string) {
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/user/${userId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.message);
+  }
 
   return await response.json();
 }
