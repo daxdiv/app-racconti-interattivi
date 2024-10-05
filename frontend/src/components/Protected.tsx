@@ -12,7 +12,7 @@ function Protected({ children }: ProtectedProps) {
   if (me.isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <LoaderCircle className="animate-spin text-white" />
+        <LoaderCircle className="animate-spin" />
       </div>
     );
   }
