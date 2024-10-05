@@ -77,7 +77,12 @@ function UserProfile(user: UserProfileProps) {
               >
                 <Users size={15} /> Usa un altro account
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-sm flex justify-between items-center cursor-pointer">
+              <DropdownMenuItem
+                className="text-sm flex justify-between items-center cursor-pointer"
+                onClick={() => {
+                  navigate("/user/flows", { replace: true });
+                }}
+              >
                 <BookOpen size={15} /> I miei racconti
               </DropdownMenuItem>
               <DropdownMenuItem
