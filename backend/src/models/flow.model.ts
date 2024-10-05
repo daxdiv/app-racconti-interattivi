@@ -147,12 +147,15 @@ EdgeSchema.methods.toJSON = function () {
   return edge;
 };
 
-const flowSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
-  label: { type: String, required: true, unique: true },
-  nodes: { type: [NodeSchema], required: true },
-  edges: { type: [EdgeSchema], required: true },
-}).index({ userId: 1, label: 1 }, { unique: true });
+const flowSchema = new Schema(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
+    label: { type: String, required: true, unique: true },
+    nodes: { type: [NodeSchema], required: true },
+    edges: { type: [EdgeSchema], required: true },
+  },
+  { timestamps: true }
+).index({ userId: 1, label: 1 }, { unique: true });
 
 flowSchema.methods.toJSON = function () {
   const flow = this.toObject();
