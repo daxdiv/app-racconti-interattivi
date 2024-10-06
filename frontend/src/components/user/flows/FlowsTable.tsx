@@ -1,4 +1,14 @@
-import { SquareArrowOutUpRight, Trash } from "lucide-react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Edit, Trash } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -14,7 +24,9 @@ import { Button } from "@/components/ui/button";
 import type { Data } from "@/hooks/useUser";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDate } from "@/lib/utils";
+import toast from "react-hot-toast";
 import { truncate } from "@/lib/utils";
+import useFlow from "@/hooks/useFlow";
 
 type FlowsTableProps = {
   data: Data;
@@ -22,6 +34,16 @@ type FlowsTableProps = {
 };
 
 function FlowsTable(user: FlowsTableProps) {
+  const { deleteFlow } = useFlow();
+
+  const handleDeleteFlow = (flowId: string) => {
+    toast.promise(deleteFlow.mutateAsync(flowId), {
+      loading: "Caricamento...",
+      success: ({ message }) => message,
+      error: ({ message }) => `Errore eliminazione racconto \n\t ${message}`,
+    });
+  };
+
   return (
     <ScrollArea className="h-[500px]">
       <Table>
@@ -73,17 +95,45 @@ function FlowsTable(user: FlowsTableProps) {
                   type="button"
                   className="flex justify-start items-center gap-x-1 text-xs"
                 >
-                  <SquareArrowOutUpRight size={15} />
+                  <Edit size={15} />
                   Modifica
                 </Button>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  className="flex justify-center items-center gap-x-1 text-xs"
-                >
-                  <Trash size={15} />
-                  Elimina
-                </Button>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      className="flex justify-center items-center gap-x-1 text-xs"
+                      disabled={deleteFlow.isPending}
+                    >
+                      <Trash size={15} />
+                      Elimina
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>
+                        Sei sicuro di voler eliminare questo racconto?
+                      </DialogTitle>
+                      <DialogDescription>Questa azione è irreversibile</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={() => handleDeleteFlow(f._id)}
+                        >
+                          Si
+                        </Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button type="button">No</Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </TableCell>
             </TableRow>
           ))}
