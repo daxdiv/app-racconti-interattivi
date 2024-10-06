@@ -6,8 +6,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Auth from "@/pages/Auth";
 import Protected from "@/components/Protected";
 import { Toaster } from "react-hot-toast";
-import UserFlows from "@/pages/user/UserFlows";
-import UserProfile from "@/pages/user/UserProfile";
+import UserFlows from "@/pages/user/flows/UserFlows";
+import UserProfile from "@/pages/user/profile/UserProfile";
 
 function App() {
   return (
