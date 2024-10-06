@@ -45,7 +45,7 @@ function FlowsTable(user: FlowsTableProps) {
   };
 
   return (
-    <ScrollArea className="h-[500px]">
+    <ScrollArea className="h-[280px]">
       <Table>
         <TableCaption />
         <TableHeader>
@@ -63,7 +63,7 @@ function FlowsTable(user: FlowsTableProps) {
             <TableHead className="text-center">Creato il</TableHead>
             <TableHead
               colSpan={2}
-              className="text-right w-[300px]"
+              className="text-center w-[300px]"
             >
               Azioni
             </TableHead>
