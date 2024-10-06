@@ -10,6 +10,7 @@ import { UserPen, Users } from "lucide-react";
 
 import type { Data } from "@/hooks/useUser";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import FlowForm from "@/components/user/flows/FlowForm";
 import FlowsTable from "@/components/user/flows/FlowsTable";
 import { ModeToggle } from "@/components/ModeToggle";
 import UserActions from "@/components/UserActions";
@@ -54,10 +55,21 @@ function UserFlows(user: UserFlowsProps) {
       <div className="w-full h-screen flex justify-center items-center">
         <Card className="border-none flex flex-col justify-center items-center w-2/3">
           <CardHeader>
-            <CardTitle>I miei racconti</CardTitle>
+            <CardTitle />
             <CardDescription />
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-6">
+            <FlowForm />
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Oppure</span>
+              </div>
+            </div>
+
             {user.data.flows.length === 0 ? (
               <p className="flex justify-center items-center text-muted-foreground">
                 Non hai creato nessun racconto
