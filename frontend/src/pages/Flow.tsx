@@ -1,8 +1,7 @@
 import Header from "@/components/ui/header";
 import { DEFAULT_DATA } from "@/constants";
 import useReactFlowConnection from "@/hooks/useReactFlowConnection";
-import useRestoreFlow from "@/hooks/useRestoreFlow";
-import useSaveFlow from "@/hooks/useSaveFlow";
+import useFlow from "@/hooks/useFlow";
 import useTheme from "@/hooks/useTheme";
 import { PageSchema } from "@/lib/zod";
 import {
@@ -41,15 +40,17 @@ function Flow() {
     onLayout,
     isValidConnection,
   } = useReactFlowConnection();
-  const saveFlow = useSaveFlow();
-  const { data } = useRestoreFlow();
+  const {
+    save,
+    restore: { data },
+  } = useFlow();
   const { theme } = useTheme();
 
   const onSave = useCallback(async () => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
 
-      toast.promise(saveFlow.mutateAsync(flow), {
+      toast.promise(save.mutateAsync(flow), {
         loading: "Salvataggio in corso...",
         success: ({ message }) => message,
         error: ({ message }) => `Errore salvataggio racconto (${message})`,
@@ -135,7 +136,7 @@ function Flow() {
               Ordina
             </Button>
             <Button
-              disabled={saveFlow.isPending}
+              disabled={save.isPending}
               className="flex justify-center items-center"
               onClick={() => {
                 const existNodesUnchanged = nodes.some(
