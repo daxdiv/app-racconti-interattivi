@@ -7,6 +7,7 @@ type SetPasswordPayload = Pick<PasswordSchema, "password" | "newPassword"> & {
   userId: string;
 };
 type CreateFlowPayload = { label: string } & Omit<ReactFlowJsonObject, "viewport">;
+type SaveFlowPayload = { flowId: string } & ReactFlowJsonObject;
 
 export async function createFlow(flow: CreateFlowPayload) {
   const formData = objectToFormData({
@@ -30,8 +31,10 @@ export async function createFlow(flow: CreateFlowPayload) {
   return await response.json();
 }
 
-export async function restoreFlow() {
-  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow`);
+export async function restoreFlow(flowId: string) {
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow/${flowId}`, {
+    credentials: "include",
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -42,15 +45,16 @@ export async function restoreFlow() {
   return await response.json();
 }
 
-export async function saveFlow(flow: ReactFlowJsonObject) {
+export async function saveFlow(flow: SaveFlowPayload) {
   const formData = objectToFormData({
     nodes: flow.nodes.map(n => ({ id: n.id, position: n.position, ...n.data })),
     edges: flow.edges.map(e => ({ id: e.id, source: e.source, target: e.target })),
   });
 
-  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow`, {
-    method: "POST",
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow/${flow.flowId}`, {
+    method: "PUT",
     body: formData,
+    credentials: "include",
   });
 
   if (!response.ok) {

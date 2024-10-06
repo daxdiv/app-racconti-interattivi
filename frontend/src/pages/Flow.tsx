@@ -21,6 +21,7 @@ import DeleteButtonEdge from "@/components/edges/DeleteButtonEdge";
 import { ModeToggle } from "@/components/ModeToggle";
 import PageNode from "@/components/nodes/DoublePageNode";
 import { Button } from "@/components/ui/button";
+import { useParams } from "react-router-dom";
 
 function Flow() {
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
@@ -40,17 +41,16 @@ function Flow() {
     onLayout,
     isValidConnection,
   } = useReactFlowConnection();
-  const {
-    save,
-    restore: { data },
-  } = useFlow();
+  const { flowId } = useParams();
+  const { save, useRestore } = useFlow();
+  const restore = useRestore(flowId as string);
   const { theme } = useTheme();
 
   const onSave = useCallback(async () => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
 
-      toast.promise(save.mutateAsync(flow), {
+      toast.promise(save.mutateAsync({ flowId: flowId!, ...flow }), {
         loading: "Salvataggio in corso...",
         success: ({ message }) => message,
         error: ({ message }) => `Errore salvataggio racconto (${message})`,
@@ -60,11 +60,11 @@ function Flow() {
   }, [rfInstance]);
 
   useEffect(() => {
-    if (!data) return;
+    if (!restore.data) return;
 
-    if (data.nodes.length !== 0) {
+    if (restore.data.nodes.length !== 0) {
       setNodes(
-        data.nodes.map(n => {
+        restore.data.nodes.map(n => {
           const { id, position, ...rest } = n;
           const node: Node<PageSchema> = {
             id,
@@ -79,9 +79,9 @@ function Flow() {
         })
       );
     }
-    if (data.edges.length !== 0) {
+    if (restore.data.edges.length !== 0) {
       setEdges(
-        data.edges.map(e => ({
+        restore.data.edges.map(e => ({
           ...e,
           animated: true,
           type: "deleteButton",
@@ -94,7 +94,7 @@ function Flow() {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [restore.data]);
 
   return (
     <>
@@ -136,7 +136,7 @@ function Flow() {
               Ordina
             </Button>
             <Button
-              disabled={save.isPending}
+              disabled={save.isPending || restore.isLoading || restore.isError}
               className="flex justify-center items-center"
               onClick={() => {
                 const existNodesUnchanged = nodes.some(
