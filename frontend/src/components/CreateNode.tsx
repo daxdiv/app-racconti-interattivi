@@ -13,12 +13,11 @@ function CreateNode() {
 
   return (
     <Button
-      variant="secondary"
       className="flex justify-center items-center"
       onClick={handleClick}
     >
       <Plus className="mr-2" />
-      Crea pagine
+      Crea nodo
     </Button>
   );
 }
