@@ -1,9 +1,17 @@
-import { restoreFlow, saveFlow } from "@/api";
+import { restoreFlow, saveFlow, deleteFlow as deleteFlowApi } from "@/api";
 import type { PageSchema } from "@/lib/zod";
-import { useMutation, useQuery, type DefaultError } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type DefaultError,
+} from "@tanstack/react-query";
 import type { Edge, ReactFlowJsonObject } from "@xyflow/react";
 
 type NodeFromQuery = PageSchema & { id: string; position: { x: string; y: string } };
+type Message = {
+  message: string;
+};
 
 type QueryData = {
   nodes: NodeFromQuery[];
@@ -11,13 +19,11 @@ type QueryData = {
 };
 
 function useFlow() {
-  const save = useMutation<{ message: string }, { message: string }, ReactFlowJsonObject>(
-    {
-      mutationKey: ["save-flow"],
-      mutationFn: flow => saveFlow(flow),
-    }
-  );
-
+  const queryClient = useQueryClient();
+  const save = useMutation<Message, Message, ReactFlowJsonObject>({
+    mutationKey: ["save-flow"],
+    mutationFn: saveFlow,
+  });
   const restore = useQuery<unknown, DefaultError, QueryData>({
     queryKey: ["restore-flow"],
     queryFn: restoreFlow,
@@ -26,8 +32,17 @@ function useFlow() {
     retry: false,
     refetchOnWindowFocus: false,
   });
+  const deleteFlow = useMutation<Message, Message, string>({
+    mutationKey: ["delete-flow"],
+    mutationFn: deleteFlowApi,
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ["me"],
+      });
+    },
+  });
 
-  return { save, restore };
+  return { save, restore, deleteFlow };
 }
 
 export default useFlow;
