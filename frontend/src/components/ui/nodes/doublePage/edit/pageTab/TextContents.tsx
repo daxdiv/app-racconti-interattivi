@@ -45,7 +45,7 @@ function TextContents() {
               <FormControl>
                 <Textarea
                   placeholder="C'era una volta..."
-                  className="h-[200px] min-h-[200px] max-h-[200px] text-black"
+                  className="h-[200px] min-h-[200px] max-h-[200px]"
                   {...field}
                 />
               </FormControl>
@@ -64,7 +64,7 @@ function TextContents() {
               <FormControl>
                 <Textarea
                   placeholder="...una bambina"
-                  className="h-[200px] min-h-[200px] max-h-[200px] text-black"
+                  className="h-[200px] min-h-[200px] max-h-[200px]"
                   {...field}
                 />
               </FormControl>
