@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Auth from "@/pages/Auth";
+import Flow from "@/pages/Flow";
 import Protected from "@/components/Protected";
 import { Toaster } from "react-hot-toast";
 import UserFlows from "@/pages/user/flows/UserFlows";
@@ -24,6 +25,10 @@ function App() {
         <Route
           path="user/flows"
           element={<Protected>{me => <UserFlows {...me} />}</Protected>}
+        />
+        <Route
+          path="flow/:flowId"
+          element={<Protected>{() => <Flow />}</Protected>}
         />
         <Route
           path="*"

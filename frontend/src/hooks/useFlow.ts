@@ -17,6 +17,7 @@ type QueryData = {
   edges: Edge[];
 };
 type CreateFlowVariables = { label: string } & Omit<ReactFlowJsonObject, "viewport">;
+type SaveFlowPayload = { flowId: string } & ReactFlowJsonObject;
 
 function useFlow() {
   const queryClient = useQueryClient();
@@ -29,18 +30,20 @@ function useFlow() {
       });
     },
   });
-  const save = useMutation<Message, Message, ReactFlowJsonObject>({
+  const save = useMutation<Message, Message, SaveFlowPayload>({
     mutationKey: ["save-flow"],
     mutationFn: saveFlow,
   });
-  const restore = useQuery<unknown, DefaultError, QueryData>({
-    queryKey: ["restore-flow"],
-    queryFn: restoreFlow,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
+  const useRestore = (flowId: string) => {
+    return useQuery<unknown, DefaultError, QueryData>({
+      queryKey: ["restore-flow", flowId],
+      queryFn: () => restoreFlow(flowId),
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      retry: false,
+    });
+  };
   const deleteFlow = useMutation<Message, Message, string>({
     mutationKey: ["delete-flow"],
     mutationFn: deleteFlowApi,
@@ -51,7 +54,7 @@ function useFlow() {
     },
   });
 
-  return { create, save, restore, deleteFlow };
+  return { create, save, useRestore, deleteFlow };
 }
 
 export default useFlow;
