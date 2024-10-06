@@ -11,7 +11,7 @@ import {
 
 import { z } from "zod";
 
-const baseSchema = z.object({
+export const baseSchema = z.object({
   type: z.literal("base"),
   label: z.string().min(1, { message: "Il titolo non può essere vuoto" }),
   pages: z
@@ -43,7 +43,7 @@ const baseSchema = z.object({
     .refine(file => file.size < MAX_FILE_SIZE, "File troppo grande")
     .or(z.string().url({ message: "Inserire un file" })),
 });
-const questionSchema = z.object({
+export const questionSchema = z.object({
   type: z.literal("question"),
   label: z.string().min(1, { message: "Il titolo non può essere vuoto" }),
   pages: z
@@ -145,7 +145,7 @@ const questionSchema = z.object({
     })
     .optional(),
 });
-const choiceSchema = z.object({
+export const choiceSchema = z.object({
   type: z.literal("choice"),
   label: z.string().min(1, { message: "Il titolo non può essere vuoto" }),
   pages: z
