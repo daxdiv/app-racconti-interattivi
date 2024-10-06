@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { BaseEdge, EdgeLabelRenderer, EdgeProps, getBezierPath } from "@xyflow/react";
 
+import { Button } from "@/components/ui/button";
 import useEdgeUtils from "@/hooks/useEdgeUtils";
 
 function DeleteButtonEdge({
@@ -63,13 +64,16 @@ function DeleteButtonEdge({
                 <AlertDialogDescription />
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogAction
-                  onClick={() => {
-                    onEdgeDelete(id);
-                  }}
-                  className="bg-destructive hover:bg-destructive/70"
-                >
-                  Si
+                <AlertDialogAction asChild>
+                  <Button
+                    variant="destructive"
+                    className="bg-destructive hover:bg-destructive/90 dark:bg-destructive hover:dark:bg-destructive-foreground"
+                    onClick={() => {
+                      onEdgeDelete(id);
+                    }}
+                  >
+                    Si
+                  </Button>
                 </AlertDialogAction>
                 <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
                   No

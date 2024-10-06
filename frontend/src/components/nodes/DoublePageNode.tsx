@@ -126,7 +126,7 @@ function PageNode({ id }: { id: PageNodeProps["id"] }) {
                     <AlertDialogTrigger asChild>
                       <TooltipTrigger asChild>
                         <Trash2
-                          className="cursor-pointer text-secondary p-1 rounded-full bg-destructive dark:bg-destructive hover:bg-destructive-foreground hover:dark:bg-destructive-foreground nodrag nopan"
+                          className="cursor-pointer text-secondary p-1 rounded-full bg-destructive dark:bg-destructive nodrag nopan"
                           size={24}
                         />
                       </TooltipTrigger>
@@ -147,13 +147,16 @@ function PageNode({ id }: { id: PageNodeProps["id"] }) {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogAction
-                      onClick={() => {
-                        onNodeDelete(id);
-                      }}
-                      className="bg-destructive hover:bg-destructive/70"
-                    >
-                      Si
+                    <AlertDialogAction asChild>
+                      <Button
+                        variant="destructive"
+                        className="bg-destructive hover:bg-destructive/90 dark:bg-destructive hover:dark:bg-destructive-foreground"
+                        onClick={() => {
+                          onNodeDelete(id);
+                        }}
+                      >
+                        Si
+                      </Button>
                     </AlertDialogAction>
                     <AlertDialogCancel className="bg-primary hover:bg-primary/90 text-secondary hover:text-secondary">
                       No

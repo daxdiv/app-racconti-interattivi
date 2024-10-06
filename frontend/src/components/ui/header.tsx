@@ -1,4 +1,4 @@
-import CreateNode from "@/components/CreateNode";
+import { ModeToggle } from "@/components/ModeToggle";
 
 function Header() {
   return (
@@ -8,9 +8,8 @@ function Header() {
           Titolo
         </h1>
       </div>
-      <div className="flex justify-center items-center gap-x-2">
-        <CreateNode />
-      </div>
+
+      <ModeToggle />
     </header>
   );
 }

@@ -15,7 +15,10 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon">
+        <Button
+          size="icon"
+          className="bg-secondary text-primary hover:bg-secondary/90"
+        >
           <Palette />
           <span className="sr-only">Toggle theme</span>
         </Button>
