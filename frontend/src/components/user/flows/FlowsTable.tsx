@@ -27,6 +27,7 @@ import { formatDate } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { truncate } from "@/lib/utils";
 import useFlow from "@/hooks/useFlow";
+import { useNavigate } from "react-router-dom";
 
 type FlowsTableProps = {
   data: Data;
@@ -34,6 +35,7 @@ type FlowsTableProps = {
 };
 
 function FlowsTable(user: FlowsTableProps) {
+  const navigate = useNavigate();
   const { deleteFlow } = useFlow();
 
   const handleDeleteFlow = (flowId: string) => {
@@ -47,7 +49,7 @@ function FlowsTable(user: FlowsTableProps) {
   return (
     <ScrollArea className="h-[280px]">
       <Table>
-        <TableCaption />
+        <TableCaption>Racconti totali: {user.data.flows.length}</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead
@@ -94,6 +96,9 @@ function FlowsTable(user: FlowsTableProps) {
                 <Button
                   type="button"
                   className="flex justify-start items-center gap-x-1 text-xs"
+                  onClick={() => {
+                    navigate(`/flow/${f._id}`);
+                  }}
                 >
                   <Edit size={15} />
                   Modifica
