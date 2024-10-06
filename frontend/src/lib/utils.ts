@@ -43,3 +43,13 @@ export function genId() {
     return v.toString(16);
   });
 }
+
+export function formatDate(date: Date) {
+  const formatter = new Intl.DateTimeFormat("it-IT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  return formatter.format(date);
+}
