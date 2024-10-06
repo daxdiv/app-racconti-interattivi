@@ -6,6 +6,29 @@ import { objectToFormData } from "@/lib/utils";
 type SetPasswordPayload = Pick<PasswordSchema, "password" | "newPassword"> & {
   userId: string;
 };
+type CreateFlowPayload = { label: string } & Omit<ReactFlowJsonObject, "viewport">;
+
+export async function createFlow(flow: CreateFlowPayload) {
+  const formData = objectToFormData({
+    label: flow.label,
+    nodes: flow.nodes.map(n => ({ id: n.id, position: n.position, ...n.data })),
+    edges: flow.edges.map(e => ({ id: e.id, source: e.source, target: e.target })),
+  });
+
+  const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow`, {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.message);
+  }
+
+  return await response.json();
+}
 
 export async function restoreFlow() {
   const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/flow`);
