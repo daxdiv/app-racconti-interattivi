@@ -24,16 +24,17 @@ type PatchRequest = Request<
 
 const flowRouter = express.Router();
 
-flowRouter.get("/", auth, async (req, res) => {
+flowRouter.get("/:flowId", auth, async (req, res) => {
   const { verified } = res.locals;
+  const { flowId } = req.params;
 
   try {
     const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
     const baseUrl = `${url.substring(0, url.lastIndexOf("/"))}`;
-    const flow = await FlowModel.findOne({ userId: verified._id });
+    const flow = await FlowModel.findOne({ userId: verified._id, _id: flowId });
 
     if (!flow) {
-      res.status(404).json({ message: "Nessun racconto trovato" });
+      res.status(404).json({ message: "Racconto non trovato per questo utente" });
       return;
     }
 
@@ -49,34 +50,60 @@ flowRouter.get("/", auth, async (req, res) => {
   }
 });
 
-flowRouter.post("/", auth, async (req, res) => {
-  const { verified } = res.locals;
-
-  const schema = postFlowSchema.safeParse({ userId: verified._id, ...req.body });
-
-  if (!schema.success) {
-    res.status(400).json({ message: schema.error.issues.map(i => i.message).join("\n") });
-    return;
-  }
-
-  try {
-    const newFlow = new FlowModel(schema.data);
-
-    await newFlow.save();
-    await UserModel.findByIdAndUpdate(schema.data.userId, {
-      $addToSet: { flowsId: newFlow._id },
-    });
-
-    res.status(201).json(newFlow);
-  } catch (error) {
-    if (error.code === 11000) {
-      res
-        .status(409)
-        .json({ message: "Esiste già un racconto creato da te con questo titolo" });
+flowRouter.post("/", auth, (req, res) => {
+  upload(req, res, async err => {
+    if (err instanceof MulterError) {
+      res.status(400).json({ message: "File forniti non nel formato corretto" });
       return;
     }
-    res.status(500).json({ message: "Errore lato server" });
-  }
+    if (err) {
+      res.status(400).json({ message: err.message });
+      return;
+    }
+
+    const { verified } = res.locals;
+    const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
+    const files = req.files as Express.Multer.File[];
+
+    writeFiles(files);
+
+    const nodes = createNodesPayload(req.body.nodes, url);
+    const edges = req.body.edges || [];
+    const schema = postFlowSchema.safeParse({
+      userId: verified._id,
+      label: req.body.label,
+      nodes,
+      edges,
+    });
+
+    if (!schema.success) {
+      res
+        .status(400)
+        .json({ message: schema.error.issues.map(i => i.message).join("\n") });
+      return;
+    }
+
+    try {
+      const newFlow = new FlowModel({
+        userId: verified._id,
+        label: schema.data.label,
+        nodes: schema.data.nodes,
+        edges: schema.data.edges,
+      });
+
+      await newFlow.save();
+
+      res.status(200).json({ message: "Racconto creato" });
+    } catch (error) {
+      if (error.code === 11000) {
+        res
+          .status(409)
+          .json({ message: "Esiste già un racconto creato da te con questo nome" });
+        return;
+      }
+      res.status(500).json({ message: "Errore lato server" });
+    }
+  });
 });
 
 flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
@@ -122,6 +149,7 @@ flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
     });
 
     if (!schema.success) {
+      console.log(schema.error.issues);
       res
         .status(400)
         .json({ message: schema.error.issues.map(i => i.message).join("\n") });
@@ -130,10 +158,7 @@ flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
 
     try {
       const flow = await FlowModel.findOneAndUpdate(
-        {
-          userId: verified._id,
-          _id: schema.data.flowId,
-        },
+        { userId: verified._id, _id: flowId },
         {
           $set: {
             nodes: schema.data.nodes,
@@ -147,7 +172,7 @@ flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
         return;
       }
 
-      res.status(200).json({ message: "Modifiche salvate" });
+      res.status(200).json({ message: "Modifiche al racconto salvate" });
     } catch (error) {
       res.status(500).json({ message: "Errore lato server" });
     }

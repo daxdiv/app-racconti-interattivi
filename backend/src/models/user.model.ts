@@ -13,11 +13,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    flowsId: {
-      type: [Schema.Types.ObjectId],
-      ref: "flow",
-      default: [],
-    },
   },
   { timestamps: true }
 );
