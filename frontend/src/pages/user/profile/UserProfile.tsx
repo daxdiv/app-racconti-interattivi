@@ -22,10 +22,10 @@ import useUser, { Data } from "@/hooks/useUser";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/ModeToggle";
-import PasswordForm from "@/components/user/PasswordForm";
+import PasswordForm from "@/components/user/profile/PasswordForm";
 import { Separator } from "@/components/ui/separator";
 import UserActions from "@/components/UserActions";
-import UsernameForm from "@/components/user/UsernameForm";
+import UsernameForm from "@/components/user/profile/UsernameForm";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -106,9 +106,9 @@ function UserProfile(user: UserProfileProps) {
               <LoaderCircle className="animate-spin text-white" />
             ) : (
               <>
-                <UsernameForm />
+                <UsernameForm {...user} />
 
-                <PasswordForm />
+                <PasswordForm {...user} />
 
                 <Separator />
 

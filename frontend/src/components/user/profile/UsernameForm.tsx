@@ -10,23 +10,28 @@ import { usernameSchema, type UsernameSchema } from "@/lib/zod";
 
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import useUser from "@/hooks/useUser";
+import useUser, { type Data } from "@/hooks/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 
-function UsernameForm() {
-  const { me, setUsername } = useUser();
+type UsernameFormProps = {
+  data: Data;
+  isLoading: boolean;
+};
+
+function UsernameForm(user: UsernameFormProps) {
+  const { setUsername } = useUser();
   const form = useForm<UsernameSchema>({
     resolver: zodResolver(usernameSchema),
     defaultValues: {
-      username: me.data?.username || "",
+      username: user.data.username || "",
     },
   });
 
   const onSubmit = ({ username }: UsernameSchema) => {
-    toast.promise(setUsername.mutateAsync({ username, userId: me.data!._id }), {
+    toast.promise(setUsername.mutateAsync({ username, userId: user.data._id }), {
       loading: "Caricamento...",
       success: ({ message }) => message,
       error: ({ message }) => `Errore aggiornamento nome utente \n\t ${message}`,
@@ -34,10 +39,10 @@ function UsernameForm() {
   };
 
   useEffect(() => {
-    if (me.data) form.reset({ username: me.data.username });
+    if (user.data) form.reset({ username: user.data.username });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [me.data]);
+  }, [user.data]);
 
   return (
     <Form {...form}>
