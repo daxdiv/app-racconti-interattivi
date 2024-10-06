@@ -33,6 +33,7 @@ userRouter.get("/", auth, async (_req, res) => {
               input: "$flows",
               as: "flow",
               in: {
+                _id: "$$flow._id",
                 label: "$$flow.label",
                 nodesLength: { $size: "$$flow.nodes" },
                 createdAt: "$$flow.createdAt",

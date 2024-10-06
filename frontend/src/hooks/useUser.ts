@@ -15,7 +15,8 @@ type Message = {
 };
 export type Data = {
   _id: string;
-  username: AuthSchema["username"];
+  username: string;
+  flows: { _id: string; label: string; nodesLength: number; createdAt: string }[];
 };
 type SetUsernameVars = UsernameSchema & { userId: string };
 type SetPasswordVars = Pick<PasswordSchema, "password" | "newPassword"> & {
