@@ -190,14 +190,14 @@ export const postFlowSchema = z.object({
   nodes: z.array(nodeSchema).min(1),
   edges: z.array(edgeSchema),
 });
-export const putFlowSchema = postFlowSchema.merge(
-  z.object({
-    flowId: z.custom<mongoose.Schema.Types.ObjectId>(
-      data => mongoose.isValidObjectId(data),
-      { message: "Invalid ObjectId" }
-    ),
-  })
-);
+export const putFlowSchema = z.object({
+  userId: z.custom<mongoose.Schema.Types.ObjectId>(
+    data => mongoose.isValidObjectId(data),
+    { message: "Invalid ObjectId" }
+  ),
+  nodes: z.array(nodeSchema).min(1),
+  edges: z.array(edgeSchema),
+});
 export const deleteFlowSchema = z.object({
   flowId: z.custom<mongoose.Schema.Types.ObjectId>(
     data => mongoose.isValidObjectId(data),
