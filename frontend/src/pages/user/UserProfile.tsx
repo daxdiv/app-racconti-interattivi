@@ -29,8 +29,6 @@ import UsernameForm from "@/components/user/UsernameForm";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-// TODO quando elimino utente devo anche eliminare i flow collegati
-
 type UserProfileProps = {
   data: Data;
   isLoading: boolean;
