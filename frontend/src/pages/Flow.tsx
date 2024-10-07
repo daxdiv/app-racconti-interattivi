@@ -98,7 +98,7 @@ function Flow() {
 
   return (
     <>
-      <Header />
+      <Header label={restore.data?.label || "Titolo"} />
       <div
         style={{ height: "90vh", width: "100vw" }}
         ref={reactFlowWrapper}
