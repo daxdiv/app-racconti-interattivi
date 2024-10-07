@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 import DeleteButtonEdge from "@/components/edges/DeleteButtonEdge";
 import PageNode from "@/components/nodes/DoublePageNode";
 import { Button } from "@/components/ui/button";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import CreateNode from "@/components/CreateNode";
 
 function Flow() {
@@ -95,6 +95,15 @@ function Flow() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restore.data]);
+
+  if (!restore.isLoading && restore.isError) {
+    return (
+      <Navigate
+        to="/"
+        replace
+      />
+    );
+  }
 
   return (
     <>
