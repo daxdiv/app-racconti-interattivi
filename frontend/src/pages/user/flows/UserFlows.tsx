@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { UserPen, Users } from "lucide-react";
+import { LogOut, UserPen, Users } from "lucide-react";
 
 import type { Data } from "@/hooks/useUser";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -14,7 +14,9 @@ import FlowForm from "@/components/user/flows/FlowForm";
 import FlowsTable from "@/components/user/flows/FlowsTable";
 import { ModeToggle } from "@/components/ModeToggle";
 import UserActions from "@/components/UserActions";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import useUser from "@/hooks/useUser";
 
 type UserFlowsProps = {
   data: Data;
@@ -23,6 +25,19 @@ type UserFlowsProps = {
 
 function UserFlows(user: UserFlowsProps) {
   const navigate = useNavigate();
+  const { signOut } = useUser();
+
+  const handleSignOut = () => {
+    toast.promise(signOut.mutateAsync(), {
+      loading: "Disconnetto...",
+      success: () => {
+        navigate("/", { replace: true });
+
+        return "Disconnesso correttamente";
+      },
+      error: "Errore durante la disconnessione",
+    });
+  };
 
   return (
     <>
@@ -46,6 +61,13 @@ function UserFlows(user: UserFlowsProps) {
                 }}
               >
                 <UserPen size={15} /> Profilo
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                className="text-sm flex justify-between items-center cursor-pointer"
+                onClick={handleSignOut}
+              >
+                <LogOut size={15} /> Esci
               </DropdownMenuItem>
             </>
           )}
