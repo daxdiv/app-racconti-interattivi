@@ -1,9 +1,8 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import Feedbacks from "@/components/ui/nodes/doublePage/preview/questionChoiceTab/Feedbacks";
 import Options from "@/components/ui/nodes/doublePage/preview/questionChoiceTab/Options";
 import Text from "@/components/ui/nodes/doublePage/preview/questionChoiceTab/Text";
-import Values from "./Values";
 
 type QuestionChoiceTabProps = {
   field: "question" | "choice";
@@ -11,17 +10,28 @@ type QuestionChoiceTabProps = {
 
 function QuestionChoiceTab({ field }: QuestionChoiceTabProps) {
   return (
-    <Card className="h-full flex justify-center items-center">
-      <CardContent className="flex flex-col justify-center items-center">
-        <Text field={field} />
+    <>
+      <Tabs defaultValue="preview-text-and-options">
+        <TabsList className="w-full grid grid-cols-3">
+          <TabsTrigger value="preview-text-and-options">Testo e opzioni</TabsTrigger>
+          <TabsTrigger value="preview-first-feedback">Primo feedback</TabsTrigger>
+          <TabsTrigger value="preview-second-feedback">Secondo feedback</TabsTrigger>
+        </TabsList>
 
-        <Options field={field} />
+        <TabsContent value="preview-text-and-options">
+          <Text field={field} />
+          <Options field={field} />
+        </TabsContent>
 
-        <Values />
+        <TabsContent value="preview-first-feedback">
+          <Feedbacks render="first" />
+        </TabsContent>
 
-        <Feedbacks field={field} />
-      </CardContent>
-    </Card>
+        <TabsContent value="preview-second-feedback">
+          <Feedbacks render="second" />
+        </TabsContent>
+      </Tabs>
+    </>
   );
 }
 

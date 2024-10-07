@@ -14,11 +14,8 @@ function Text({ field }: TextProps) {
       : formTextAudio || "";
 
   return (
-    <div className="flex justify-center items-center gap-x-2 mb-4">
-      <p className="break-words">
-        <span className="font-extrabold">Testo: </span>
-        {form.getValues(`${field}.text`)}
-      </p>
+    <div className="h-full flex flex-col justify-center items-center gap-x-2 mb-4">
+      <p className="break-words">{form.getValues(`${field}.text`)}</p>
 
       {textAudio && (
         <audio
