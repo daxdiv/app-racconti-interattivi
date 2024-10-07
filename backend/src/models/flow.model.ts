@@ -82,6 +82,22 @@ const PositionSchema = new Schema(
   { _id: false }
 );
 
+const EvaluationSchema = new Schema(
+  {
+    show: {
+      type: Boolean,
+      default: true,
+      required: true,
+    },
+    label: {
+      type: String,
+      default: "Quanto ti è piaciuta la storia?",
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
 const NodeSchema = new Schema(
   {
     type: { type: String, enum: ["base", "question", "choice"], required: true },
@@ -115,6 +131,14 @@ const NodeSchema = new Schema(
     position: {
       type: PositionSchema,
       required: true,
+    },
+    lastPage: {
+      type: Boolean,
+      default: undefined,
+    },
+    evaluation: {
+      type: EvaluationSchema,
+      default: undefined,
     },
   },
   { _id: false }
