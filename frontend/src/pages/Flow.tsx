@@ -1,6 +1,5 @@
 import Header from "@/components/ui/header";
-import { DEFAULT_DATA } from "@/constants";
-import useReactFlowConnection from "@/hooks/useReactFlowConnection";
+import useReactFlowConnection from "@/hooks/useFlowUtils";
 import useFlow from "@/hooks/useFlow";
 import useTheme from "@/hooks/useTheme";
 import { PageSchema } from "@/lib/zod";
@@ -40,6 +39,7 @@ function Flow() {
     onConnectEnd,
     onLayout,
     isValidConnection,
+    isValidState,
   } = useReactFlowConnection();
   const { flowId } = useParams();
   const { save, useRestore } = useFlow();
@@ -139,13 +139,20 @@ function Flow() {
               disabled={save.isPending || restore.isLoading || restore.isError}
               className="flex justify-center items-center"
               onClick={() => {
-                const existNodesUnchanged = nodes.some(
-                  n => JSON.stringify(n.data) === JSON.stringify(DEFAULT_DATA)
-                );
-
-                if (existNodesUnchanged) {
+                if (!isValidState()) {
                   toast.error(
-                    "Ci sono dei nodi non salvati, eliminali oppure compila tutti i campi richiesti"
+                    `Racconto non salvabile, verifica che: \n
+                    - hai compilato tutti i campi richiesti in ogni nodo \n
+                    - l'ultimo nodo non sia "domanda" o "scelta" \n
+                    - tutti i nodi scelta abbiano due collegamenti in uscita
+                    `,
+                    {
+                      duration: 5000,
+                      style: {
+                        fontSize: "0.75rem",
+                        lineHeight: "1rem",
+                      },
+                    }
                   );
                   return;
                 }

@@ -17,6 +17,7 @@ import {
 import { DEFAULT_DATA, INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants";
 import { PageSchema } from "@/lib/zod";
 import { genId } from "@/lib/utils";
+import useNodeUtils from "@/hooks/useNodeUtils";
 
 function getLayoutedElements(
   nodes: Node[],
@@ -50,11 +51,12 @@ function getLayoutedElements(
   };
 }
 
-export default function useReactFlowConnection() {
+function useFlowUtils() {
   const connectingNodeId = useRef<null | string>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { getNodes, getEdges, screenToFlowPosition, fitView } = useReactFlow();
+  const { isNodeUnlinked } = useNodeUtils();
 
   const onConnect: OnConnect = useCallback(params => {
     connectingNodeId.current = null;
@@ -158,6 +160,31 @@ export default function useReactFlowConnection() {
     [getNodes, getEdges]
   );
 
+  const isValidState = useCallback(() => {
+    const doesChoiceNodeHasEnoughOutGoers = (node: Node) => {
+      if (node.data.type === "choice") {
+        return getOutgoers(node, nodes, edges).length === 2;
+      }
+
+      return true;
+    };
+
+    return nodes.every(n => {
+      console.log(
+        JSON.stringify(n.data) !== JSON.stringify(DEFAULT_DATA),
+        !isNodeUnlinked(n.id),
+        doesChoiceNodeHasEnoughOutGoers(n)
+      );
+      return (
+        JSON.stringify(n.data) !== JSON.stringify(DEFAULT_DATA) &&
+        !isNodeUnlinked(n.id) &&
+        doesChoiceNodeHasEnoughOutGoers(n)
+      );
+    });
+
+    // return { checkState};
+  }, [nodes, edges]);
+
   return {
     nodes,
     edges,
@@ -170,5 +197,8 @@ export default function useReactFlowConnection() {
     onConnectEnd,
     onLayout,
     isValidConnection,
+    isValidState,
   };
 }
+
+export default useFlowUtils;
