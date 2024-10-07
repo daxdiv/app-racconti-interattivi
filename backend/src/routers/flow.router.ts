@@ -39,6 +39,7 @@ flowRouter.get("/:flowId", auth, async (req, res) => {
     }
 
     res.status(200).json({
+      label: flow.label,
       nodes: flow.nodes.map(n => ({
         background: `${baseUrl}/${n.id}/${n.id}_background`,
         ...n.toJSON(),

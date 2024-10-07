@@ -35,7 +35,7 @@ function useFlow() {
     mutationFn: saveFlow,
   });
   const useRestore = (flowId: string) => {
-    return useQuery<unknown, DefaultError, QueryData>({
+    return useQuery<unknown, DefaultError, QueryData & { label: string }>({
       queryKey: ["restore-flow", flowId],
       queryFn: () => restoreFlow(flowId),
       refetchOnMount: false,
