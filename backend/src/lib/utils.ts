@@ -18,10 +18,10 @@ export async function splitImage(
     .toFile(secondHalfPath);
 }
 
-export function writeFiles(files: Express.Multer.File[]) {
+export function writeFiles(userId: string, flowId: string, files: Express.Multer.File[]) {
   files.map(async f => {
     const id = f.originalname.split("_")[0];
-    const destPath = `public/${id}`;
+    const destPath = `public/${userId}/${flowId}/${id}`;
 
     if (!fs.existsSync(destPath)) {
       fs.mkdirSync(destPath, { recursive: true });
@@ -40,11 +40,19 @@ export function writeFiles(files: Express.Multer.File[]) {
   });
 }
 
-export function createNodesPayload(payload: NodeSchema[], basePath: string) {
+export function createNodesPayload(
+  payload: NodeSchema[],
+  basePath: string,
+  userId: string,
+  flowId: string
+) {
   const nodes: NodeSchema[] = [];
 
   payload.forEach(n => {
-    const url = `${basePath.substring(0, basePath.lastIndexOf("/"))}/${n.id}`;
+    const url = `${basePath.substring(
+      0,
+      basePath.lastIndexOf("/")
+    )}/${userId}/${flowId}/${n.id}`;
 
     switch (n.type) {
       case "base":

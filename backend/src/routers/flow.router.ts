@@ -12,6 +12,7 @@ import { upload } from "../storages/flow.storage";
 import FlowModel from "../models/flow.model";
 import { auth } from "../middlewares";
 import UserModel from "../models/user.model";
+import mongoose from "mongoose";
 
 type PatchRequest = Request<
   { flowId: string },
@@ -41,7 +42,7 @@ flowRouter.get("/:flowId", auth, async (req, res) => {
     res.status(200).json({
       label: flow.label,
       nodes: flow.nodes.map(n => ({
-        background: `${baseUrl}/${n.id}/${n.id}_background`,
+        background: `${baseUrl}/${verified._id}/${flowId}/${n.id}/${n.id}_background`,
         ...n.toJSON(),
       })),
       edges: flow.edges,
@@ -65,10 +66,11 @@ flowRouter.post("/", auth, (req, res) => {
     const { verified } = res.locals;
     const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
     const files = req.files as Express.Multer.File[];
+    const flowId = new mongoose.Types.ObjectId().toString();
 
-    writeFiles(files);
+    writeFiles(verified._id, flowId, files);
 
-    const nodes = createNodesPayload(req.body.nodes, url);
+    const nodes = createNodesPayload(req.body.nodes, url, verified._id, flowId);
     const edges = req.body.edges || [];
     const schema = postFlowSchema.safeParse({
       userId: verified._id,
@@ -86,6 +88,7 @@ flowRouter.post("/", auth, (req, res) => {
 
     try {
       const newFlow = new FlowModel({
+        _id: flowId,
         userId: verified._id,
         label: schema.data.label,
         nodes: schema.data.nodes,
@@ -136,21 +139,20 @@ flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
 
     const url = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
     const files = req.files as Express.Multer.File[];
-
-    writeFiles(files);
-
-    const nodes = createNodesPayload(req.body.nodes, url);
-    const edges = req.body.edges || [];
     const flowId = req.params.flowId;
+
+    writeFiles(verified._id, flowId, files);
+
+    const nodes = createNodesPayload(req.body.nodes, url, verified._id, flowId);
+
+    const edges = req.body.edges || [];
     const schema = putFlowSchema.safeParse({
       userId: verified._id,
       nodes,
       edges,
-      flowId,
     });
 
     if (!schema.success) {
-      console.log(schema.error.issues);
       res
         .status(400)
         .json({ message: schema.error.issues.map(i => i.message).join("\n") });
@@ -162,7 +164,20 @@ flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
         { userId: verified._id, _id: flowId },
         {
           $set: {
-            nodes: schema.data.nodes,
+            nodes: schema.data.nodes.map((n, i) => {
+              if (i === schema.data.nodes.length - 1) {
+                return {
+                  ...n,
+                  lastPage: true,
+                  evaluation: {
+                    show: true,
+                    label: "Quanto ti è piaciuta la storia?",
+                  },
+                };
+              }
+
+              return n;
+            }),
             edges: schema.data.edges,
           },
         }
