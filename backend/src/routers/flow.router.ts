@@ -165,7 +165,7 @@ flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
         {
           $set: {
             nodes: schema.data.nodes.map((n, i) => {
-              if (i === schema.data.nodes.length - 1) {
+              if (i !== 0 && i === schema.data.nodes.length - 1) {
                 return {
                   ...n,
                   lastPage: true,
