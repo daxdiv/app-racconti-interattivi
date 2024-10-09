@@ -69,6 +69,14 @@ function FlowForm() {
             },
             data: values.nodes[0],
           },
+          {
+            id: "end",
+            position: {
+              x: 400,
+              y: 50,
+            },
+            data: values.nodes[0],
+          },
         ],
         edges: [],
       }),
