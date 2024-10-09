@@ -161,24 +161,17 @@ function useFlowUtils() {
   );
 
   const isValidState = useCallback(() => {
-    const doesChoiceNodeHasEnoughOutGoers = (node: Node) => {
-      if (node.data.type === "choice") {
-        return getOutgoers(node, nodes, edges).length === 2;
-      }
+    const checkOutGoers = (node: Node) => {
+      const outGoersCount = node.id === "end" ? 0 : node.data.type === "choice" ? 2 : 1;
 
-      return true;
+      return getOutgoers(node, nodes, edges).length === outGoersCount;
     };
 
     return nodes.every(n => {
-      console.log(
-        JSON.stringify(n.data) !== JSON.stringify(DEFAULT_DATA),
-        !isNodeUnlinked(n.id),
-        doesChoiceNodeHasEnoughOutGoers(n)
-      );
       return (
         JSON.stringify(n.data) !== JSON.stringify(DEFAULT_DATA) &&
         !isNodeUnlinked(n.id) &&
-        doesChoiceNodeHasEnoughOutGoers(n)
+        checkOutGoers(n)
       );
     });
 
