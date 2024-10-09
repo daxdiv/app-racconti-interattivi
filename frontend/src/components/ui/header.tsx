@@ -1,3 +1,4 @@
+import { BookOpen, LogOut, UserPen, Users } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -5,14 +6,34 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/ModeToggle";
+import UserActions from "@/components/UserActions";
+import toast from "react-hot-toast";
 import { truncate } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+import useUser from "@/hooks/useUser";
 
 type HeaderProps = {
   label: string;
 };
 
 function Header({ label }: HeaderProps) {
+  const navigate = useNavigate();
+  const { signOut } = useUser();
+
+  const handleSignOut = () => {
+    toast.promise(signOut.mutateAsync(), {
+      loading: "Disconnetto...",
+      success: () => {
+        navigate("/", { replace: true });
+
+        return "Disconnesso correttamente";
+      },
+      error: "Errore durante la disconnessione",
+    });
+  };
+
   return (
     <header className="w-full h-[10vh] border-border/40 bg-black flex justify-between px-3 items-center">
       <div>
@@ -28,7 +49,45 @@ function Header({ label }: HeaderProps) {
         </TooltipProvider>
       </div>
 
-      <ModeToggle />
+      <div className="flex justify-center items-center gap-x-1">
+        <UserActions
+          renderItems={() => (
+            <>
+              <DropdownMenuItem
+                className="text-sm flex justify-between items-center cursor-pointer"
+                onClick={() => {
+                  navigate("/", { replace: true });
+                }}
+              >
+                <Users size={15} /> Usa un altro account
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-sm flex justify-between items-center cursor-pointer"
+                onClick={() => {
+                  navigate("/user/flows", { replace: true });
+                }}
+              >
+                <BookOpen size={15} /> I miei racconti
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-sm flex justify-between items-center cursor-pointer"
+                onClick={() => {
+                  navigate("/user/profile", { replace: true });
+                }}
+              >
+                <UserPen size={15} /> Profilo
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-sm flex justify-between items-center cursor-pointer"
+                onClick={handleSignOut}
+              >
+                <LogOut size={15} /> Esci
+              </DropdownMenuItem>
+            </>
+          )}
+        />
+        <ModeToggle />
+      </div>
     </header>
   );
 }
