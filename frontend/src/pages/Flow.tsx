@@ -152,8 +152,8 @@ function Flow() {
                   toast.error(
                     `Racconto non salvabile, verifica che: \n
                     - hai compilato tutti i campi richiesti in ogni nodo \n
-                    - l'ultimo nodo non sia "domanda" o "scelta" \n
-                    - tutti i nodi scelta abbiano due collegamenti in uscita
+                    - tutti i nodi scelta abbiano due collegamenti in uscita \n
+                    - tutti i nodi escluso l'ultimo abbiano almeno un collegamento in uscita
                     `,
                     {
                       duration: 5000,
