@@ -15,7 +15,10 @@ function UserActions({ renderItems }: UserActionsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon">
+        <Button
+          size="icon"
+          className="bg-secondary hover:bg-secondary/90 text-primary"
+        >
           <User />
           <span className="sr-only">User actions</span>
         </Button>
