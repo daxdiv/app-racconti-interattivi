@@ -216,7 +216,7 @@ userRouter.delete("/:userId", auth, async (req, res) => {
       return;
     }
 
-    await FlowModel.deleteMany({ userId: verified._id });
+    await FlowModel.deleteMany({ userId: deletedUser._id });
 
     res.cookie("user", "", { maxAge: 0 });
     res.status(200).json({ message: "Successo" });
