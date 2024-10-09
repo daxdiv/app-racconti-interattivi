@@ -174,7 +174,7 @@ EdgeSchema.methods.toJSON = function () {
 const flowSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
-    label: { type: String, required: true, unique: true },
+    label: { type: String, required: true },
     nodes: { type: [NodeSchema], required: true },
     edges: { type: [EdgeSchema], required: true },
   },
