@@ -91,7 +91,20 @@ flowRouter.post("/", auth, (req, res) => {
         _id: flowId,
         userId: verified._id,
         label: schema.data.label,
-        nodes: schema.data.nodes,
+        nodes: schema.data.nodes.map(n => {
+          if (n.id === "end") {
+            return {
+              ...n,
+              lastPage: true,
+              evaluation: {
+                show: true,
+                label: "Quanto ti è piaciuta la storia?",
+              },
+            };
+          }
+
+          return n;
+        }),
         edges: schema.data.edges,
       });
 
@@ -164,20 +177,7 @@ flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
         { userId: verified._id, _id: flowId },
         {
           $set: {
-            nodes: schema.data.nodes.map((n, i) => {
-              if (i !== 0 && i === schema.data.nodes.length - 1) {
-                return {
-                  ...n,
-                  lastPage: true,
-                  evaluation: {
-                    show: true,
-                    label: "Quanto ti è piaciuta la storia?",
-                  },
-                };
-              }
-
-              return n;
-            }),
+            nodes: schema.data.nodes,
             edges: schema.data.edges,
           },
         }
