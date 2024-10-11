@@ -14,12 +14,12 @@ import { auth } from "../middlewares";
 import UserModel from "../models/user.model";
 import mongoose from "mongoose";
 
-type PatchRequest = Request<
+type PutRequest = Request<
   { flowId: string },
   any,
   {
     nodes: NodeSchema[] & { id: string; position: { x: string; y: string } };
-    edges: EdgeSchema;
+    edges: EdgeSchema[];
   }
 >;
 
@@ -123,7 +123,7 @@ flowRouter.post("/", auth, (req, res) => {
   });
 });
 
-flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
+flowRouter.put("/:flowId", auth, (req: PutRequest, res) => {
   upload(req, res, async err => {
     if (err instanceof MulterError) {
       res.status(400).json({ message: "File forniti non nel formato corretto" });
@@ -161,7 +161,15 @@ flowRouter.put("/:flowId", auth, (req: PatchRequest, res) => {
     const edges = req.body.edges || [];
     const schema = putFlowSchema.safeParse({
       userId: verified._id,
-      nodes,
+      nodes: nodes.map(n => {
+        if (n.type === "choice") {
+          n.nextSteps = edges.filter(e => e.source === n.id).map(e => e.id);
+
+          return n;
+        }
+
+        return n;
+      }),
       edges,
     });
 
