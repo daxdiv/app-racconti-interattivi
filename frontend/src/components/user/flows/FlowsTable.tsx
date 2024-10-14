@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit, Trash } from "lucide-react";
+import { Download, Edit, Trash } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -23,6 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { Data } from "@/hooks/useUser";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { downloadFlow } from "@/api";
 import { formatDate } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { truncate } from "@/lib/utils";
@@ -91,7 +92,7 @@ function FlowsTable(user: FlowsTableProps) {
               </TableCell>
               <TableCell
                 colSpan={2}
-                className="text-right flex justify-end items-center gap-x-1"
+                className="text-right flex justify-center items-center gap-x-1"
               >
                 <Button
                   type="button"
@@ -102,6 +103,15 @@ function FlowsTable(user: FlowsTableProps) {
                 >
                   <Edit size={15} />
                   Modifica
+                </Button>
+
+                <Button
+                  type="button"
+                  className="flex justify-start items-center gap-x-1 text-xs"
+                  onClick={() => downloadFlow(f._id)}
+                >
+                  <Download size={15} />
+                  Scarica <code className="text-xs text-muted-foreground">(.json)</code>
                 </Button>
 
                 <Dialog>

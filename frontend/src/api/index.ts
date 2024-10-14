@@ -2,6 +2,7 @@ import type { AuthSchema, PasswordSchema, UsernameSchema } from "@/lib/zod";
 
 import type { ReactFlowJsonObject } from "@xyflow/react";
 import { objectToFormData } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 type SetPasswordPayload = Pick<PasswordSchema, "password" | "newPassword"> & {
   userId: string;
@@ -64,6 +65,35 @@ export async function saveFlow(flow: SaveFlowPayload) {
   }
 
   return await response.json();
+}
+
+export async function downloadFlow(flowId: string) {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/flow/${flowId}/download`,
+      { credentials: "include" }
+    );
+
+    if (!response.ok) {
+      toast.error("Errore durante il download del file");
+      return;
+    }
+
+    const data = await response.json();
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "flow.json";
+    a.click();
+
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Errore nel download del file:", error);
+  }
 }
 
 export async function deleteFlow(flowId: string) {
