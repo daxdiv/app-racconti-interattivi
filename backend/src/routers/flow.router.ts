@@ -7,12 +7,12 @@ import {
   type NodeSchema,
 } from "../lib/zod";
 import express, { type Request } from "express";
-import { createNodesPayload, writeFiles } from "../lib/utils";
+import { createNodesPayload, getSortedNodes, writeFiles } from "../lib/utils";
 import { upload } from "../storages/flow.storage";
 import FlowModel from "../models/flow.model";
 import { auth } from "../middlewares";
-import UserModel from "../models/user.model";
 import mongoose from "mongoose";
+import fs from "fs";
 
 type PutRequest = Request<
   { flowId: string },
@@ -47,6 +47,27 @@ flowRouter.get("/:flowId", auth, async (req, res) => {
       })),
       edges: flow.edges,
     });
+  } catch (error) {
+    res.status(500).json({ message: "Errore lato server" });
+  }
+});
+flowRouter.get("/:flowId/download", auth, async (req, res) => {
+  const { verified } = res.locals;
+  const { flowId } = req.params;
+
+  try {
+    const flow = await FlowModel.findOne({ userId: verified._id, _id: flowId });
+
+    if (!flow) {
+      res.status(404).json({ message: "Racconto non trovato per questo utente" });
+      return;
+    }
+
+    const sortedNodes = getSortedNodes(flow.nodes.toObject(), flow.edges.toObject());
+
+    res.setHeader("Content-Disposition", 'attachment; filename="flow.json"');
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).send(JSON.stringify(sortedNodes, null, 2));
   } catch (error) {
     res.status(500).json({ message: "Errore lato server" });
   }
@@ -214,12 +235,11 @@ flowRouter.delete("/:flowId", auth, async (req: Request<{ flowId: string }>, res
 
   try {
     await FlowModel.findOneAndDelete({ _id: schema.data.flowId, userId: verified._id });
-    await UserModel.findByIdAndUpdate(verified._id, {
-      $pull: {
-        flowsId: schema.data.flowId,
-      },
-    });
 
+    fs.rmSync(`public/${verified._id}/${schema.data.flowId}`, {
+      recursive: true,
+      force: true,
+    });
     res.status(200).json({ message: "Racconto eliminato" });
   } catch (error) {
     res.status(500).json({ message: "Errore lato server" });
