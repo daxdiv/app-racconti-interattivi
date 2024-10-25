@@ -13,7 +13,7 @@ import {
   MiniMap,
   type Node,
 } from "@xyflow/react";
-import { Network, Save } from "lucide-react";
+import { Activity, Network, Save } from "lucide-react";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import DeleteButtonEdge from "@/components/edges/DeleteButtonEdge";
@@ -148,12 +148,22 @@ function Flow() {
               disabled={save.isPending || restore.isLoading || restore.isError}
               className="flex justify-center items-center"
               onClick={() => {
+                onSave();
+              }}
+            >
+              <Save className="mr-2 nodrag nopan" />
+              Salva racconto
+            </Button>
+
+            <Button
+              className="flex justify-center items-center"
+              onClick={() => {
                 if (!isValidState()) {
                   toast.error(
-                    `Racconto non salvabile, verifica che: \n
+                    `Stato del racconto non corretto verifica che: \n
+                    - non vi siano nodi scollegati \n
                     - hai compilato tutti i campi richiesti in ogni nodo \n
-                    - tutti i nodi scelta abbiano due collegamenti in uscita \n
-                    - tutti i nodi escluso l'ultimo abbiano almeno un collegamento in uscita
+                    - tutti i nodi scelta abbiano due collegamenti in uscita
                     `,
                     {
                       duration: 5000,
@@ -163,14 +173,13 @@ function Flow() {
                       },
                     }
                   );
-                  return;
+                } else {
+                  toast.success("Stato del racconto corretto");
                 }
-
-                onSave();
               }}
             >
-              <Save className="mr-2 nodrag nopan" />
-              Salva racconto
+              <Activity className="mr-2 nodrag nopan" />
+              Verifica stato
             </Button>
 
             <CreateNode />
