@@ -162,9 +162,11 @@ function useFlowUtils() {
 
   const isValidState = useCallback(() => {
     const checkOutGoers = (node: Node) => {
-      const outGoersCount = node.id === "end" ? 0 : node.data.type === "choice" ? 2 : 1;
+      if (node.data.type === "choice") {
+        return getOutgoers(node, nodes, edges).length === 2;
+      }
 
-      return getOutgoers(node, nodes, edges).length === outGoersCount;
+      return true;
     };
 
     return nodes.every(n => {
