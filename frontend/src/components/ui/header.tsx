@@ -26,7 +26,7 @@ function Header({ label }: HeaderProps) {
     toast.promise(signOut.mutateAsync(), {
       loading: "Disconnetto...",
       success: () => {
-        navigate("/", { replace: true });
+        navigate("/auth", { replace: true });
 
         return "Disconnesso correttamente";
       },
@@ -56,7 +56,7 @@ function Header({ label }: HeaderProps) {
               <DropdownMenuItem
                 className="text-sm flex justify-between items-center cursor-pointer"
                 onClick={() => {
-                  navigate("/", { replace: true });
+                  navigate("/auth", { replace: true });
                 }}
               >
                 <Users size={15} /> Usa un altro account

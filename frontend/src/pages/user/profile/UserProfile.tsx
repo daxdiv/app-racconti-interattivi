@@ -42,7 +42,7 @@ function UserProfile(user: UserProfileProps) {
     toast.promise(signOut.mutateAsync(), {
       loading: "Disconnetto...",
       success: () => {
-        navigate("/", { replace: true });
+        navigate("/auth", { replace: true });
 
         return "Disconnesso correttamente";
       },
@@ -53,7 +53,7 @@ function UserProfile(user: UserProfileProps) {
     toast.promise(deleteAccount.mutateAsync(user.data._id), {
       loading: "Elimino account...",
       success: () => {
-        navigate("/", { replace: true });
+        navigate("/auth", { replace: true });
 
         return "Account eliminato";
       },
@@ -70,7 +70,7 @@ function UserProfile(user: UserProfileProps) {
               <DropdownMenuItem
                 className="text-sm flex justify-between items-center cursor-pointer"
                 onClick={() => {
-                  navigate("/", { replace: true });
+                  navigate("/auth", { replace: true });
                 }}
               >
                 <Users size={15} /> Usa un altro account

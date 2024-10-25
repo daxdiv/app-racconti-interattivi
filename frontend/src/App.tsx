@@ -16,6 +16,10 @@ function App() {
       <Routes>
         <Route
           path="/"
+          element={<Protected>{me => <UserFlows {...me} />}</Protected>}
+        />
+        <Route
+          path="/auth"
           element={<Auth />}
         />
         <Route
