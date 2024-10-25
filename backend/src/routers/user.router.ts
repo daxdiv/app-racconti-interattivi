@@ -1,6 +1,5 @@
 import { authSchema, passwordSchema, usernameSchema } from "../lib/zod";
 
-import FlowModel from "../models/flow.model";
 import { JWT_EXPIRES_IN } from "../constants";
 import UserModel from "../models/user.model";
 import { auth } from "../middlewares";
@@ -74,7 +73,10 @@ userRouter.post("/sign-in", async (req, res) => {
   }
 
   try {
-    const user = await UserModel.findOne({ username: schema.data.username });
+    const user = await UserModel.findOne({
+      username: schema.data.username,
+      isDeleted: false,
+    });
 
     if (!user) {
       res.status(404).json({ message: `Utente con username "${username}" non trovato` });
@@ -186,8 +188,6 @@ userRouter.put("/:userId/password", auth, async (req, res) => {
       { password: newHashedPassword }
     );
 
-    console.log(updatedUser);
-
     if (!updatedUser) {
       res.status(404).json({ message: "Utente non trovato" });
       return;
@@ -209,14 +209,14 @@ userRouter.delete("/:userId", auth, async (req, res) => {
   }
 
   try {
-    const deletedUser = await UserModel.findByIdAndDelete(verified._id);
+    const deletedUser = await UserModel.findByIdAndUpdate(verified._id, {
+      isDeleted: true,
+    });
 
     if (!deletedUser) {
       res.status(404).json({ message: "Utente non trovato" });
       return;
     }
-
-    await FlowModel.deleteMany({ userId: deletedUser._id });
 
     res.cookie("user", "", { maxAge: 0 });
     res.status(200).json({ message: "Successo" });
