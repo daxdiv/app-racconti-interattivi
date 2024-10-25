@@ -112,20 +112,7 @@ flowRouter.post("/", auth, (req, res) => {
         _id: flowId,
         userId: verified._id,
         label: schema.data.label,
-        nodes: schema.data.nodes.map(n => {
-          if (n.id === "end") {
-            return {
-              ...n,
-              lastPage: true,
-              evaluation: {
-                show: true,
-                label: "Quanto ti è piaciuta la storia?",
-              },
-            };
-          }
-
-          return n;
-        }),
+        nodes: schema.data.nodes,
         edges: schema.data.edges,
       });
 
@@ -188,6 +175,16 @@ flowRouter.put("/:flowId", auth, (req: PutRequest, res) => {
 
           return n;
         }
+        if (!edges.some(e => e.source === n.id)) {
+          return {
+            ...n,
+            lastPage: true,
+            evaluation: {
+              show: true,
+              label: "Quanto ti è piaciuta la storia?",
+            },
+          };
+        }
 
         return n;
       }),
@@ -195,6 +192,7 @@ flowRouter.put("/:flowId", auth, (req: PutRequest, res) => {
     });
 
     if (!schema.success) {
+      console.dir(schema.error.issues, { depth: Infinity });
       res
         .status(400)
         .json({ message: schema.error.issues.map(i => i.message).join("\n") });

@@ -169,14 +169,6 @@ export function getSortedNodes(nodes: NodeSchema[], edges: EdgeSchema[]) {
       audio: n.audio,
     };
 
-    if (n.id === "end") {
-      commonFields.lastPage = true;
-      commonFields.evaluation = {
-        show: true,
-        label: "Quanto ti è piaciuta la storia?",
-      };
-    }
-
     switch (n.type) {
       case "base":
         return commonFields;

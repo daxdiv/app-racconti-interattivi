@@ -34,10 +34,10 @@ const baseSchema = z.object({
     .min(2)
     .max(2),
   audio: z.string(),
-  lastPage: z.literal("true").optional(),
+  lastPage: z.literal(true).optional(),
   evaluation: z
     .object({
-      show: z.literal("true"),
+      show: z.literal(true),
       label: z.literal("Quanto ti è piaciuta la storia?"),
     })
     .optional(),
