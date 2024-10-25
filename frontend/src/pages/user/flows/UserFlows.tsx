@@ -83,15 +83,6 @@ function UserFlows(user: UserFlowsProps) {
           <CardContent className="space-y-6">
             <FlowForm />
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Oppure</span>
-              </div>
-            </div>
-
             {user.data.flows.length === 0 ? (
               <p className="flex justify-center items-center text-muted-foreground">
                 Non hai creato nessun racconto

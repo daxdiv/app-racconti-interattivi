@@ -8,6 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { DEFAULT_AUDIO_URL, DEFAULT_BACKGROUND_URL } from "@/constants";
 import useFlow from "@/hooks/useFlow";
 import { baseSchema, type PageSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,33 +30,36 @@ function FlowForm() {
   const { create } = useFlow();
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      label: "",
-      nodes: [
-        {
-          type: "base",
-          label: "Titolo",
-          background: new File([], ""),
-          audio: new File([], ""),
-          pages: [
-            {
-              text: {
-                content: "C'era una volta...",
-                position: "TopLeft",
+    async defaultValues() {
+      return {
+        label: "",
+        nodes: [
+          {
+            type: "base",
+            label: "Titolo",
+            background: DEFAULT_BACKGROUND_URL,
+            audio: DEFAULT_AUDIO_URL,
+            pages: [
+              {
+                text: {
+                  content: "C'era una volta...",
+                  position: "TopLeft",
+                },
               },
-            },
-            {
-              text: {
-                content: "...una bambina",
-                position: "TopRight",
+              {
+                text: {
+                  content: "...una bambina",
+                  position: "TopRight",
+                },
               },
-            },
-          ],
-        },
-      ],
+            ],
+          },
+        ],
+      };
     },
   });
 
+  console.log(form.formState.errors);
   const onSubmit = (values: FormValues) => {
     toast.promise(
       create.mutateAsync({
@@ -65,14 +69,6 @@ function FlowForm() {
             id: "0",
             position: {
               x: 0,
-              y: 50,
-            },
-            data: values.nodes[0],
-          },
-          {
-            id: "end",
-            position: {
-              x: 400,
               y: 50,
             },
             data: values.nodes[0],
@@ -104,62 +100,6 @@ function FlowForm() {
                 <Input
                   placeholder="Cappuccetto rosso"
                   {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="nodes.0.background"
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { value, onChange, ...rest } }) => (
-            <FormItem>
-              <FormLabel>
-                Sfondo primo nodo{" "}
-                <span className="text-muted-foreground text-xs">
-                  (dimensioni consigliate 1920x1080)
-                </span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  {...rest}
-                  type="file"
-                  accept="image/*"
-                  className="cursor-pointer"
-                  onChange={event =>
-                    onChange(
-                      event.target.files &&
-                        new File([event.target.files[0]], "0_background")
-                    )
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="nodes.0.audio"
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          render={({ field: { value, onChange, ...rest } }) => (
-            <FormItem>
-              <FormLabel>Audio primo nodo</FormLabel>
-              <FormControl>
-                <Input
-                  {...rest}
-                  type="file"
-                  accept="audio/mp3"
-                  className="cursor-pointer"
-                  onChange={event =>
-                    onChange(
-                      event.target.files && new File([event.target.files[0]], "0_audio")
-                    )
-                  }
                 />
               </FormControl>
               <FormMessage />
