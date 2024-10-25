@@ -22,7 +22,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { authSchema, type AuthSchema } from "@/lib/zod";
 import useUser from "@/hooks/useUser";
 import toast from "react-hot-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ModeToggle } from "@/components/ModeToggle";
 import { useEffect } from "react";
@@ -41,7 +40,7 @@ function Auth() {
       password: "",
     },
   });
-  const { signUp, signIn } = useUser();
+  const { signIn } = useUser();
 
   const onSignIn = (values: AuthSchema) => {
     toast.promise(signIn.mutateAsync(values), {
@@ -52,13 +51,6 @@ function Auth() {
         return "Accesso effettuato correttamente";
       },
       error: ({ message }) => `Errore accesso \n ${message}`,
-    });
-  };
-  const onSignUp = (values: AuthSchema) => {
-    toast.promise(signUp.mutateAsync(values), {
-      loading: "Caricamento...",
-      success: "Utente creato",
-      error: ({ message }) => `Errore creazione utente \n ${message}`,
     });
   };
 
@@ -92,150 +84,69 @@ function Auth() {
       </div>
       <div className="flex justify-center items-center h-screen min-h-screen">
         <Card className="w-1/3">
-          <Tabs
-            defaultValue="sign-in"
-            onValueChange={v => {
-              form.setValue("type", v as AuthSchema["type"]);
-              form.clearErrors();
-            }}
-          >
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="sign-in">Accedi</TabsTrigger>
-              <TabsTrigger value="sign-up">Registrati</TabsTrigger>
-            </TabsList>
+          <CardHeader>
+            <CardTitle>Accedi</CardTitle>
+            <CardDescription />
+          </CardHeader>
 
-            <TabsContent value="sign-in">
-              <CardHeader>
-                <CardTitle>Accedi</CardTitle>
-                <CardDescription />
-              </CardHeader>
-
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSignIn)}
-                  noValidate
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSignIn)}
+              noValidate
+            >
+              <CardContent className="space-y-5 w-full">
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Nome utente</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          autoCapitalize="none"
+                          autoComplete="username"
+                          autoCorrect="off"
+                          placeholder="Inserisci il nome utente"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          autoCapitalize="none"
+                          autoComplete="current-password"
+                          autoCorrect="off"
+                          placeholder="Inserisci la password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardFooter>
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                  className="w-full"
                 >
-                  <CardContent className="space-y-5 w-full">
-                    <FormField
-                      control={form.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Nome utente</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              autoCapitalize="none"
-                              autoComplete="username"
-                              autoCorrect="off"
-                              placeholder="Inserisci il nome utente"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="password"
-                              autoCapitalize="none"
-                              autoComplete="current-password"
-                              autoCorrect="off"
-                              placeholder="Inserisci la password"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      type="submit"
-                      disabled={form.formState.isSubmitting}
-                      className="w-full"
-                    >
-                      Invia
-                    </Button>
-                  </CardFooter>
-                </form>
-              </Form>
-            </TabsContent>
-
-            <TabsContent value="sign-up">
-              <CardHeader>
-                <CardTitle>Registrati</CardTitle>
-                <CardDescription />
-              </CardHeader>
-
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSignUp)}
-                  noValidate
-                >
-                  <CardContent className="space-y-5 w-full">
-                    <FormField
-                      control={form.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Nome utente</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="email"
-                              autoCapitalize="none"
-                              autoComplete="username"
-                              autoCorrect="off"
-                              placeholder="Inserisci il nome utente"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="password"
-                              autoCapitalize="none"
-                              autoComplete="current-password"
-                              autoCorrect="off"
-                              placeholder="Inserisci la password"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      type="submit"
-                      disabled={form.formState.isSubmitting}
-                      className="w-full"
-                    >
-                      Invia
-                    </Button>
-                  </CardFooter>
-                </form>
-              </Form>
-            </TabsContent>
-          </Tabs>
+                  Invia
+                </Button>
+              </CardFooter>
+            </form>
+          </Form>
         </Card>
       </div>
     </>
