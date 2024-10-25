@@ -19,7 +19,7 @@ function Protected({ children }: ProtectedProps) {
   if (me.isError) {
     return (
       <Navigate
-        to={`/?error=${me.error.message}`}
+        to={`/auth`}
         replace
       />
     );
