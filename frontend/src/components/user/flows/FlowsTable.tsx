@@ -111,7 +111,7 @@ function FlowsTable(user: FlowsTableProps) {
                   onClick={() => downloadFlow(f._id)}
                 >
                   <Download size={15} />
-                  Scarica <code className="text-xs text-muted-foreground">(.json)</code>
+                  Scarica <code className="text-xs text-muted-foreground">(.zip)</code>
                 </Button>
 
                 <Dialog>

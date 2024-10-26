@@ -79,20 +79,17 @@ export async function downloadFlow(flowId: string) {
       return;
     }
 
-    const data = await response.json();
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
+    const blob = await response.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
 
     a.href = url;
-    a.download = "flow.json";
+    a.download = "flow.zip";
     a.click();
-
     a.remove();
     URL.revokeObjectURL(url);
   } catch (error) {
-    console.error("Errore nel download del file:", error);
+    toast.error(`Errore nel download del file: ${error}`);
   }
 }
 
