@@ -18,6 +18,9 @@ import { DEFAULT_DATA, INITIAL_NODES, REACT_FLOW_PANE_CLASS } from "@/constants"
 import { PageSchema } from "@/lib/zod";
 import { genId } from "@/lib/utils";
 import useNodeUtils from "@/hooks/useNodeUtils";
+import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
+import useFlow from "@/hooks/useFlow";
 
 function getLayoutedElements(
   nodes: Node[],
@@ -55,8 +58,11 @@ function useFlowUtils() {
   const connectingNodeId = useRef<null | string>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-  const { getNodes, getEdges, screenToFlowPosition, fitView } = useReactFlow();
+  const { getNodes, getEdges, screenToFlowPosition, fitView, getViewport } =
+    useReactFlow();
   const { isNodeUnlinked } = useNodeUtils();
+  const { flowId } = useParams();
+  const { save } = useFlow();
 
   const onConnect: OnConnect = useCallback(params => {
     connectingNodeId.current = null;
@@ -103,7 +109,7 @@ function useFlowUtils() {
         origin: [0.5, 0.0],
         type: "doublePage",
       };
-      const newEgde: Edge = {
+      const newEdge: Edge = {
         id,
         source: connectingNodeId.current,
         target: id,
@@ -116,8 +122,31 @@ function useFlowUtils() {
         },
       };
 
-      setNodes(nds => nds.concat(newNode));
-      setEdges(eds => eds.concat(newEgde));
+      setNodes(nds => {
+        const updatedNodes = nds.concat(newNode);
+
+        setEdges(eds => {
+          const updatedEdges = eds.concat(newEdge);
+
+          toast.promise(
+            save.mutateAsync({
+              nodes: updatedNodes,
+              edges: updatedEdges,
+              viewport: getViewport(),
+              flowId: flowId!,
+            }),
+            {
+              loading: "Salvataggio in corso...",
+              success: ({ message }) => message,
+              error: ({ message }) => `Errore salvataggio racconto (${message})`,
+            }
+          );
+
+          return updatedEdges;
+        });
+
+        return updatedNodes;
+      });
     },
     [screenToFlowPosition]
   );
