@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { DEFAULT_AUDIO_URL, DEFAULT_BACKGROUND_URL } from "@/constants";
 import useFlow from "@/hooks/useFlow";
+import { genId } from "@/lib/utils";
 import { baseSchema, type PageSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -65,7 +66,7 @@ function FlowForm() {
         label: values.label,
         nodes: [
           {
-            id: "0",
+            id: genId(),
             position: {
               x: 0,
               y: 50,
