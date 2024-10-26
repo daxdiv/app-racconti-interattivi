@@ -46,7 +46,7 @@ function useNodeUtils() {
   };
 
   const onNodeCreate = (id: string) => {
-    const initialNode = getNode("0")!;
+    const initialNode = getNodes()[0]!;
     const newNode: Node = {
       id,
       data: DEFAULT_DATA,
