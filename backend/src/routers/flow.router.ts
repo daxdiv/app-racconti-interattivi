@@ -186,6 +186,12 @@ flowRouter.put("/:flowId", auth, (req: PutRequest, res) => {
           };
         }
 
+        if ("lastPage" in n && "evaluation" in n) {
+          const { lastPage, evaluation, ...rest } = n;
+
+          return rest;
+        }
+
         return n;
       }),
       edges,
