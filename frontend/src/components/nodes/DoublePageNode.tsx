@@ -187,14 +187,12 @@ function PageNode({ id }: { id: PageNodeProps["id"] }) {
         </CardContent>
       </Card>
 
-      {id !== "end" && (
-        <Handle
-          type="source"
-          position={Position.Right}
-          isConnectable={sourceConnections.length < sourceConnectionsLimit}
-          style={{ padding: "3px" }}
-        />
-      )}
+      <Handle
+        type="source"
+        position={Position.Right}
+        isConnectable={sourceConnections.length < sourceConnectionsLimit}
+        style={{ padding: "3px" }}
+      />
     </FormProvider>
   );
 }
