@@ -37,7 +37,6 @@ function useNodeUtils() {
         },
       ],
     });
-    toast.error("Nodo eliminato");
   };
 
   const onNodeCreate = (id: string) => {
@@ -53,7 +52,6 @@ function useNodeUtils() {
       type: "doublePage",
     };
 
-    toast.success("Pagine create", { duration: 3000 });
     setNodes(nds => {
       const updatedNodes = nds.concat(newNode);
 

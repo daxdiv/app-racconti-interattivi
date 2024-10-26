@@ -31,7 +31,6 @@ function useEdgeUtils() {
     deleteElements({
       edges: [{ id }],
     });
-    toast.error("Collegamento eliminato");
   };
 
   return { onEdgeDelete };
