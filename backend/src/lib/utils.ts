@@ -1,7 +1,6 @@
 import type { EdgeSchema, NodeSchema } from "./zod";
 
 import fs from "fs";
-import path from "path";
 import sharp from "sharp";
 
 export async function splitImage(
@@ -23,7 +22,7 @@ export async function splitImage(
 export function writeFiles(userId: string, flowId: string, files: Express.Multer.File[]) {
   files.map(async f => {
     const id = f.originalname.split("_")[0];
-    const destPath = `public/${userId}/${flowId}/${id}`;
+    const destPath = `public/${userId}/${flowId}/`;
 
     if (!fs.existsSync(destPath)) {
       fs.mkdirSync(destPath, { recursive: true });
@@ -39,23 +38,6 @@ export function writeFiles(userId: string, flowId: string, files: Express.Multer
         `${destPath}/${id}_background_left`,
         `${destPath}/${id}_background_right`
       );
-
-      if (!fs.existsSync(`public/${userId}/${flowId}/end`)) {
-        fs.mkdirSync(`public/${userId}/${flowId}/end`, { recursive: true });
-
-        const files = fs.readdirSync(destPath);
-        const filesToCopy = files.filter(file => file.startsWith("0_"));
-
-        for (const file of filesToCopy) {
-          const sourcePath = path.join(`public/${userId}/${flowId}/0`, file);
-          const destPath = path.join(
-            `public/${userId}/${flowId}/end`,
-            file.replace("0_", "end_")
-          );
-
-          fs.copyFileSync(sourcePath, destPath);
-        }
-      }
     }
   });
 }
@@ -72,7 +54,7 @@ export function createNodesPayload(
     const url = `${basePath.substring(
       0,
       basePath.lastIndexOf("/")
-    )}/${userId}/${flowId}/${n.id}`;
+    )}/${userId}/${flowId}/`;
 
     switch (n.type) {
       case "base":

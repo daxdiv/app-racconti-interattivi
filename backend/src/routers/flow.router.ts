@@ -42,7 +42,7 @@ flowRouter.get("/:flowId", auth, async (req, res) => {
     res.status(200).json({
       label: flow.label,
       nodes: flow.nodes.map(n => ({
-        background: `${baseUrl}/${verified._id}/${flowId}/${n.id}/${n.id}_background`,
+        background: `${baseUrl}/${verified._id}/${flowId}/${n.id}_background`,
         ...n.toJSON(),
       })),
       edges: flow.edges,
