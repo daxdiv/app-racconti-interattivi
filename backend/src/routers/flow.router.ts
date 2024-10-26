@@ -13,6 +13,7 @@ import FlowModel from "../models/flow.model";
 import { auth } from "../middlewares";
 import mongoose from "mongoose";
 import fs from "fs";
+import archiver from "archiver";
 
 type PutRequest = Request<
   { flowId: string },
@@ -64,10 +65,23 @@ flowRouter.get("/:flowId/download", auth, async (req, res) => {
     }
 
     const sortedNodes = getSortedNodes(flow.nodes.toObject(), flow.edges.toObject());
+    const folderPath = `public/${verified._id}/${flowId}`;
 
-    res.setHeader("Content-Disposition", 'attachment; filename="flow.json"');
-    res.setHeader("Content-Type", "application/json");
-    res.status(200).send(JSON.stringify(sortedNodes, null, 2));
+    res.setHeader("Content-Disposition", 'attachment; filename="flow.zip"');
+    res.setHeader("Content-Type", "application/zip");
+
+    const archive = archiver("zip", {
+      zlib: { level: 9 },
+    });
+
+    archive.on("error", err => {
+      res.status(500).send({ error: err.message });
+    });
+
+    archive.pipe(res);
+    archive.directory(folderPath, false);
+    archive.append(JSON.stringify(sortedNodes, null, 2), { name: "flow.json" });
+    archive.finalize();
   } catch (error) {
     res.status(500).json({ message: "Errore lato server" });
   }
