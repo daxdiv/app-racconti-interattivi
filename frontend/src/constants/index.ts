@@ -2,25 +2,29 @@ import type { Node } from "@xyflow/react";
 import type { PageSchema } from "@/lib/zod";
 
 export const REACT_FLOW_PANE_CLASS = "react-flow__pane";
+export const DEFAULT_BACKGROUND_URL =
+  "https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80";
+export const DEFAULT_AUDIO_URL =
+  "https://www.voanews.com/embed/player/0/6148249.html?type=audio";
 export const DEFAULT_DATA: PageSchema = {
   type: "base",
   label: "Titolo",
   pages: [
     {
       text: {
-        content: "",
+        content: "C'era una volta...",
         position: "TopLeft",
       },
     },
     {
       text: {
-        content: "",
+        content: "...una bambina",
         position: "TopRight",
       },
     },
   ],
-  background: "",
-  audio: "",
+  background: DEFAULT_BACKGROUND_URL,
+  audio: DEFAULT_AUDIO_URL,
 };
 export const INITIAL_NODES: Node<PageSchema>[] = [
   {
@@ -39,7 +43,3 @@ export const MAX_VALUE_LENGTH = 15;
 export const MAX_CONTINUE_OPTION_LENGTH = 15;
 export const MIN_USERNAME_LENGTH = 5;
 export const MIN_PASSWORD_LENGTH = 8;
-export const DEFAULT_BACKGROUND_URL =
-  "https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80";
-export const DEFAULT_AUDIO_URL =
-  "https://www.voanews.com/embed/player/0/6148249.html?type=audio";
