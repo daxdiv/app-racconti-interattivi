@@ -7,26 +7,32 @@ import { useParams } from "react-router-dom";
 function useNodeUtils() {
   const { save } = useFlow();
   const { flowId } = useParams();
-  const { getNode, getNodes, getEdges, setNodes, deleteElements, getViewport } =
+  const { getNode, getNodes, getEdges, setNodes, setEdges, deleteElements, getViewport } =
     useReactFlow<Node>();
 
   const onNodeDelete = (id: string) => {
     setNodes(prevNodes => {
       const updatedNodes = prevNodes.filter(node => node.id !== id);
 
-      toast.promise(
-        save.mutateAsync({
-          nodes: updatedNodes,
-          edges: getEdges(),
-          viewport: getViewport(),
-          flowId: flowId!,
-        }),
-        {
-          loading: "Salvataggio in corso...",
-          success: ({ message }) => message,
-          error: ({ message }) => `Errore salvataggio racconto (${message})`,
-        }
-      );
+      setEdges(eds => {
+        const updatedEdges = eds.filter(e => e.target !== id);
+
+        toast.promise(
+          save.mutateAsync({
+            nodes: updatedNodes,
+            edges: updatedEdges,
+            viewport: getViewport(),
+            flowId: flowId!,
+          }),
+          {
+            loading: "Salvataggio in corso...",
+            success: ({ message }) => message,
+            error: ({ message }) => `Errore salvataggio racconto (${message})`,
+          }
+        );
+
+        return updatedEdges;
+      });
 
       return updatedNodes;
     });
