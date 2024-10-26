@@ -59,7 +59,6 @@ function FlowForm() {
     },
   });
 
-  console.log(form.formState.errors);
   const onSubmit = (values: FormValues) => {
     toast.promise(
       create.mutateAsync({
