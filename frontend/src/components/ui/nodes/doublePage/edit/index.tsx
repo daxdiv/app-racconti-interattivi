@@ -22,7 +22,9 @@ import Preview from "@/components/ui/nodes/doublePage/preview";
 import QuestionChoiceTab from "@/components/ui/nodes/doublePage/edit/questionChoiceTab";
 import toast from "react-hot-toast";
 import { truncate } from "@/lib/utils";
+import useFlow from "@/hooks/useFlow";
 import { useFormContext } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import { useState } from "react";
 
 type EditDialogProps = {
@@ -31,14 +33,40 @@ type EditDialogProps = {
 
 function EditDialog({ id }: EditDialogProps) {
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-  const { updateNodeData } = useReactFlow<Node<PageSchema>>();
+  const { flowId } = useParams();
+  const { save } = useFlow();
+  const { getNodes, getEdges, getViewport, updateNodeData } =
+    useReactFlow<Node<PageSchema>>();
   const form = useFormContext<PageSchema>();
   const formType = form.watch("type");
 
   const onSubmit = (values: PageSchema) => {
-    updateNodeData(id, values);
+    updateNodeData(id, () => {
+      toast.promise(
+        save.mutateAsync({
+          nodes: getNodes().map(n => {
+            if (n.id === id) {
+              return { ...n, data: values };
+            }
+
+            return n;
+          }),
+          edges: getEdges(),
+          viewport: getViewport(),
+          flowId: flowId!,
+        }),
+        {
+          loading: "Salvataggio in corso...",
+          success: ({ message }) => message,
+          error: ({ message }) => `Errore salvataggio racconto (${message})`,
+        }
+      );
+
+      return values;
+    });
     setAlertDialogOpen(false);
-    toast.success("Modifiche salvate");
+
+    // toast.success("Modifiche salvate");
   };
 
   return (

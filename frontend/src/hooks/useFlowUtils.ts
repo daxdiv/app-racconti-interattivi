@@ -66,8 +66,9 @@ function useFlowUtils() {
 
   const onConnect: OnConnect = useCallback(params => {
     connectingNodeId.current = null;
-    setEdges(eds =>
-      addEdge(
+
+    setEdges(eds => {
+      const updatedEdges = addEdge(
         {
           ...params,
           animated: true,
@@ -79,8 +80,24 @@ function useFlowUtils() {
           },
         },
         eds
-      )
-    );
+      );
+
+      toast.promise(
+        save.mutateAsync({
+          nodes: getNodes(),
+          edges: updatedEdges,
+          viewport: getViewport(),
+          flowId: flowId!,
+        }),
+        {
+          loading: "Salvataggio in corso...",
+          success: ({ message }) => message,
+          error: ({ message }) => `Errore salvataggio racconto (${message})`,
+        }
+      );
+
+      return updatedEdges;
+    });
   }, []);
 
   const onConnectStart: OnConnectStart = useCallback((_, { nodeId }) => {
