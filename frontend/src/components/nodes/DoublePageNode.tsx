@@ -61,14 +61,11 @@ function PageNode({ id }: { id: PageNodeProps["id"] }) {
 
   return (
     <FormProvider {...form}>
-      {parseInt(id) !== 0 && (
-        <Handle
-          type="target"
-          position={Position.Left}
-          style={{ padding: "3px" }}
-          isConnectableStart={false}
-        />
-      )}
+      <Handle
+        type="target"
+        position={Position.Left}
+        style={{ padding: "3px" }}
+      />
 
       <Card className="w-[300px]">
         <CardHeader className="flex flex-row justify-between items-center space-y-0">
