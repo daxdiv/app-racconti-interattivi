@@ -14,18 +14,15 @@ import { z } from "zod";
 const baseSchema = z.object({
   type: z.literal("base"),
   id: z.string({ message: "Id required" }),
-  label: z.string().min(1, { message: "Label required" }),
+  label: z.string(),
   pages: z
     .array(
       z.object({
         background: z.string(),
         text: z.object({
-          content: z
-            .string()
-            .min(1, { message: "Page content required" })
-            .max(MAX_TEXT_CONTENT_LENGTH, {
-              message: "Page content too long",
-            }),
+          content: z.string().max(MAX_TEXT_CONTENT_LENGTH, {
+            message: "Page content too long",
+          }),
           position: z.custom<PageTextPosition>(),
           class: z.string().default("").optional(),
         }),
@@ -49,18 +46,15 @@ const baseSchema = z.object({
 const questionSchema = z.object({
   type: z.literal("question"),
   id: z.string({ message: "Id required" }),
-  label: z.string().min(1, { message: "Label required" }),
+  label: z.string(),
   pages: z
     .array(
       z.object({
         background: z.string(),
         text: z.object({
-          content: z
-            .string()
-            .min(1, { message: "Page content required" })
-            .max(MAX_TEXT_CONTENT_LENGTH, {
-              message: "Page content too long",
-            }),
+          content: z.string().max(MAX_TEXT_CONTENT_LENGTH, {
+            message: "Page content too long",
+          }),
           position: z.custom<PageTextPosition>(),
           class: z.string().default("").optional(),
         }),
@@ -70,16 +64,13 @@ const questionSchema = z.object({
     .max(2),
   audio: z.string(),
   question: z.object({
-    text: z
-      .string()
-      .min(1, { message: "Question text required" })
-      .max(MAX_QUESTION_CHOICE_TEXT_LENGTH, {
-        message: "Question text too long",
-      }),
+    text: z.string().max(MAX_QUESTION_CHOICE_TEXT_LENGTH, {
+      message: "Question text too long",
+    }),
     audio: z.array(z.string()).min(3).max(3),
     options: z
       .array(
-        z.string().min(1, { message: "Option text required" }).max(MAX_OPTION_LENGTH, {
+        z.string().max(MAX_OPTION_LENGTH, {
           message: "Option text too long",
         })
       )
@@ -88,7 +79,7 @@ const questionSchema = z.object({
   }),
   values: z
     .array(
-      z.string().min(1, "Value text required").max(MAX_VALUE_LENGTH, {
+      z.string().max(MAX_VALUE_LENGTH, {
         message: "Value text too long",
       })
     )
@@ -98,13 +89,12 @@ const questionSchema = z.object({
     list: z
       .array(
         z.object({
-          text: z.string().min(1, "Feedback text required"),
           audio: z.string(),
         })
       )
       .min(2)
       .max(2),
-    option: z.string().min(1, "Option text required").max(MAX_CONTINUE_OPTION_LENGTH, {
+    option: z.string().max(MAX_CONTINUE_OPTION_LENGTH, {
       message: "Option text too long",
     }),
   }),
@@ -116,18 +106,15 @@ const questionSchema = z.object({
 const choiceSchema = z.object({
   type: z.literal("choice"),
   id: z.string({ message: "Id required" }),
-  label: z.string().min(1, { message: "Label required" }),
+  label: z.string(),
   pages: z
     .array(
       z.object({
         background: z.string(),
         text: z.object({
-          content: z
-            .string()
-            .min(1, { message: "Page content required" })
-            .max(MAX_TEXT_CONTENT_LENGTH, {
-              message: "Page content too long",
-            }),
+          content: z.string().max(MAX_TEXT_CONTENT_LENGTH, {
+            message: "Page content too long",
+          }),
           position: z.custom<PageTextPosition>(),
           class: z.string().default("").optional(),
         }),
@@ -137,16 +124,13 @@ const choiceSchema = z.object({
     .max(2),
   audio: z.string(),
   choice: z.object({
-    text: z
-      .string()
-      .min(1, { message: "Choice text required" })
-      .max(MAX_QUESTION_CHOICE_TEXT_LENGTH, {
-        message: "Choice text too long",
-      }),
+    text: z.string().max(MAX_QUESTION_CHOICE_TEXT_LENGTH, {
+      message: "Choice text too long",
+    }),
     audio: z.array(z.string()).min(3).max(3),
     options: z
       .array(
-        z.string().min(1, { message: "Option text required" }).max(MAX_OPTION_LENGTH, {
+        z.string().max(MAX_OPTION_LENGTH, {
           message: "Option text too long",
         })
       )
@@ -155,7 +139,7 @@ const choiceSchema = z.object({
   }),
   values: z
     .array(
-      z.string().min(1, "Value text required").max(MAX_VALUE_LENGTH, {
+      z.string().max(MAX_VALUE_LENGTH, {
         message: "Value text too long",
       })
     )
@@ -165,13 +149,12 @@ const choiceSchema = z.object({
     list: z
       .array(
         z.object({
-          text: z.string().min(1, "Feedback text required"),
           audio: z.string(),
         })
       )
       .min(2)
       .max(2),
-    option: z.string().min(1, "Option text required").max(MAX_CONTINUE_OPTION_LENGTH, {
+    option: z.string().max(MAX_CONTINUE_OPTION_LENGTH, {
       message: "Option text too long",
     }),
   }),

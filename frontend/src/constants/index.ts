@@ -13,19 +13,19 @@ export const DEFAULT_DATA: PageSchema = {
   pages: [
     {
       text: {
-        content: "C'era una volta...",
+        content: "",
         position: "TopLeft",
       },
     },
     {
       text: {
-        content: "...una bambina",
+        content: "",
         position: "TopRight",
       },
     },
   ],
-  background: DEFAULT_BACKGROUND_URL,
-  audio: DEFAULT_AUDIO_URL,
+  background: "",
+  audio: "",
 };
 export const INITIAL_NODES: Node<PageSchema>[] = [
   {
