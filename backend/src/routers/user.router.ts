@@ -1,8 +1,8 @@
+import { adminOnly, auth } from "../middlewares";
 import { authSchema, passwordSchema, usernameSchema } from "../lib/zod";
 
 import { JWT_EXPIRES_IN } from "../constants";
 import UserModel from "../models/user.model";
-import { auth } from "../middlewares";
 import bcrypt from "bcrypt";
 import express from "express";
 import jwt from "jsonwebtoken";
@@ -100,7 +100,7 @@ userRouter.post("/sign-in", async (req, res) => {
     res.status(500).json({ message: "Errore lato server" });
   }
 });
-userRouter.post("/sign-up", async (req, res) => {
+userRouter.post("/sign-up", adminOnly, async (req, res) => {
   const { type, username, password } = req.body;
   const schema = authSchema.safeParse({ type, username, password });
 

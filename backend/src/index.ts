@@ -19,6 +19,9 @@ import userRouter from "./routers/user.router";
   if (!process.env.JWT_SECRET) {
     throw new Error("Missing JWT_SECRET inside .env");
   }
+  if (!process.env.ADMIN_SECRET) {
+    throw new Error("Missing ADMIN_SECRET inside .env");
+  }
 
   await mongoose.connect(process.env.DATABASE_URL);
 
