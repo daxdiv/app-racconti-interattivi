@@ -144,9 +144,9 @@ export function getSortedNodes(nodes: NodeSchema[], edges: EdgeSchema[]) {
     }
   }
 
-  return sortedNodes.map(n => {
+  return sortedNodes.map((n, i) => {
     const commonFields: Record<string, unknown> = {
-      id: n.id,
+      id: i,
       pages: n.pages,
       audio: n.audio,
     };
@@ -167,7 +167,9 @@ export function getSortedNodes(nodes: NodeSchema[], edges: EdgeSchema[]) {
           choice: n.choice,
           values: n.values,
           feedback: n.feedback,
-          nextSteps: n.nextSteps,
+          nextSteps: sortedNodes
+            .filter(sn => n.nextSteps?.includes(sn.id))
+            .map(sn => sortedNodes.indexOf(sn) * 2),
         };
       default:
         return commonFields;
