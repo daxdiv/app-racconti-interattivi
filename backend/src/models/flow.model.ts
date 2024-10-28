@@ -122,10 +122,6 @@ const NodeSchema = new Schema(
     feedback: { type: FeedbackSchema, default: undefined },
     nextSteps: {
       type: [String],
-      validate: [
-        (arr: any[]) => arr.length === 2,
-        "NextSteps array must contain 2 elements",
-      ],
       default: undefined,
     },
     position: {

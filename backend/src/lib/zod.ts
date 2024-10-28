@@ -158,7 +158,7 @@ const choiceSchema = z.object({
       message: "Option text too long",
     }),
   }),
-  nextSteps: z.array(z.string()).min(2).max(2).optional(),
+  nextSteps: z.array(z.string()).optional(),
   position: z.object({
     x: z.string(),
     y: z.string(),
