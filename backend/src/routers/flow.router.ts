@@ -185,7 +185,7 @@ flowRouter.put("/:flowId", auth, (req: PutRequest, res) => {
       userId: verified._id,
       nodes: nodes.map(n => {
         if (n.type === "choice") {
-          n.nextSteps = edges.filter(e => e.source === n.id).map(e => e.id);
+          n.nextSteps = edges.filter(e => e.source === n.id).map(e => e.target);
 
           return n;
         }
