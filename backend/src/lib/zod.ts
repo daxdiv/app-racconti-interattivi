@@ -89,6 +89,7 @@ const questionSchema = z.object({
     list: z
       .array(
         z.object({
+          text: z.string(),
           audio: z.string(),
         })
       )
@@ -149,6 +150,7 @@ const choiceSchema = z.object({
     list: z
       .array(
         z.object({
+          text: z.string(),
           audio: z.string(),
         })
       )
