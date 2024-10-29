@@ -184,11 +184,22 @@ userRouter.put("/:userId/password", auth, async (req, res) => {
   }
 
   try {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ message: "Utente non trovato" });
+      return;
+    }
+
+    const passwordMatch = await bcrypt.compare(schema.data.password, user.password);
+
+    if (!passwordMatch) {
+      res.status(400).json({ message: "Password errata" });
+      return;
+    }
+
     const newHashedPassword = await bcrypt.hash(schema.data.newPassword, 10);
-    const updatedUser = await UserModel.findOneAndUpdate(
-      { _id: userId },
-      { password: newHashedPassword }
-    );
+    const updatedUser = await user.updateOne({ password: newHashedPassword });
 
     if (!updatedUser) {
       res.status(404).json({ message: "Utente non trovato" });
