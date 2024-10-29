@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LogOut, UserPen, Users } from "lucide-react";
+import { LogOut, UserPen } from "lucide-react";
 
 import type { Data } from "@/hooks/useUser";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -33,7 +33,7 @@ function UserFlows(user: UserFlowsProps) {
       success: () => {
         navigate("/auth", { replace: true });
 
-        return "Disconnesso correttamente";
+        return "Disconnesso";
       },
       error: "Errore durante la disconnessione",
     });
@@ -46,16 +46,7 @@ function UserFlows(user: UserFlowsProps) {
           renderItems={() => (
             <>
               <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
-                onClick={() => {
-                  navigate("/auth", { replace: true });
-                }}
-              >
-                <Users size={15} /> Usa un altro account
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
+                className="text-sm flex gap-x-2 cursor-pointer"
                 onClick={() => {
                   navigate("/user/profile", { replace: true });
                 }}
@@ -64,7 +55,7 @@ function UserFlows(user: UserFlowsProps) {
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
+                className="text-sm flex gap-x-2 cursor-pointer"
                 onClick={handleSignOut}
               >
                 <LogOut size={15} /> Esci
@@ -80,7 +71,7 @@ function UserFlows(user: UserFlowsProps) {
             <CardTitle />
             <CardDescription />
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 flex flex-col justify-center items-center">
             <FlowForm />
 
             {user.data.flows.length === 0 ? (

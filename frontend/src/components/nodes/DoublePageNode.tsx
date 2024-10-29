@@ -137,7 +137,7 @@ function PageNode({ id }: { id: PageNodeProps["id"] }) {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      Eliminare "{truncate(form.getValues("label"), 12)}?
+                      Eliminare "{truncate(form.getValues("label"), 12)}"?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                       Una volta eliminate, dovrai ricrearle da zero.

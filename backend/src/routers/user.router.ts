@@ -79,16 +79,14 @@ userRouter.post("/sign-in", async (req, res) => {
     });
 
     if (!user) {
-      res.status(404).json({ message: `Utente con username "${username}" non trovato` });
+      res.status(404).json({ message: "Username o password errati" });
       return;
     }
 
     const passwordMatch = await bcrypt.compare(schema.data.password, user.password);
 
     if (!passwordMatch) {
-      res
-        .status(400)
-        .json({ message: `Password errata per username "${user.username}"` });
+      res.status(400).json({ message: "Username o password errati" });
       return;
     }
 
@@ -102,7 +100,11 @@ userRouter.post("/sign-in", async (req, res) => {
 });
 userRouter.post("/sign-up", adminOnly, async (req, res) => {
   const { type, username, password } = req.body;
-  const schema = authSchema.safeParse({ type, username, password });
+  const schema = authSchema.safeParse({
+    type,
+    username: username.toLowerCase(),
+    password,
+  });
 
   if (!schema.success) {
     res.status(400).json({ message: schema.error.issues.map(i => i.message).join("\n") });
@@ -159,7 +161,7 @@ userRouter.put("/:userId/username", auth, async (req, res) => {
       return;
     }
 
-    res.status(200).json({ message: "Nome utente aggiornato correttamente" });
+    res.status(200).json({ message: "Nome utente aggiornato" });
   } catch (error) {
     res.status(500).json({ message: "Errore lato server" });
   }
@@ -193,7 +195,7 @@ userRouter.put("/:userId/password", auth, async (req, res) => {
       return;
     }
 
-    res.status(200).json({ message: "Password aggiornata correttamente" });
+    res.status(200).json({ message: "Password aggiornata" });
   } catch (error) {
     res.status(500).json({ message: "Errore lato server" });
   }

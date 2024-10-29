@@ -96,9 +96,7 @@ function EditDialog({ id }: EditDialogProps) {
           <AlertDialogTitle className="flex justify-between items-center gap-x-1">
             Modifica "{truncate(form.getValues("label"), 12)}"
             {!form.formState.isValid && (
-              <p className="text-destructive text-sm">
-                Compila tutti i campi {formType !== "base" && "i campi in tutte le tab"}
-              </p>
+              <p className="text-destructive text-sm">Compila tutti i campi</p>
             )}
           </AlertDialogTitle>
         </AlertDialogHeader>

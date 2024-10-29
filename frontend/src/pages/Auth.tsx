@@ -48,9 +48,9 @@ function Auth() {
       success: () => {
         navigate("user/profile");
 
-        return "Accesso effettuato correttamente";
+        return "Accesso effettuato";
       },
-      error: ({ message }) => `Errore accesso \n ${message}`,
+      error: ({ message }) => message,
     });
   };
 
@@ -70,7 +70,7 @@ function Auth() {
           renderItems={() => (
             <>
               <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
+                className="text-sm flex gap-x-2 cursor-pointer"
                 onClick={() => {
                   navigate("/user/profile", { replace: true });
                 }}

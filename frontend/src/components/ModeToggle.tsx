@@ -23,21 +23,20 @@ export function ModeToggle() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="w-36"
-      >
+      <DropdownMenuContent className="w-32">
         <DropdownMenuItem
           onClick={() => setTheme("light")}
-          className="text-sm flex justify-between items-center cursor-pointer"
+          className="text-sm flex cursor-pointer gap-x-2"
         >
-          <Sun size={15} /> Tema chiaro
+          <Sun size={15} />
+          Tema chiaro
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => setTheme("dark")}
-          className="text-sm flex justify-between items-center cursor-pointer"
+          className="text-sm flex cursor-pointer gap-x-2"
         >
-          <Moon size={15} /> Tema scuro
+          <Moon size={15} />
+          Tema scuro
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
