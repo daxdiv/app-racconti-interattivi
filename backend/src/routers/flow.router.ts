@@ -14,6 +14,7 @@ import { auth } from "../middlewares";
 import mongoose from "mongoose";
 import fs from "fs";
 import archiver from "archiver";
+import { DEFAULT_AUDIO_URL, DEFAULT_BACKGROUND_URL } from "../constants";
 
 type PutRequest = Request<
   { flowId: string },
@@ -42,10 +43,20 @@ flowRouter.get("/:flowId", auth, async (req, res) => {
 
     res.status(200).json({
       label: flow.label,
-      nodes: flow.nodes.map(n => ({
-        background: `${baseUrl}/${verified._id}/${flowId}/${n.id}_background`,
-        ...n.toJSON(),
-      })),
+      nodes: flow.nodes.map(n => {
+        const backgroundPath = `${baseUrl}/${verified._id}/${flowId}/${n.id}_background`;
+        const background = fs.existsSync(backgroundPath)
+          ? backgroundPath
+          : DEFAULT_BACKGROUND_URL;
+        const audioPath = `${baseUrl}/${verified._id}/${flowId}/${n.id}_background`;
+        const audio = fs.existsSync(audioPath) ? audioPath : DEFAULT_AUDIO_URL;
+
+        return {
+          background,
+          ...n.toJSON(),
+          audio,
+        };
+      }),
       edges: flow.edges,
     });
   } catch (error) {
