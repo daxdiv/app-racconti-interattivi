@@ -1,4 +1,4 @@
-import { BookOpen, LogOut, UserPen, Users } from "lucide-react";
+import { BookOpen, LogOut, UserPen } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -28,7 +28,7 @@ function Header({ label }: HeaderProps) {
       success: () => {
         navigate("/auth", { replace: true });
 
-        return "Disconnesso correttamente";
+        return "Disconnesso";
       },
       error: "Errore durante la disconnessione",
     });
@@ -54,15 +54,7 @@ function Header({ label }: HeaderProps) {
           renderItems={() => (
             <>
               <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
-                onClick={() => {
-                  navigate("/auth", { replace: true });
-                }}
-              >
-                <Users size={15} /> Usa un altro account
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
+                className="text-sm flex gap-x-2 cursor-pointer"
                 onClick={() => {
                   navigate("/user/flows", { replace: true });
                 }}
@@ -70,7 +62,7 @@ function Header({ label }: HeaderProps) {
                 <BookOpen size={15} /> I miei racconti
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
+                className="text-sm flex gap-x-2 cursor-pointer"
                 onClick={() => {
                   navigate("/user/profile", { replace: true });
                 }}
@@ -78,7 +70,7 @@ function Header({ label }: HeaderProps) {
                 <UserPen size={15} /> Profilo
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
+                className="text-sm flex gap-x-2 cursor-pointer"
                 onClick={handleSignOut}
               >
                 <LogOut size={15} /> Esci

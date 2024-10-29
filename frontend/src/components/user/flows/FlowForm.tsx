@@ -82,19 +82,21 @@ function FlowForm() {
         error: ({ message }) => `Errore creazione racconto \n\t ${message}`,
       }
     );
+
+    form.reset();
   };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4"
+        className="space-y-4 flex flex-col justify-center"
       >
         <FormField
           control={form.control}
           name="label"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="w-[400px]">
               <FormLabel>Titolo</FormLabel>
               <FormControl>
                 <Input
@@ -109,7 +111,7 @@ function FlowForm() {
 
         <Button
           type="submit"
-          className="w-full"
+          className="w-[400px]"
         >
           Crea un nuovo racconto
         </Button>

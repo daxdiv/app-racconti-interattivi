@@ -23,12 +23,7 @@ function UserActions({ renderItems }: UserActionsProps) {
           <span className="sr-only">User actions</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="w-48"
-      >
-        {renderItems()}
-      </DropdownMenuContent>
+      <DropdownMenuContent>{renderItems()}</DropdownMenuContent>
     </DropdownMenu>
   );
 }

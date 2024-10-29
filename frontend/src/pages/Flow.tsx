@@ -160,7 +160,7 @@ function Flow() {
               onClick={() => {
                 if (!isValidState()) {
                   toast.error(
-                    `Stato del racconto non corretto verifica che: \n
+                    `Stato del racconto non corretto, verifica che: \n
                     - non vi siano nodi scollegati \n
                     - hai compilato tutti i campi richiesti in ogni nodo \n
                     - tutti i nodi scelta abbiano due collegamenti in uscita

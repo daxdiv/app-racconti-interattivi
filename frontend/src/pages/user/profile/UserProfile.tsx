@@ -1,4 +1,4 @@
-import { BookOpen, LoaderCircle, LogOut, Users } from "lucide-react";
+import { BookOpen, LoaderCircle, LogOut } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -44,7 +44,7 @@ function UserProfile(user: UserProfileProps) {
       success: () => {
         navigate("/auth", { replace: true });
 
-        return "Disconnesso correttamente";
+        return "Disconnesso";
       },
       error: "Errore durante la disconnessione",
     });
@@ -68,15 +68,7 @@ function UserProfile(user: UserProfileProps) {
           renderItems={() => (
             <>
               <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
-                onClick={() => {
-                  navigate("/auth", { replace: true });
-                }}
-              >
-                <Users size={15} /> Usa un altro account
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
+                className="text-sm flex gap-x-2 cursor-pointer"
                 onClick={() => {
                   navigate("/user/flows", { replace: true });
                 }}
@@ -84,7 +76,7 @@ function UserProfile(user: UserProfileProps) {
                 <BookOpen size={15} /> I miei racconti
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-sm flex justify-between items-center cursor-pointer"
+                className="text-sm flex gap-x-2 cursor-pointer"
                 onClick={handleSignOut}
               >
                 <LogOut size={15} /> Esci

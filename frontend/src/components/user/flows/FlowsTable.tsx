@@ -54,7 +54,7 @@ function FlowsTable(user: FlowsTableProps) {
         <TableHeader>
           <TableRow>
             <TableHead
-              className="w-[150px]"
+              className="w-[150px] rounded-tl-md"
               colSpan={2}
             >
               Titolo
@@ -66,7 +66,7 @@ function FlowsTable(user: FlowsTableProps) {
             <TableHead className="text-center">Creato il</TableHead>
             <TableHead
               colSpan={2}
-              className="text-center w-[300px]"
+              className="text-center w-[300px] rounded-tr-md"
             >
               Azioni
             </TableHead>
