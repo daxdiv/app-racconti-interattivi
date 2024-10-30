@@ -26,6 +26,4 @@ dist-ssr
 /node_modules
 .env
 
-TODO.md
-
 backend/public
