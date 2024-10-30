@@ -38,7 +38,6 @@ function useFlow() {
     return useQuery<unknown, DefaultError, QueryData & { label: string }>({
       queryKey: ["restore-flow", flowId],
       queryFn: () => restoreFlow(flowId),
-      refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
       retry: false,
