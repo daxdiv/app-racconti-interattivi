@@ -48,7 +48,6 @@ flowRouter.get("/:flowId", auth, async (req, res) => {
         const background = fs.existsSync(backgroundPath)
           ? `${baseUrl}/${verified._id}/${flowId}/${n.id}_background`
           : DEFAULT_BACKGROUND_URL;
-
         const audioPath = `public/${verified._id}/${flowId}/${n.id}_audio`;
         const audio = fs.existsSync(audioPath)
           ? `${baseUrl}/${verified._id}/${flowId}/${n.id}_audio`
