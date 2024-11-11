@@ -44,12 +44,15 @@ flowRouter.get("/:flowId", auth, async (req, res) => {
     res.status(200).json({
       label: flow.label,
       nodes: flow.nodes.map(n => {
-        const backgroundPath = `${baseUrl}/${verified._id}/${flowId}/${n.id}_background`;
+        const backgroundPath = `public/${verified._id}/${flowId}/${n.id}_background`;
         const background = fs.existsSync(backgroundPath)
-          ? backgroundPath
+          ? `${baseUrl}/${verified._id}/${flowId}/${n.id}_background`
           : DEFAULT_BACKGROUND_URL;
-        const audioPath = `${baseUrl}/${verified._id}/${flowId}/${n.id}_background`;
-        const audio = fs.existsSync(audioPath) ? audioPath : DEFAULT_AUDIO_URL;
+
+        const audioPath = `public/${verified._id}/${flowId}/${n.id}_audio`;
+        const audio = fs.existsSync(audioPath)
+          ? `${baseUrl}/${verified._id}/${flowId}/${n.id}_audio`
+          : DEFAULT_AUDIO_URL;
 
         return {
           background,
