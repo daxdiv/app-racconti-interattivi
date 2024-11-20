@@ -100,7 +100,7 @@ function FlowForm() {
               <FormLabel>Titolo</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Cappuccetto rosso"
+                  placeholder="Inserisci un titolo..."
                   {...field}
                 />
               </FormControl>
