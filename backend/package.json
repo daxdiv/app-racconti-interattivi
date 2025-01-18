@@ -40,5 +40,10 @@
     "nodemon": "^3.1.9",
     "tsc-watch": "^6.2.1",
     "typescript": "^5.7.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "mongoose@<8.9.5": ">=8.9.5"
+    }
   }
 }
